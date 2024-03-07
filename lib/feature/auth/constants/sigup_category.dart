@@ -1,0 +1,6 @@
+
+
+enum StudentHubCategorySignUp {
+  student,
+  company
+}
