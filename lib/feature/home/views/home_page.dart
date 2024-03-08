@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-            color: Color(0xFFCE5A67),
+            color: const Color(0xFFCE5A67),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
                   Container(
                     width: 250.0,
                     height: 250.0,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: AssetImage(
@@ -29,39 +29,46 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   Text(
                     'Build your product with high-skilled students'
                         .toUpperCase(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 252, 245, 237),
                       fontSize: 20.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   Text(
                     'Find and onboard best-skilled student for your product. Student works to gain experience & skills from real-world projects',
                     style: TextStyle(
-                      color:
-                          Color.fromARGB(255, 252, 245, 237).withOpacity(0.5),
+                      color: const Color.fromARGB(255, 252, 245, 237)
+                          .withOpacity(0.5),
                       fontSize: 16.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   // 2 nút company và student với đổ bóng đen màu vàng
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.company.name}", title: StudentHubCategorySignUp.company.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.company.name}",
+                                title: StudentHubCategorySignUp.company.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 244, 191, 150),
+                            backgroundColor:
+                                const Color.fromARGB(255, 244, 191, 150),
                             elevation: 8.0, // Điều chỉnh độ nâng
                             shadowColor: Colors.black, // Đặt màu đổ bóng
                             shape: RoundedRectangleBorder(
@@ -69,16 +76,22 @@ class HomePage extends StatelessWidget {
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
                             minimumSize: Size(100.0, 50.0)),
-                        child: Text('Company',
+                        child: const Text('Company',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
-                      SizedBox(width: 24.0),
+                      const SizedBox(width: 24.0),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.student.name}", title: StudentHubCategorySignUp.student.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.student.name}",
+                                title: StudentHubCategorySignUp.student.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -89,15 +102,15 @@ class HomePage extends StatelessWidget {
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
                             minimumSize: Size(100.0, 50.0)),
-                        child: Text('Student',
+                        child: const Text('Student',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
                     ],
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   // Câu giới thiệu khác không phải nút
-                  Text(
+                  const Text(
                     'StudentHub is university market place to connect high-skilled student and company on a real-world project',
                     style: TextStyle(fontSize: 14.0),
                     textAlign: TextAlign.center,
