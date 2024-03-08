@@ -35,13 +35,13 @@ class LoginPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              CustomTextField(
+              const CustomTextField(
                 hintText: "Username or email",
               ),
               const SizedBox(
                 height: 10,
               ),
-              PasswordFielddWidget(),
+              const PasswordFielddWidget(),
               const SizedBox(
                 height: 10,
               ),
@@ -64,7 +64,7 @@ class LoginPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return SignUpByCategory();
+                            return const SignUpByCategory();
                           },
                         ));
                       },

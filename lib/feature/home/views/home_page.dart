@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -75,7 +76,7 @@ class HomePage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
-                            minimumSize: Size(100.0, 50.0)),
+                            minimumSize: const Size(100.0, 50.0)),
                         child: const Text('Company',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
@@ -94,15 +95,42 @@ class HomePage extends StatelessWidget {
                           ));
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 244, 191, 150),
+                            backgroundColor:
+                                const Color.fromARGB(255, 244, 191, 150),
                             elevation: 8.0, // Điều chỉnh độ nâng
                             shadowColor: Colors.black, // Đặt màu đổ bóng
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
-                            minimumSize: Size(100.0, 50.0)),
+                            minimumSize: const Size(100.0, 50.0)),
                         child: const Text('Student',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 31, 23, 23))),
+                      ),
+                      // TODO: Test profile
+                      const SizedBox(width: 24.0),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return const ProfileScreen();
+                            },
+                          ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 244, 191, 150),
+                          elevation: 8.0, // setup config lift
+                          shadowColor:
+                              Colors.black, // setup config shadow color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                0.0), // setup config border radius
+                          ),
+                          minimumSize: const Size(100.0, 50.0),
+                        ),
+                        child: const Text('Profile',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
