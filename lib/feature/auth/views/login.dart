@@ -4,12 +4,7 @@ import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
-  LoginPage(
-  {
-    super.key,
-    required this.apiForLogin,
-    required this.title
-  });
+  LoginPage({super.key, required this.apiForLogin, required this.title});
 
   final String apiForLogin;
   final String title;
@@ -52,34 +47,34 @@ class LoginPage extends StatelessWidget {
               Container(
                 width: size.width / 2,
                 child: ElevatedButton(
-                  onPressed: () {
-                    print(apiForLogin);
-                  }, 
-                  child: Text("LOGIN AS ${title.toUpperCase()}")
-                ),
+                    onPressed: () {
+                      print(apiForLogin);
+                    },
+                    child: Text("LOGIN AS ${title.toUpperCase()}")),
               ),
               Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an Student Hub account? "),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder:(context) {
+                  child: Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an Student Hub account? "),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
                             return SignUpByCategory();
-                          },));
-                        },
-                        child: Text("Sign up", style: TextStyle(
-                          fontWeight: FontWeight.bold
-                        ),),
-                      )
-                    ],
-                  ),
-                )
-              ),
-              
+                          },
+                        ));
+                      },
+                      child: Text(
+                        "Sign up",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+              )),
             ],
           ),
         ),
@@ -87,4 +82,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
