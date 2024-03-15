@@ -1,6 +1,1 @@
-
-
-enum StudentHubCategorySignUp {
-  student,
-  company
-}
+enum StudentHubCategorySignUp { student, company }

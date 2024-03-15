@@ -1,4 +1,3 @@
-import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
 import 'package:flutter/material.dart';
@@ -56,9 +58,15 @@ class HomePage extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.company.name}", title: StudentHubCategorySignUp.company.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.company.name}",
+                                title: StudentHubCategorySignUp.company.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -76,9 +84,15 @@ class HomePage extends StatelessWidget {
                       SizedBox(width: 24.0),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.student.name}", title: StudentHubCategorySignUp.student.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.student.name}",
+                                title: StudentHubCategorySignUp.student.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
