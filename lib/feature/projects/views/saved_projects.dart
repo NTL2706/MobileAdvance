@@ -2,9 +2,8 @@
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import './alll_projects.dart';
-import '../provider/project_provider.dart';
 import './project_details.dart';
+import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 

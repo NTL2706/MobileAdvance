@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
+import '../provider/project_provider.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;
@@ -11,6 +13,8 @@ class ProjectDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final projectProvider = Provider.of<ProjectProvider>(context);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(project.name),
@@ -116,12 +120,16 @@ class ProjectDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      projectProvider.toggleFavoriteStatus(project.id);
+                    },
                     style: ButtonStyle(
                       minimumSize: MaterialStateProperty.all(
                           Size(150, 55)), // Kích thước nút
                       backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.blue), // Màu nền
+                          project.isFavourite
+                              ? Colors.red
+                              : Colors.blue), // Màu nền
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius:
@@ -130,7 +138,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Saved',
+                      project.isFavourite ? 'Saved' : 'Save',
                       style: TextStyle(color: Colors.white), // Màu văn bản
                     ),
                   ),
