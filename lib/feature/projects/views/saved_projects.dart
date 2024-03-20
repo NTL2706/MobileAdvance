@@ -1,88 +1,43 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import './alll_projects.dart';
 import '../provider/project_provider.dart';
 import './project_details.dart';
-import './saved_projects.dart';
-import './filter_modal.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 
-class ProjectWidget extends StatefulWidget {
-  ProjectWidget({super.key});
+class SavedProjectWidget extends StatefulWidget {
+  const SavedProjectWidget({super.key});
 
   @override
-  State<ProjectWidget> createState() => _ProjectWidgetState();
+  State<SavedProjectWidget> createState() => _ProjectWidgetState();
 }
 
-class _ProjectWidgetState extends State<ProjectWidget> {
+class _ProjectWidgetState extends State<SavedProjectWidget> {
   @override
   Widget build(BuildContext context) {
     final projectProvider = Provider.of<ProjectProvider>(context);
-
     return Scaffold(
         appBar: AppBar(
           scrolledUnderElevation: 0,
-          title: Text('Browse Projects'),
+          title: Text('Saved Projects'),
         ),
         body: Padding(
           padding: EdgeInsets.all(24),
           child: Column(
             children: [
-              Padding(
-                  padding: EdgeInsets.only(bottom: 24.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: projectProvider.searchController,
-                          onChanged: (value) {
-                            projectProvider.updateSearch();
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide(color: Colors.grey),
-                            ),
-                            hintText: 'Search projects...',
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 16.0),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      IconButton(
-                          constraints:
-                              BoxConstraints.tightFor(width: 30, height: 30),
-                          iconSize: 30,
-                          padding: EdgeInsets.all(0),
-                          icon: Icon(
-                              projectProvider.searchController.text.isNotEmpty
-                                  ? Icons.filter_list
-                                  : Icons.favorite),
-                          onPressed: () {
-                            projectProvider.searchController.text.isNotEmpty
-                                ? showModalBottomSheet(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return FilterModal(); // Sử dụng widget FilterModal ở đây
-                                    },
-                                  )
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            SavedProjectWidget()),
-                                  );
-                          }),
-                    ],
-                  )),
               Expanded(
                 child: ListView.builder(
-                  itemCount: projectProvider.projects.length,
+                  itemCount: projectProvider.projects
+                      .where((project) => project.isFavourite == true)
+                      .toList()
+                      .length,
                   itemBuilder: (context, index) {
-                    final project = projectProvider.projects[index];
+                    final project = projectProvider.projects
+                        .where((project) => project.isFavourite == true)
+                        .toList()[index];
                     return Container(
                         margin: EdgeInsets.only(bottom: 24.0),
                         decoration: BoxDecoration(
@@ -112,9 +67,8 @@ class _ProjectWidgetState extends State<ProjectWidget> {
                                     // Thời gian của animation
                                     IconButton(
                                         onPressed: () {
-                                          projectProvider.toggleFavoriteStatus(
-                                              project
-                                                  .id); // Gọi hàm toggleFavoriteStatus với chỉ số index
+                                          projectProvider
+                                              .toggleFavoriteStatus(project.id);
                                         },
                                         icon: Icon(
                                           project.isFavourite
@@ -225,9 +179,7 @@ class _ProjectWidgetState extends State<ProjectWidget> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        // Xử lý khi nút được nhấn
-                                      },
+                                      onPressed: () {},
                                       style: ButtonStyle(
                                         minimumSize: MaterialStateProperty.all(
                                             Size(80, 45)),
@@ -259,15 +211,4 @@ class _ProjectWidgetState extends State<ProjectWidget> {
           ),
         ));
   }
-}
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ProjectProvider(),
-      child: MaterialApp(
-        home: ProjectWidget(),
-      ),
-    ),
-  );
 }

@@ -1,10 +1,12 @@
 class Project {
-  final String name;
-  final DateTime createdAt;
-  final int numberOfPeople;
-  final List<int> time;
-  final List<String> describe;
+  String id;
+  String name;
+  DateTime createdAt;
+  int numberOfPeople;
+  List<int> time;
+  List<String> describe;
+  bool isFavourite;
 
-  Project(
-      this.name, this.createdAt, this.numberOfPeople, this.time, this.describe);
+  Project(this.id, this.name, this.createdAt, this.numberOfPeople, this.time,
+      this.describe, this.isFavourite);
 }
