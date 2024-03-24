@@ -1,49 +1,56 @@
-import 'package:flutter/cupertino.dart';
+import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isAccountListVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
-        elevation: 0, // remove shadow
+        elevation: 0,
       ),
       body: Column(
-        children: [_appProfileBar(), _appProfileAction()],
+        children: [
+          _appProfileBar(),
+          _appProfileAction(),
+        ],
       ),
     );
   }
 
-  _appProfileBar() {
+  Widget _appProfileBar() {
     return Container(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(10.0),
       child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center, // center with column
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
             backgroundImage: AssetImage("assets/images/logo.png"),
-            radius: 50,
+            radius: 40,
           ),
-          SizedBox(height: 12.0),
-          Row(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+          SizedBox(height: 10.0),
+          Column(
             children: [
-              Column(
-                children: [
-                  Text(
-                    "Nguyen Van A",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text("Profile"),
-                ],
+              Text(
+                "Nguyen Van A",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              Text("Profile"),
             ],
           ),
         ],
@@ -51,7 +58,42 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  _appProfileAction() {
+  Widget _switchAccountAction(bool isAccountListVisible) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: isAccountListVisible ? 1.0 : 0.0,
+      child: Visibility(
+        visible: isAccountListVisible,
+        child: Container(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Column(
+            children: [
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/logo.png"),
+                ),
+                title: const Text("User 1"),
+                onTap: () {
+                  print("Account 1 selected");
+                },
+              ),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/logo.png"),
+                ),
+                title: const Text("User 2"),
+                onTap: () {
+                  print("Account 2 selected");
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _appProfileAction() {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12.0),
@@ -60,57 +102,50 @@ class ProfileScreen extends StatelessWidget {
             topLeft: Radius.circular(30.0),
             topRight: Radius.circular(30.0),
           ),
-          color: Color.fromARGB(255, 164, 132, 132),
+          color: AppColors.backgroundColor,
         ),
         child: Column(
           children: [
-            // ListTile is a row with leading, title, trailing
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8.0),
-                // config border radius
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 93, 54, 54),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
-              title: const Text("Profile"),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            ProfileListTile(
+              icon: Icons.account_circle,
+              title: "Switch account",
               onTap: () {
-                print("Submit button clicked");
+                print("Profile button clicked");
+                setState(() {
+                  isAccountListVisible = !isAccountListVisible;
+                });
               },
             ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 93, 54, 54),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Icon(Icons.settings, color: Colors.white),
-              ),
-              title: const Text("Profile"),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _switchAccountAction(isAccountListVisible),
+            ProfileListTile(
+              icon: Icons.person,
+              title: "Profile",
               onTap: () {
-                print("Submit button clicked");
+                // move to profile screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    // builder: (context) => const DetailProfileCompanyScreen(),
+                    builder: (context) => const DetailProfileStudentScreen(),
+                  ),
+                );
               },
             ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 93, 54, 54),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Icon(Icons.logout, color: Colors.white),
-              ),
-              title: const Text("Profile"),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            ProfileListTile(
+              icon: Icons.settings,
+              title: "Settings",
               onTap: () {
-                print("Submit button clicked");
+                print("Settings button clicked");
               },
             ),
+            ProfileListTile(
+              icon: Icons.logout,
+              title: "Logout",
+              onTap: () {
+                print("Logout button clicked");
+              },
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
