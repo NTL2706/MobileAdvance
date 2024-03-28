@@ -92,27 +92,36 @@ class DashBoard extends StatelessWidget{
           child: Container(
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Your projects",style: TextStyle(
-                      fontWeight: FontWeight.bold
-                    )),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0.5,
-                        
-                      ),
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return ProjectPost_1();
-                        },));
-                      },
-                      child: Text("Post a jobs",style: TextStyle(
-                        color: Colors.black
-                      ),)
-                    )
-                  ],
+                Container(
+                  height: 50,
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Your projects",style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      )),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0.2,
+                          minimumSize: Size(30, 30),
+
+                        ),
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return ProjectPost_1();
+                          },));
+                        },
+                        child: Text("Post a jobs",style: TextStyle(
+                          color: Colors.black
+                        ),)
+                      )
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: Container(
@@ -151,7 +160,7 @@ class AllProjectWidget extends StatelessWidget{
           JobModel job = jobList[index];
           return Container(
             margin: EdgeInsets.only(top: 5),
-            height: 150,
+            height: 165,
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               
@@ -162,7 +171,92 @@ class AllProjectWidget extends StatelessWidget{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(job.title!,style: Theme.of(context).textTheme.bodyLarge),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(job.title!,style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold
+                    )),
+                    SizedBox(
+                      height: 30,
+                      child: IconButton(onPressed: ()async{
+                        await showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+
+                            backgroundColor: Colors.white,
+                            content: Container(
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("View proposals",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("View messages",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("View hired",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("View job posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("Edit posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                  Container(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                      ),
+                                      onPressed: (){}, child: Text("Remove posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.white
+                                      ),))),
+
+                                ],
+                              ),
+                            ),
+                          );
+                        },);
+                      }, icon: Icon(Icons.more_vert),iconSize: 18,))
+                  ],
+                ),
                 Text(job.createAt!),
                 Text("Student are looking for"),
                 Text("${"-\r${job.discription}"}"),
@@ -174,7 +268,18 @@ class AllProjectWidget extends StatelessWidget{
                         alignment: Alignment.center,
                         child: Column(
                           children: [
-                            Text("${job.proposalNumber}"),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 25,
+                              width: 20,
+                              decoration: BoxDecoration(
+                  
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black
+                                )
+                              ),
+                              child: Text("${job.proposalNumber}")),
                             Text("Proposals")
                           ],
                         ),
@@ -185,7 +290,18 @@ class AllProjectWidget extends StatelessWidget{
                         alignment: Alignment.center,
                         child: Column(
                           children: [
-                            Text("${job.messagesNumber}"),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 25,
+                              width: 20,
+                              decoration: BoxDecoration(
+                  
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black
+                                )
+                              ),
+                              child: Text("${job.messagesNumber}")),
                             Text("Messages")
                           ],
                         ),
@@ -197,8 +313,15 @@ class AllProjectWidget extends StatelessWidget{
                         child: Column(
                           children: [
                             Container(
+                              alignment: Alignment.center,
+                              height: 25,
+                              width: 20,
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle
+                  
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black
+                                )
                               ),
                               child: Text("${job.HiredNumber}")),
                             Text("Hired")

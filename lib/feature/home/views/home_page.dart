@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(right: 5, left: 5, bottom: 5,top: 5),
+        margin: const EdgeInsets.only(right: 5, left: 5, bottom: 10,top: 5),
         decoration: BoxDecoration(
       
           boxShadow: [
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             BoxShadow(
                 color: Colors.black.withAlpha(20),
                 blurRadius: 10,
-                spreadRadius: 10)
+                spreadRadius: 5)
           ],
           borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
@@ -93,6 +93,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
             currentIndex: _selectedIndex,
+            selectedItemColor: Colors.blue,
             onTap: _onItemTapped,
           ),
         ),

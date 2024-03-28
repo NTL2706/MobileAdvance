@@ -39,38 +39,41 @@ class _CustomTabBarState extends State<CustomTabBar>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            ///Default Tabbar with full width tabbar indicator
-            Expanded(
-              flex: 1,
-              child: TabBar(
-                controller: _tabController,
-                tabs: widget.tabs,
-                labelColor: _selectedColor,
-                indicatorColor: _selectedColor,
-                unselectedLabelColor: _unselectedColor,
-              ),
-            ),
-    
-            Expanded(
-              flex: 9,
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: TabBarView(
+    return SizedBox(
+      height: 45,
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ///Default Tabbar with full width tabbar indicator
+              Expanded(
+                flex: 1,
+                child: TabBar(
                   controller: _tabController,
-                  children: widget.tab_views),
+                  tabs: widget.tabs,
+                  labelColor: _selectedColor,
+                  indicatorColor: _selectedColor,
+                  unselectedLabelColor: _unselectedColor,
+                ),
               ),
-            )
-            ///Default Tabbar with indicator width of the label
-            
-          ]
-            /// Custom Tabbar with transparent selected bg and solid selected text
-            ///
+      
+              Expanded(
+                flex: 9,
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: widget.tab_views),
+                ),
+              )
+              ///Default Tabbar with indicator width of the label
+              
+            ]
+              /// Custom Tabbar with transparent selected bg and solid selected text
+              ///
+          ),
         ),
-      );
+    );
     
   }
 }
