@@ -1,32 +1,97 @@
+import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() =>
+      _HomePageState();
+}
+
+class _HomePageState
+    extends State<HomePage> {
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static List<Widget> widgetOptions = <Widget>[
+    DashBoard(),
+    Text(
+      'Index 1: Business',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: School',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-            color: Color(0xFFCE5A67),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text('Student Hub'),
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: IconButton(onPressed: () {
+              
+            },icon:Icon(Icons.person)),
+          )
+        ],
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(color: Colors.amber),
+            child: Center(
+              child: widgetOptions[_selectedIndex],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // 2 câu giới thiệu
-                  Container(
-                    width: 250.0,
-                    height: 250.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(
-                            'assets/images/logo.png'), // Thay đổi đường dẫn ảnh
-                        fit: BoxFit.fill,
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 65,
+                margin: const EdgeInsets.only(right: 24, left: 24, bottom: 24),
+                decoration: BoxDecoration(
+                  color: Colors.black, 
+                  boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withAlpha(20),
+                      blurRadius: 20,
+                      spreadRadius: 10)
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  child: BottomNavigationBar(
+                    backgroundColor: Colors.white,
+                    items: const <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        label: 'Home',
                       ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.business),
+                        label: 'Business',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.school),
+                        label: 'School',
                     ),
                   ),
                   SizedBox(height: 24.0),
@@ -56,9 +121,15 @@ class HomePage extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.company.name}", title: StudentHubCategorySignUp.company.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.company.name}",
+                                title: StudentHubCategorySignUp.company.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -76,9 +147,15 @@ class HomePage extends StatelessWidget {
                       SizedBox(width: 24.0),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.student.name}", title: StudentHubCategorySignUp.student.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.student.name}",
+                                title: StudentHubCategorySignUp.student.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -94,16 +171,16 @@ class HomePage extends StatelessWidget {
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
                     ],
+                    currentIndex: _selectedIndex,
+                    selectedItemColor: Colors.amber[800],
+                    onTap: _onItemTapped,
                   ),
-                  SizedBox(height: 24.0),
-                  // Câu giới thiệu khác không phải nút
-                  Text(
-                    'StudentHub is university market place to connect high-skilled student and company on a real-world project',
-                    style: TextStyle(fontSize: 14.0),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
-            )));
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
