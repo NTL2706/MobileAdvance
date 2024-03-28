@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/projects/views/alll_projects.dart';
 import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
 import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +18,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-
-      
-      initialRoute: '/intro',
+      initialRoute: '/project',
       routes: {
-        '/intro':(context) => IntroPage(),
-        '/home': (context) => HomePage()
+        '/intro': (context) => IntroPage(),
+        '/home': (context) => HomePage(),
+        '/project': (context) => ProjectWidget(),
       },
-
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -45,7 +44,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-
     );
   }
 }
