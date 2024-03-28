@@ -1,4 +1,4 @@
-import 'package:final_project_advanced_mobile/feature/post_a_project/models/job_model.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:flutter/material.dart';
 
