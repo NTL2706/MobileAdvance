@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, sized_box_for_whitespace
 
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
-import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
-import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';

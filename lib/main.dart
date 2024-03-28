@@ -1,7 +1,5 @@
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
-import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
-import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
 import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 import './feature/projects/provider/project_provider.dart';
@@ -50,6 +48,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           home: ProjectPage(),
-        ));
+        )
+      );
   }
 }
