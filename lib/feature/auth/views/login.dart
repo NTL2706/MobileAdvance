@@ -62,10 +62,6 @@ class LoginPage extends StatelessWidget {
                   }, 
                   child: Text("LOGIN AS ${title.toUpperCase()}")
                 ),
-                    onPressed: () {
-                      print(apiForLogin);
-                    },
-                    child: Text("LOGIN AS ${title.toUpperCase()}")),
               ),
               Expanded(
                   child: Container(
@@ -89,18 +85,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 )
               ),
-
-                          },
-                        ));
-                      },
-                      child: Text(
-                        "Sign up",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              )),
             ],
           ),
         ),
