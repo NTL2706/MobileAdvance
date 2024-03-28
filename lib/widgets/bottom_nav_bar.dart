@@ -1,21 +1,23 @@
-import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class BottomNavigationBarExample extends StatefulWidget {
+  const BottomNavigationBarExample({super.key});
 
   @override
-  State<HomePage> createState() =>
-      _HomePageState();
+  State<BottomNavigationBarExample> createState() =>
+      _BottomNavigationBarExampleState();
 }
 
-class _HomePageState
-    extends State<HomePage> {
+class _BottomNavigationBarExampleState
+    extends State<BottomNavigationBarExample> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static List<Widget> widgetOptions = <Widget>[
-    DashBoard(),
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
     Text(
       'Index 1: Business',
       style: optionStyle,
@@ -36,23 +38,14 @@ class _HomePageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Student Hub'),
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: IconButton(onPressed: () {
-              
-            },icon:Icon(Icons.person)),
-          )
-        ],
+        title: const Text('BottomNavigationBar Sample'),
       ),
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(color: Colors.amber),
             child: Center(
-              child: widgetOptions[_selectedIndex],
+              child: _widgetOptions[_selectedIndex],
             ),
           ),
           Align(
@@ -75,7 +68,7 @@ class _HomePageState
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                   child: BottomNavigationBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.black,
                     items: const <BottomNavigationBarItem>[
                       BottomNavigationBarItem(
                         icon: Icon(Icons.home),

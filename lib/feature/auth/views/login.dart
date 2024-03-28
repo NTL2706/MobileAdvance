@@ -1,4 +1,6 @@
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
+import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
+import 'package:final_project_advanced_mobile/feature/post_a_project/views/dash_board.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +56,10 @@ class LoginPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     print(apiForLogin);
+                    Navigator.of(context).pushNamed('/home');
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    //   return HomePage();
+                    // },));
                   }, 
                   child: Text("LOGIN AS ${title.toUpperCase()}")
                 ),
@@ -79,7 +85,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 )
               ),
-              
             ],
           ),
         ),
