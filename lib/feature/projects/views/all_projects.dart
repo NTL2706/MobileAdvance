@@ -20,14 +20,8 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     final projectProvider = Provider.of<ProjectProvider>(context);
-
-    return Scaffold(
-        appBar: AppBar(
-          scrolledUnderElevation: 0,
-          title: Text('Browse Projects'),
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(24),
+    return Padding(
+          padding: EdgeInsets.all(15),
           child: Column(
             children: [
               Padding(
@@ -258,6 +252,6 @@ class _ProjectPageState extends State<ProjectPage> {
               ),
             ],
           ),
-        ));
+        );
   }
 }

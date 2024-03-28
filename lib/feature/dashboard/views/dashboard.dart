@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
@@ -126,6 +127,7 @@ class DashBoard extends StatelessWidget{
                 Expanded(
                   child: Container(
                     child: CustomTabBar(
+                      lengOfTabBar: 3,
                       tabs: [
                         Text("All projects"),
                         Text("Working"),
@@ -158,183 +160,190 @@ class AllProjectWidget extends StatelessWidget{
         itemCount: jobList.length,
         itemBuilder: (context, index) {
           JobModel job = jobList[index];
-          return Container(
-            margin: EdgeInsets.only(top: 5),
-            height: 165,
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              
-              borderRadius: BorderRadius.circular(5.0),
-              color: Colors.grey.shade200,
-              
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(job.title!,style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold
-                    )),
-                    SizedBox(
-                      height: 30,
-                      child: IconButton(onPressed: ()async{
-                        await showDialog(context: context, builder: (context) {
-                          return AlertDialog(
-
-                            backgroundColor: Colors.white,
-                            content: Container(
-                              width: double.infinity,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("View proposals",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("View messages",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("View hired",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("View job posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("Edit posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                  Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue
-                                      ),
-                                      onPressed: (){}, child: Text("Remove posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white
-                                      ),))),
-
-                                ],
-                              ),
-                            ),
-                          );
-                        },);
-                      }, icon: Icon(Icons.more_vert),iconSize: 18,))
-                  ],
-                ),
-                Text(job.createAt!),
-                Text("Student are looking for"),
-                Text("${"-\r${job.discription}"}"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              height: 25,
-                              width: 20,
-                              decoration: BoxDecoration(
-                  
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black
-                                )
-                              ),
-                              child: Text("${job.proposalNumber}")),
-                            Text("Proposals")
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              height: 25,
-                              width: 20,
-                              decoration: BoxDecoration(
-                  
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black
-                                )
-                              ),
-                              child: Text("${job.messagesNumber}")),
-                            Text("Messages")
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              height: 25,
-                              width: 20,
-                              decoration: BoxDecoration(
-                  
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black
-                                )
-                              ),
-                              child: Text("${job.HiredNumber}")),
-                            Text("Hired")
-                          ],
-                        ),
-                      ),
-                    ),
-                 
-                  ],
-                )
+          return GestureDetector(
+            onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return ManageProject();
+                },));
+              },
+            child: Container(
+              margin: EdgeInsets.only(top: 5),
+              height: 165,
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
                 
-              ],
-            ) ,
+                borderRadius: BorderRadius.circular(5.0),
+                color: Colors.grey.shade200,
+                
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(job.title!,style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold
+                      )),
+                      SizedBox(
+                        height: 30,
+                        child: IconButton(onPressed: ()async{
+                          await showDialog(context: context, builder: (context) {
+                            return AlertDialog(
+              
+                              backgroundColor: Colors.white,
+                              content: Container(
+                                width: double.infinity,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("View proposals",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("View messages",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("View hired",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("View job posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("Edit posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                    Container(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue
+                                        ),
+                                        onPressed: (){}, child: Text("Remove posting",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.white
+                                        ),))),
+              
+                                  ],
+                                ),
+                              ),
+                            );
+                          },);
+                        }, icon: Icon(Icons.more_vert),iconSize: 18,))
+                    ],
+                  ),
+                  Text(job.createAt!),
+                  Text("Student are looking for"),
+                  Text("${"-\r${job.discription}"}"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                height: 25,
+                                width: 20,
+                                decoration: BoxDecoration(
+                    
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.black
+                                  )
+                                ),
+                                child: Text("${job.proposalNumber}")),
+                              Text("Proposals")
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                height: 25,
+                                width: 20,
+                                decoration: BoxDecoration(
+                    
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.black
+                                  )
+                                ),
+                                child: Text("${job.messagesNumber}")),
+                              Text("Messages")
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                height: 25,
+                                width: 20,
+                                decoration: BoxDecoration(
+                    
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.black
+                                  )
+                                ),
+                                child: Text("${job.HiredNumber}")),
+                              Text("Hired")
+                            ],
+                          ),
+                        ),
+                      ),
+                   
+                    ],
+                  )
+                  
+                ],
+              ) ,
+            ),
           );
         },
       ),

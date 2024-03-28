@@ -84,7 +84,7 @@ class ProjectPost_4 extends StatelessWidget {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                    "${JobModel.timeForProjectController.text}")
+                                    "•${JobModel.timeForProjectController.text}")
                               ],
                             )
                           ],
@@ -108,7 +108,7 @@ class ProjectPost_4 extends StatelessWidget {
                                 Align(
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                        "${JobModel.numberStudentController.text}"))
+                                        "•${JobModel.numberStudentController.text}"))
                               ],
                             )
                           ],

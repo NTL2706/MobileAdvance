@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 import './feature/projects/provider/project_provider.dart';
@@ -22,11 +23,10 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
-          initialRoute: '/project',
+          initialRoute: '/intro',
           routes: {
             '/intro': (context) => IntroPage(),
             '/home': (context) => HomePage(),
-            '/project': (context) => ProjectPage(),
           },
           theme: ThemeData(
             // This is the theme of your application.
@@ -47,7 +47,6 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: ProjectPage(),
         )
       );
   }

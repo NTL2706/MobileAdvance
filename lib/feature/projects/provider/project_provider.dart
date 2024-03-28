@@ -50,8 +50,7 @@ class ProjectProvider extends ChangeNotifier {
   ];
   List<Project> _filteredProjects = [];
   int _selectedProjectLength = 0;
-  final TextEditingController _numberOfStudentsController =
-      TextEditingController();
+  final TextEditingController _numberOfStudentsController =TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   ProjectProvider() {
@@ -63,6 +62,7 @@ class ProjectProvider extends ChangeNotifier {
   TextEditingController get numberOfStudentsController =>
       _numberOfStudentsController;
   TextEditingController get searchController => _searchController;
+  
   List<List<int>> projectLengths = [
     [0, 1000],
     [1, 3],
