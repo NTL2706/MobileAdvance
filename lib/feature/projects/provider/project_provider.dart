@@ -63,6 +63,12 @@ class ProjectProvider extends ChangeNotifier {
   TextEditingController get numberOfStudentsController =>
       _numberOfStudentsController;
   TextEditingController get searchController => _searchController;
+  List<List<int>> projectLengths = [
+    [0, 1000],
+    [1, 3],
+    [4, 6],
+    [6, 1000]
+  ];
 
   // Phương thức để cập nhật danh sách dự án
   void updateProjects(List<Project> newProjects) {
@@ -92,28 +98,37 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   void filterSearch() {
+    late bool isFilter = false;
+    updateSearch();
     _filteredProjects = _filteredProjects.where((project) {
       if (_numberOfStudentsController.text.isNotEmpty) {
-        if (project.numberOfPeople >
+        if (project.numberOfPeople <=
             int.parse(_numberOfStudentsController.text)) {
-          return false;
+          isFilter = true;
+        } else {
+          isFilter = false;
         }
       }
 
-      if (_selectedProjectLength != 0) {
-        if (project.time.length == 1) {
-          if (project.time[0] > _selectedProjectLength) {
-            return false;
-          }
-        } else if (project.time.length == 2) {
-          if (project.time[0] > _selectedProjectLength ||
-              project.time[1] < _selectedProjectLength) {
-            return false;
-          }
+      if (project.time.length == 1) {
+        if (project.time[0] >= projectLengths[_selectedProjectLength][0] &&
+            project.time[0] <= projectLengths[_selectedProjectLength][1]) {
+          isFilter = true;
+        } else {
+          isFilter = false;
+        }
+      } else if (project.time.length == 2) {
+        if (project.time[0] >= projectLengths[_selectedProjectLength][0] &&
+                project.time[0] <= projectLengths[_selectedProjectLength][1] ||
+            project.time[1] >= projectLengths[_selectedProjectLength][0] &&
+                project.time[1] <= projectLengths[_selectedProjectLength][1]) {
+          isFilter = true;
+        } else {
+          isFilter = false;
         }
       }
 
-      return true;
+      return isFilter;
     }).toList();
 
     notifyListeners();

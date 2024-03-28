@@ -9,14 +9,14 @@ import './filter_modal.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 
-class ProjectWidget extends StatefulWidget {
-  ProjectWidget({super.key});
+class ProjectPage extends StatefulWidget {
+  ProjectPage({super.key});
 
   @override
-  State<ProjectWidget> createState() => _ProjectWidgetState();
+  State<ProjectPage> createState() => _ProjectPageState();
 }
 
-class _ProjectWidgetState extends State<ProjectWidget> {
+class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     final projectProvider = Provider.of<ProjectProvider>(context);
@@ -64,6 +64,7 @@ class _ProjectWidgetState extends State<ProjectWidget> {
                           onPressed: () {
                             projectProvider.searchController.text.isNotEmpty
                                 ? showModalBottomSheet(
+                                    isScrollControlled: true,
                                     context: context,
                                     builder: (BuildContext context) {
                                       return FilterModal(); // Sử dụng widget FilterModal ở đây
@@ -259,15 +260,4 @@ class _ProjectWidgetState extends State<ProjectWidget> {
           ),
         ));
   }
-}
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ProjectProvider(),
-      child: MaterialApp(
-        home: ProjectWidget(),
-      ),
-    ),
-  );
 }
