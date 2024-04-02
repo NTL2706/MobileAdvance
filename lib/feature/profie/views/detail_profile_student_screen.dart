@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';

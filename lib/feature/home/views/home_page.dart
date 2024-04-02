@@ -2,6 +2,7 @@
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
 import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 
 import 'package:flutter/material.dart';
@@ -40,7 +41,11 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: EdgeInsets.all(8),
-            child: IconButton(onPressed: () {}, icon: Icon(Icons.person)),
+            child: IconButton(onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return ProfileScreen();
+              },));
+            }, icon: Icon(Icons.person)),
           )
         ],
       ),

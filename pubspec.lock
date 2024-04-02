@@ -75,14 +75,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
+  intl:
     dependency: "direct main"
     description:
-      name: get
-      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      name: intl
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.6"
+    version: "0.19.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -107,14 +107,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
-  intl:
-    dependency: "direct main"
-    description:
-      name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.0"
   lints:
     dependency: transitive
     description:
@@ -146,6 +138,7 @@ packages:
       sha256: d584fa6707a52763a52446f02cc621b077888fb63b93bbcb1143a7be5a0c0c04
       url: "https://pub.dev"
     source: hosted
+    version: "1.11.0"
   nested:
     dependency: transitive
     description:
@@ -161,7 +154,7 @@ packages:
       sha256: "087ce49c3f0dc39180befefc60fdb4acd8f8620e5682fe2476afd0b3688bb4af"
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.3"
+    version: "1.9.0"
   provider:
     dependency: "direct main"
     description:
@@ -242,4 +235,3 @@ packages:
 sdks:
   dart: ">=3.2.6 <4.0.0"
   flutter: ">=1.16.0"
-
