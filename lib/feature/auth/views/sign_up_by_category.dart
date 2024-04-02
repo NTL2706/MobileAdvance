@@ -1,10 +1,12 @@
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, avoid_print
+
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up.dart';
 import 'package:flutter/material.dart';
 
 class SignUpByCategory extends StatefulWidget {
   const SignUpByCategory({super.key});
-
+  
   @override
   State<SignUpByCategory> createState() => _SignUpByCategoryState();
 }
@@ -31,7 +33,8 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(
+
+                SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -41,8 +44,8 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                   child: ListTile(
                     title: Container(
                         alignment: Alignment.topLeft,
-                        child: const Icon(Icons.person)),
-                    subtitle: const Text("I am student"),
+                        child: Icon(Icons.person)),
+                    subtitle: Text("I am student"),
                     trailing: Checkbox(
                       onChanged: (value) {
                         if (value!) {
@@ -70,9 +73,9 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                   child: ListTile(
                       title: Container(
                           alignment: Alignment.topLeft,
-                          child: const ImageIcon(
+                          child: ImageIcon(
                               AssetImage("assets/icons/business.png"))),
-                      subtitle: const Text("I am company"),
+                      subtitle: Text("I am company"),
                       trailing: Checkbox(
                         onChanged: (value) {
                           if (value!) {

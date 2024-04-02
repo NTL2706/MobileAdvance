@@ -1,13 +1,19 @@
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, sized_box_for_whitespace
+
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key, required this.apiForLogin, required this.title});
+
+  LoginPage({super.key, required this.apiForLogin, required this.title});
 
   final String apiForLogin;
   final String title;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -48,10 +54,16 @@ class LoginPage extends StatelessWidget {
               Container(
                 width: size.width / 2,
                 child: ElevatedButton(
-                    onPressed: () {
-                      print(apiForLogin);
-                    },
-                    child: Text("LOGIN AS ${title.toUpperCase()}")),
+                  onPressed: () {
+                    print(apiForLogin);
+                    context.read<AuthenticateProvider>().signInWithPassword(email: "volehoai070902@gmail.com", password: "123456", role: title);
+                    Navigator.of(context).pushNamed('/home');
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    //   return HomePage();
+                    // },));
+                  }, 
+                  child: Text("LOGIN AS ${title.toUpperCase()}")
+                ),
               ),
               Expanded(
                   child: Container(
@@ -59,23 +71,23 @@ class LoginPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an Student Hub account? "),
+                    Text("Don't have an Student Hub account? "),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return const SignUpByCategory();
-                          },
-                        ));
-                      },
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              )),
+
+                            return SignUpByCategory();
+                          },));
+                        },
+                        child: Text("Sign up", style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),),
+                      )
+                    ],
+                  ),
+                )
+              ),
             ],
           ),
         ),

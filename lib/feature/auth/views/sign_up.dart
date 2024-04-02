@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, prefer_const_constructors, sized_box_for_whitespace
+
 import 'dart:async';
 
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
