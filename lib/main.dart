@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ProjectProvider()),
-          ChangeNotifierProvider(create: (context) => JobNotifier())
+          ChangeNotifierProvider(create: (context) => JobNotifier()),
+          ChangeNotifierProvider(create: (context) => ChatProvider(),)
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

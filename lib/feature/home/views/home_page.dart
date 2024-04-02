@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +17,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> widgetOptions = <Widget>[
     ProjectPage(),
     DashBoard(),
-    Text(
-      'Index 3: Messages',
-      style: optionStyle,
-    ),
+    MessageWidget(),
     Text(
       'Index 4: Alerts',
       style: optionStyle,
