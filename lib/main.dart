@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
@@ -22,7 +23,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => ProjectProvider()),
           ChangeNotifierProvider(create: (context) => JobNotifier()),
-          ChangeNotifierProvider(create: (context) => ChatProvider(),)
+          ChangeNotifierProvider(create: (context) => ChatProvider(),),
+          ChangeNotifierProvider(create: (context) => AuthenticateProvider(),),
+
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

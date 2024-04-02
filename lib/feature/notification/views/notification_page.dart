@@ -39,16 +39,19 @@ class NoticationPage extends StatelessWidget {
                         flex: 2, child: Image.asset("assets/images/logo.png")),
                     Expanded(
                         flex: 8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text(notification.content!),
-                            ),
-                            Container(
-                              child: Text(notification.createAt!),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: Text(notification.content!),
+                              ),
+                              Container(
+                                child: Text(notification.createAt!),
+                              ),
+                            ],
+                          ),
                         )),
                   ],
                 ),

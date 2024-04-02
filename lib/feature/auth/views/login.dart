@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, sized_box_for_whitespace
 
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key, required this.apiForLogin, required this.title});
@@ -53,6 +55,7 @@ class LoginPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     print(apiForLogin);
+                    context.read<AuthenticateProvider>().signInWithPassword(email: "volehoai070902@gmail.com", password: "123456", role: title);
                     Navigator.of(context).pushNamed('/home');
                     // Navigator.push(context, MaterialPageRoute(builder: (context) {
                     //   return HomePage();
