@@ -31,7 +31,7 @@ class MessageWidget extends StatelessWidget {
               child: ClipRRect(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(30.0), // Bo góc ở trên
-              bottom: Radius.circular(20.0), // Bo góc ở dưới
+              bottom: Radius.circular(30.0), // Bo góc ở dưới
             ),
             child: Container(
               color: Colors.grey[200],
@@ -40,7 +40,7 @@ class MessageWidget extends StatelessWidget {
                     .length, // Replace this with your actual data count
                 itemBuilder: (context, index) {
                   return Padding(
-                      padding: EdgeInsets.only(top: 12),
+                      padding: EdgeInsets.only(top: 12, bottom: 12),
                       child: ListTile(
                         leading: Container(
                           width: 55, // Kích thước mặc định bạn muốn đặt
@@ -101,6 +101,7 @@ class MessageWidget extends StatelessWidget {
               ),
             ),
           )),
+          SizedBox(height: 12),
         ],
       ),
     );
