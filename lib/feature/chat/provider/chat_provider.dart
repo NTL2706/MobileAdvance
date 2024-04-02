@@ -33,6 +33,8 @@ class ChatProvider extends ChangeNotifier {
   List<ChatMessage> _chatmessage = [
     ChatMessage(sender: 'Me', text: 'Hello!', time: DateTime.now()),
     ChatMessage(sender: 'You', text: 'Hi there!', time: DateTime.now()),
+    ChatMessage(sender: 'Me', text: 'Are you oke!', time: DateTime.now()),
+    ChatMessage(sender: 'You', text: 'Haha!', time: DateTime.now()),
   ];
 
   final TextEditingController _textController =

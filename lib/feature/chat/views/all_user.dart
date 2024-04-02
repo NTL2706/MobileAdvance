@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:final_project_advanced_mobile/feature/chat/constants/chat_type.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './chat_message.dart';
@@ -41,12 +42,19 @@ class MessageWidget extends StatelessWidget {
                   return Padding(
                       padding: EdgeInsets.only(top: 12),
                       child: ListTile(
-                        leading: provider.chatusers[index].avatar != null
-                            ? CustomImage(
-                                imageUrl: provider.chatusers[index].avatar,
-                                size: 40,
-                                borderRadius: BorderRadius.circular(20))
-                            : Icon(Icons.person, size: 40),
+                        leading: Container(
+                          width: 55, // Kích thước mặc định bạn muốn đặt
+                          height: 55,
+                          child: provider.chatusers[index].avatar != null
+                              ? CustomImage(
+                                  imageUrl: provider.chatusers[index].avatar,
+                                  borderRadius: BorderRadius.circular(50),
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  size: 55,
+                                ),
+                        ),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -82,8 +90,9 @@ class MessageWidget extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    ChatScreen()), // Điều hướng đến màn hình chat
+                                builder: (context) => ChatScreen(
+                                    chatUser: provider.chatusers[
+                                        index])), // Điều hướng đến màn hình chat
                           );
                           // Handle tapping on the message
                         },
