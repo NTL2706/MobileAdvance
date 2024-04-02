@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-import '../constants/chat_type.dart';
 
 class ChatProvider extends ChangeNotifier {
   List<ChatUser> _chatusers = [
@@ -30,19 +29,30 @@ class ChatProvider extends ChangeNotifier {
     ChatUser('9', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
         false, null)
   ];
-  List<ChatMessage> _chatmessage = [
+  List<dynamic> _chatmessage = [
     ChatMessage(sender: 'Me', text: 'Hello!', time: DateTime.now()),
     ChatMessage(sender: 'You', text: 'Hi there!', time: DateTime.now()),
     ChatMessage(sender: 'Me', text: 'Are you oke!', time: DateTime.now()),
     ChatMessage(sender: 'You', text: 'Haha!', time: DateTime.now()),
+    ShecduleMeeting(
+        author: 'Me',
+        title: 'Meeting',
+        timeStart: DateTime.now(),
+        timeEnd: DateTime.now()),
   ];
 
   final TextEditingController _textController =
       TextEditingController(); // Thêm controller này
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
 
   List<ChatUser> get chatusers => _chatusers;
-  List<ChatMessage> get chatmessage => _chatmessage;
+  List<dynamic> get chatmessage => _chatmessage;
   TextEditingController get textController => _textController;
+  TextEditingController get titleController => _titleController;
+  TextEditingController get startTimeController => _startTimeController;
+  TextEditingController get endTimeController => _endTimeController;
 
   void handleSubmitted(String text) {
     _textController.value.text.isNotEmpty
@@ -53,6 +63,83 @@ class ChatProvider extends ChangeNotifier {
         : null;
 
     _textController.clear();
+    notifyListeners();
+  }
+
+  void handleScheduleMeeting() async {
+    final title = _titleController.text;
+    final startTime = _startTimeController.text;
+    final endTime = _endTimeController.text;
+
+    if (title.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {
+      _chatmessage.insert(
+        0,
+        ShecduleMeeting(
+          author: 'Me',
+          title: title,
+          timeStart: DateTime.parse(startTime),
+          timeEnd: DateTime.parse(endTime),
+        ),
+      );
+    }
+
+    _titleController.clear();
+    _startTimeController.clear();
+    _endTimeController.clear();
+    notifyListeners();
+  }
+
+  void handleChangeStartTime(context) async {
+    final DateTime? pickedDateTime = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDateTime != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        final DateTime selectedDateTime = DateTime(
+          pickedDateTime.year,
+          pickedDateTime.month,
+          pickedDateTime.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        _startTimeController.text = selectedDateTime.toString();
+        // Thực hiện hành động khi chọn ngày và giờ
+      }
+    }
+    notifyListeners();
+  }
+
+  void handleChangeEndTime(context) async {
+    final DateTime? pickedDateTime = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDateTime != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        final DateTime selectedDateTime = DateTime(
+          pickedDateTime.year,
+          pickedDateTime.month,
+          pickedDateTime.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        _endTimeController.text = selectedDateTime.toString();
+        // Thực hiện hành động khi chọn ngày và giờ
+      }
+    }
     notifyListeners();
   }
 }
