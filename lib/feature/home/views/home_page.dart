@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
+import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 import 'package:flutter/material.dart';
 
@@ -18,10 +19,7 @@ class _HomePageState extends State<HomePage> {
     ProjectPage(),
     DashBoard(),
     MessageWidget(),
-    Text(
-      'Index 4: Alerts',
-      style: optionStyle,
-    ),
+    NoticationPage(),
   ];
 
   void _onItemTapped(int index) {
