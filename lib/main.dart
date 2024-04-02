@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ProjectProvider()),
+          ChangeNotifierProvider(create: (context) => JobNotifier())
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

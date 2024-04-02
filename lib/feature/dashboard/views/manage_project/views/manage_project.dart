@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project_proposal.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class ManageProject extends StatelessWidget{
                   ),),
                 ],
                  tab_views: [
-                  Container(child: Center(child: Text("Proposals"),)),
+                  ManageProjectProposal(),
                   Container(child: Center(child: Text("Detail"),)),
                   Container(child: Center(child: Text("Message"),)),
                   Container(child: Center(child: Text("Hired"),)),
@@ -40,5 +41,4 @@ class ManageProject extends StatelessWidget{
       ),
     ) ;
   }
-
 }

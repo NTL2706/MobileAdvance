@@ -65,6 +65,7 @@ class _CustomTabBarState extends State<CustomTabBar>
                 child: Padding(
                   padding: EdgeInsets.all(5),
                   child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: widget.tab_views),
                 ),
@@ -77,6 +78,5 @@ class _CustomTabBarState extends State<CustomTabBar>
           ),
         ),
     );
-    
   }
 }

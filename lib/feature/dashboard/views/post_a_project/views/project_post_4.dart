@@ -1,6 +1,8 @@
+import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProjectPost_4 extends StatelessWidget {
   const ProjectPost_4({super.key});
@@ -124,6 +126,7 @@ class ProjectPost_4 extends StatelessWidget {
                                       elevation: 0.5,
                                       backgroundColor: Colors.white),
                                   onPressed: () {
+                                    context.read<JobNotifier>().addJob(title: JobModel.titleController.text, discription: JobModel.discriptionController.text, numberStudent: int.parse(JobModel.numberStudentController.text));
                                     Navigator.of(context).popUntil(ModalRoute.withName('/home'));
                                   },
                               child: Text("Post job"))),
