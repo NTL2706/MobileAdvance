@@ -5,6 +5,8 @@ import 'package:final_project_advanced_mobile/feature/auth/views/sign_up.dart';
 import 'package:flutter/material.dart';
 
 class SignUpByCategory extends StatefulWidget {
+  const SignUpByCategory({super.key});
+  
   @override
   State<SignUpByCategory> createState() => _SignUpByCategoryState();
 }
@@ -31,6 +33,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
+
                 SizedBox(
                   height: 10,
                 ),
@@ -60,7 +63,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -89,7 +92,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                         value: checkBoxCompany,
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -107,7 +110,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                         ));
                       }
                     },
-                    child: Text("Create account"),
+                    child: const Text("Create account"),
                   ),
                 )
               ],

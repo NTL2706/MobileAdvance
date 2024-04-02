@@ -14,6 +14,7 @@ class SignUpForStudentOrCompany extends StatelessWidget {
 
   final String title;
 
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -32,19 +33,19 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-              CustomTextField(hintText: "Fullname"),
-              SizedBox(height: 10),
-              CustomTextField(
+              const CustomTextField(hintText: "Fullname"),
+              const SizedBox(height: 10),
+              const CustomTextField(
                 hintText: "Work email address",
               ),
-              SizedBox(height: 10),
-              PasswordFielddWidget(),
+              const SizedBox(height: 10),
+              const PasswordFielddWidget(),
               Row(
                 children: [
                   CustomCheckBox(
                     checkBoxStreamController: checkBoxStreamController,
                   ),
-                  Text("Yes, i understand and agree to StudentHub")
+                  const Text("Yes, i understand and agree to StudentHub")
                 ],
               ),
               Container(
@@ -65,12 +66,12 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                     }
                                   }
                                 : null,
-                            child: Text("SIGN UP"));
+                            child: const Text("SIGN UP"));
                       })),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Looking for a project? "),
+                  const Text("Looking for a project? "),
                   GestureDetector(
                     onTap: () {
                       if (title == "student") {
@@ -92,11 +93,11 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                       }
                     },
                     child: title == "student"
-                        ? Text(
+                        ? const Text(
                             "Apply as company",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )
-                        : Text(
+                        : const Text(
                             "Apply as student",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
+
   LoginPage({super.key, required this.apiForLogin, required this.title});
 
   final String apiForLogin;
@@ -20,7 +21,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("StudentHub"),
+        title: const Text("StudentHub"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -40,13 +41,13 @@ class LoginPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              CustomTextField(
+              const CustomTextField(
                 hintText: "Username or email",
               ),
               const SizedBox(
                 height: 10,
               ),
-              PasswordFielddWidget(),
+              const PasswordFielddWidget(),
               const SizedBox(
                 height: 10,
               ),
@@ -75,6 +76,7 @@ class LoginPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
+
                             return SignUpByCategory();
                           },));
                         },
