@@ -17,16 +17,3 @@ class ChatMessage {
 
   ChatMessage({required this.sender, required this.text, required this.time});
 }
-
-class ShecduleMeeting {
-  final String author;
-  final String title;
-  final DateTime timeEnd;
-  final DateTime timeStart;
-
-  ShecduleMeeting(
-      {required this.author,
-      required this.title,
-      required this.timeEnd,
-      required this.timeStart});
-}
