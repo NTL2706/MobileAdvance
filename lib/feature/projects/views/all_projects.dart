@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/project_provider.dart';
 import './project_details.dart';
 import './saved_projects.dart';
 import './filter_modal.dart';
+import './apply_project.dart';
+import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 
@@ -221,7 +222,12 @@ class _ProjectPageState extends State<ProjectPage> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        // Xử lý khi nút được nhấn
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ApplyProject()),
+                                        );
                                       },
                                       style: ButtonStyle(
                                         minimumSize: MaterialStateProperty.all(
