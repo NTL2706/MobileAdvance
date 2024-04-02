@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 class CustomImage extends StatelessWidget {
   final String? imageUrl;
-  final double? size;
   final BorderRadius? borderRadius;
 
-  CustomImage({super.key, this.imageUrl, this.size, this.borderRadius});
+  CustomImage({super.key, this.imageUrl, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +12,6 @@ class CustomImage extends StatelessWidget {
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: Image.network(
         imageUrl!,
-        width: size,
-        height: size,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return const Center(child: CircularProgressIndicator());
