@@ -125,7 +125,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                 provider.handleScheduleMeeting();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Đặt màu nền là màu xanh dương
+                backgroundColor: Colors.blue, // Đặt màu nền là màu xanh dương
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(12), // Đặt borderRadius thành zero
