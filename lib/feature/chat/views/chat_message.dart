@@ -1,7 +1,8 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import './schedule.dart';
 import '../constants/chat_type.dart';
 import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
@@ -22,6 +23,37 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.chatUser.name),
+        actions: [
+          PopupMenuButton(
+            elevation: 50,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: EdgeInsets.zero,
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                child: Text('Shecdule a new meeting'),
+                value: 1,
+              ),
+              // Thêm các mục menu khác nếu cần
+            ],
+            onSelected: (value) {
+              // Xử lý khi một mục được chọn
+              switch (value) {
+                case 1:
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return MeetingScheduleBottomSheet();
+                    },
+                  );
+                  break;
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -29,33 +61,55 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.builder(
               itemCount: provider.chatmessage.length,
               itemBuilder: (context, index) {
-                final int lastIndex = provider.chatmessage.length - index - 1;
-                final message =
-                    lastIndex >= 0 ? provider.chatmessage[lastIndex] : null;
+                if (provider
+                        .chatmessage[provider.chatmessage.length - index - 1]
+                    is ShecduleMeeting) {
+                  return MeetingCard(
+                    author: provider
+                        .chatmessage[provider.chatmessage.length - index - 1]
+                        .author,
+                    title: provider
+                        .chatmessage[provider.chatmessage.length - index - 1]
+                        .title,
+                    timeStart: provider
+                        .chatmessage[provider.chatmessage.length - index - 1]
+                        .timeStart,
+                    timeEnd: provider
+                        .chatmessage[provider.chatmessage.length - index - 1]
+                        .timeEnd,
+                  );
+                } else {
+                  final int lastIndex = provider.chatmessage.length - index - 1;
+                  final message =
+                      lastIndex >= 0 ? provider.chatmessage[lastIndex] : null;
 
-                final int nextIndex = lastIndex - 1;
-                final nextmessage =
-                    nextIndex >= 0 ? provider.chatmessage[nextIndex] : null;
+                  final int nextIndex = lastIndex - 1;
+                  final nextmessage = nextIndex >= 0 &&
+                          provider.chatmessage[nextIndex] is ChatMessage
+                      ? provider.chatmessage[nextIndex]
+                      : null;
 
-                final int prevIndex = lastIndex + 1;
-                final prevmessage = prevIndex < provider.chatmessage.length
-                    ? provider.chatmessage[prevIndex]
-                    : null;
+                  final int prevIndex = lastIndex + 1;
+                  final prevmessage = prevIndex < provider.chatmessage.length &&
+                          provider.chatmessage[prevIndex] is ChatMessage
+                      ? provider.chatmessage[prevIndex]
+                      : null;
 
-                return ChatBubble(
-                  message: message!,
-                  isMe: message != null &&
-                      message.sender ==
-                          'Me', // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
-                  isFirst: prevmessage == null ||
-                      prevmessage?.sender !=
-                          message
-                              .sender, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
-                  isLast: nextmessage == null ||
-                      nextmessage?.sender !=
-                          message
-                              .sender, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
-                );
+                  return ChatBubble(
+                    message: message!,
+                    isMe: message != null &&
+                        message.sender ==
+                            'Me', // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
+                    isFirst: prevmessage == null ||
+                        prevmessage?.sender !=
+                            message
+                                .sender, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
+                    isLast: nextmessage == null ||
+                        nextmessage?.sender !=
+                            message
+                                .sender, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
+                  );
+                }
               },
             ),
           ),
@@ -163,6 +217,100 @@ class ChatBubble extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class MeetingCard extends StatelessWidget {
+  final String author;
+  final String title;
+  final DateTime timeStart;
+  final DateTime timeEnd;
+  final int duration;
+
+  MeetingCard({
+    required this.author,
+    required this.title,
+    required this.timeStart,
+    required this.timeEnd,
+    this.duration = 60, // Default duration is 60 minutes
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 4, right: 8, left: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Created by: $author',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Duration: $duration minutes',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Start Time: ${getDateTime(timeStart)}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'End Time: ${getDateTime(timeEnd)}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle join meeting
+                  },
+                  child: Text('Join'),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // Handle more options
+                  },
+                  icon: Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black, width: 2),
+          color: Colors.green[300]),
     );
   }
 }
