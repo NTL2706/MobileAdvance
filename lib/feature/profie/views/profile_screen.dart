@@ -1,8 +1,11 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -141,8 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileListTile(
               icon: Icons.logout,
               title: "Logout",
-              onTap: () {
-                print("Logout button clicked");
+              onTap: () async{
+                await context.read<AuthenticateProvider>().signOut();
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => IntroPage(),), (route) => false);
               },
             ),
             const SizedBox(height: 20),
