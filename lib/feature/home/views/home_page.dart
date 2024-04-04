@@ -1,4 +1,5 @@
 
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
 import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
@@ -6,6 +7,7 @@ import 'package:final_project_advanced_mobile/feature/profie/views/profile_scree
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +27,12 @@ class _HomePageState extends State<HomePage> {
     NoticationPage(),
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<AuthenticateProvider>().getUserInf().then((value) => print("get user"));
+  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

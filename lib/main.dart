@@ -6,10 +6,15 @@ import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dar
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './feature/projects/provider/project_provider.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+late SharedPreferences sharedPreferences;
+void main() async{
+  
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferences = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
