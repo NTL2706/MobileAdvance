@@ -113,9 +113,10 @@ class EducationWidget extends StatelessWidget {
               child: Text('Cancel'),
             ),
             TextButton(
-              // onPressed: editEducationInfo(index, nameController.text,
-              //     startYearController.text, endYearController.text),
-              onPressed: () => {},
+              onPressed: () {
+                editEducationInfo(index, nameController.text,
+                    startYearController.text, endYearController.text);
+              },
               child: Text('Save'),
             ),
           ],
