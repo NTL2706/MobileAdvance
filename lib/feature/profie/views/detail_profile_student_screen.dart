@@ -1,6 +1,12 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/education_info.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/experience_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/education_widger.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/teckstack_widget.dart';
 import 'package:flutter/material.dart';
 
 class DetailProfileStudentScreen extends StatefulWidget {
@@ -16,7 +22,7 @@ class _DetailProfileStudentScreenState
   final TextEditingController _controller =
       TextEditingController(text: 'DevOps');
 
-  String? selectedExpertise = 'Fullstack';
+  String selectedTech = 'Fullstack';
 
   List<String> skills = [
     'Flutter',
@@ -28,6 +34,13 @@ class _DetailProfileStudentScreenState
     'Mobile Development',
     'Web Development',
     'Database Management'
+  ];
+
+  List<EducationInfo> educationList = [
+    EducationInfo('School A', 2021, 2002),
+    EducationInfo('School B', 2022, 2002),
+    EducationInfo('School C', 2023, 2002),
+    EducationInfo('School D', 2024, 2002),
   ];
 
   List<String> selectedSkills = [];
@@ -89,160 +102,72 @@ class _DetailProfileStudentScreenState
         ),
         child: ListView(
           children: [
-            ElevatedButton(
-              onPressed: () {
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         // builder: (context) => const DetailProfileCompanyScreen(),
+            //         builder: (context) => MyApp(),
+            //       ),
+            //     );
+            //   },
+            //   child: Text('Update'),
+            // ),
+            ProfileListTile(
+              icon: Icons.work_outlined,
+              title: "Experience",
+              onTap: () {
+                // move to profile screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    // builder: (context) => const DetailProfileCompanyScreen(),
-                    builder: (context) => SchoolListScreen(),
+                    builder: (context) => const ExperienceScreen(),
                   ),
                 );
               },
-              child: Text('Update'),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: TextEditingController(text: selectedExpertise),
-                    enabled: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Tech stack',
-                      labelStyle: AppTextStyles.headerStyle,
-                      disabledBorder: InputBorder.none,
-                    ),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    setState(() {
-                      setState(() {
-                        selectedExpertise = value;
-                      });
-                    });
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    'Fullstack',
-                    'Mobile',
-                    'Backend',
-                    'Frontend',
-                    'DevOps',
-                    'QA',
-                    'Other'
-                  ].map<PopupMenuItem<String>>((String value) {
-                    return PopupMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  icon: Icon(Icons.edit),
-                ),
-              ],
+
+            // Tech stack
+            TechstackWidget(
+                selectedTech: selectedTech,
+                onExpertiseSelected: (String value) {
+                  setState(() {
+                    selectedTech = value;
+                  });
+                }),
+            // Skills
+            SkillWidget(
+              selectedSkills: selectedSkills,
+              skills: skills,
+              onSkillSelected: (String value) {
+                setState(() {
+                  selectedSkills.add(value);
+                });
+              },
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: null, // Tạo một TextEditingController mới
-                        enabled: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Skill',
-                          labelStyle: AppTextStyles.bodyStyle,
-                          disabledBorder: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    PopupMenuButton<String>(
-                      onSelected: (String value) {
-                        setState(() {
-                          setState(() {
-                            selectedSkills.add(value);
-                          });
-                        });
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          skills.map((String skill) {
-                        return PopupMenuItem<String>(
-                          value: skill,
-                          child: Text(skill),
-                        );
-                      }).toList(),
-                      icon: Icon(Icons.add),
-                    ),
-                  ],
-                ),
-                // Wrap widget to display selected skills
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: [
-                    ...selectedSkills.map((skill) {
-                      return Chip(
-                        label: Text(skill),
-                        onDeleted: () {
-                          setState(() {
-                            selectedSkills.remove(skill);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller:
-                        TextEditingController(), // Tạo một TextEditingController mới
-                    enabled: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Skill',
-                      labelStyle: AppTextStyles.bodyStyle,
-                      disabledBorder: InputBorder.none,
-                    ),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    setState(() {
-                      setState(() {
-                        selectedSkills.add(value);
-                      });
-                    });
-                  },
-                  itemBuilder: (BuildContext context) =>
-                      skills.map((String skill) {
-                    return PopupMenuItem<String>(
-                      value: skill,
-                      child: Text(skill),
-                    );
-                  }).toList(),
-                  icon: Icon(Icons.add),
-                ),
-              ],
-            ),
-            // Wrap widget to display selected skills
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: [
-                ...selectedSkills.map((skill) {
-                  return Chip(
-                    label: Text(skill),
-                    onDeleted: () {
-                      setState(() {
-                        selectedSkills.remove(skill);
-                      });
-                    },
-                  );
-                }).toList(),
-              ],
+            // Education history
+            EducationWidget(
+              educationList: educationList,
+              addEducationInfo: () {
+                setState(() {
+                  educationList.add(EducationInfo(
+                      'New School', DateTime.now().year, DateTime.now().year));
+                });
+              },
+              deleteEducationInfo: (index) {
+                setState(() {
+                  educationList.removeAt(index);
+                });
+              },
+              editEducationInfo: (index, schoolName, startYear, endYear) {
+                setState(() {
+                  educationList[index].schoolName = schoolName;
+                  educationList[index].startYear = int.parse(startYear);
+                  educationList[index].endYear = int.parse(endYear);
+                });
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
