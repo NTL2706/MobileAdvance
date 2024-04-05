@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
@@ -9,16 +10,45 @@ import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
-
+  
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProviderStateMixin{
   bool isAccountListVisible = false;
-
+  late AnimationController _controller;
+  late Animation _animation;
+  @override
+  void initState() {
+    // TODO: implement initState
+    _controller = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
+    _controller.forward();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    
+    super.dispose();
+   
+  }
   @override
   Widget build(BuildContext context) {
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
+    String? username = context.read<AuthenticateProvider>().authenRepository.username;
+    Map<String, dynamic>? switchProfile;
+
+    if (role == "company") {
+      switchProfile = context.read<AuthenticateProvider>().authenRepository.company;
+      username = switchProfile?['companyName'];
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
@@ -26,17 +56,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Column(
         children: [
-          _appProfileBar(),
+          _appProfileBar(username),
           _appProfileAction(),
         ],
       ),
     );
   }
 
-  Widget _appProfileBar() {
+  Widget _appProfileBar(String? username) {
     return Container(
       padding: const EdgeInsets.all(10.0),
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
@@ -47,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Column(
             children: [
               Text(
-                "Nguyen Van A",
+                username!,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -62,6 +92,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _switchAccountAction(bool isAccountListVisible) {
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
+    Map<String, dynamic>? switchProfile;
+    String? username =
+        context.read<AuthenticateProvider>().authenRepository.username;
+    if (role == "student") {
+      switchProfile =
+          context.read<AuthenticateProvider>().authenRepository.company;
+      username = switchProfile?['companyName'];
+    } else {
+      switchProfile =
+          context.read<AuthenticateProvider>().authenRepository.student;
+    }
+    
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
       opacity: isAccountListVisible ? 1.0 : 0.0,
@@ -71,24 +114,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.only(left: 12.0),
           child: Column(
             children: [
-              ListTile(
-                leading: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/logo.png"),
-                ),
-                title: const Text("User 1"),
-                onTap: () {
-                  print("Account 1 selected");
-                },
-              ),
-              ListTile(
-                leading: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/logo.png"),
-                ),
-                title: const Text("User 2"),
-                onTap: () {
-                  print("Account 2 selected");
-                },
-              ),
+              switchProfile != null
+                  ? ListTile(
+                      leading: const CircleAvatar(
+                        backgroundImage: AssetImage("assets/images/logo.png"),
+                      ),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(username!),
+                          if(role == 'student')
+                          Icon(Icons.home)
+                        ],),
+                      onTap: () async {
+                        if (role == "student") {
+                          await context
+                              .read<AuthenticateProvider>()
+                              .switchProfile(role: "company");
+                        } else {
+                          await context
+                              .read<AuthenticateProvider>()
+                              .switchProfile(role: "student");
+                        }
+                        
+                        await Navigator.of(context).pushAndRemoveUntil(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const HomePage(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                const begin = Offset(0.0, 1.0);
+                            const end = Offset.zero;
+                            final tween = Tween(begin: begin, end: end);
+                            final offsetAnimation = animation.drive(tween);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
+                            ),
+                            (route) => false);
+                      },
+                    )
+                  : ListTile(
+                      leading: Icon(Icons.add),
+                      title: role == "student"
+                          ? Text("Add company")
+                          : Text("Add student"),
+                      onTap: () {
+                        if (role == "student") {
+                          print("create company");
+                        } else {
+                          print("create student");
+                        }
+                      },
+                    )
             ],
           ),
         ),
@@ -111,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             ProfileListTile(
               icon: Icons.account_circle,
-              title: "Switch account",
+              title: "Switch profile",
               onTap: () {
                 print("Profile button clicked");
                 setState(() {
@@ -144,9 +225,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileListTile(
               icon: Icons.logout,
               title: "Logout",
-              onTap: () async{
+              onTap: () async {
                 await context.read<AuthenticateProvider>().signOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => IntroPage(),), (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => IntroPage(),
+                    ),
+                    (route) => false);
               },
             ),
             const SizedBox(height: 20),

@@ -65,7 +65,7 @@ class LoginPage extends StatelessWidget {
                       print(apiForLogin);
                       await context.read<AuthenticateProvider>().signInWithPassword(email: emailSignInController.text.trim(), password: passwordSignInController.text.trim(), role: title);
                       AuthResult result = context.read<AuthenticateProvider>().state.result!;
-                      if (result == AuthResult.success){
+                      if (result == AuthResult.success){                    
                         Navigator.of(context).pushNamedAndRemoveUntil('/home',(route) => false,);
                       }
                       else{

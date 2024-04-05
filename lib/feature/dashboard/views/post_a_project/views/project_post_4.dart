@@ -1,14 +1,18 @@
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
+import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class ProjectPost_4 extends StatelessWidget {
   const ProjectPost_4({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return BasicPage(
       child: Container(
         child: LayoutBuilder(
@@ -125,9 +129,50 @@ class ProjectPost_4 extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                       elevation: 0.5,
                                       backgroundColor: Colors.white),
-                                  onPressed: () {
-                                    context.read<JobNotifier>().addJob(title: JobModel.titleController.text, discription: JobModel.discriptionController.text, numberStudent: int.parse(JobModel.numberStudentController.text));
-                                    Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                                  onPressed: () async{
+              
+
+                                    final response =await context.read<JobNotifier>().addJob(
+                                      companyId: context.read<AuthenticateProvider>().authenRepository.company?['id'].toString(),
+                                      title: JobModel.titleController.text,
+                                      projectScopeFlag: int.parse(JobModel.timeForProjectController.text),
+                                      description: JobModel.discriptionController.text, 
+                                      numberOfStudents: int.parse(JobModel.numberStudentController.text));
+                                    if (response['result']!= null){
+                                      await QuickAlert.show(
+                                        context: context, 
+                                        title: "Add Job",
+                                        cancelBtnText: "Cancel",
+                                        showCancelBtn: true,
+                                        confirmBtnText: "OK",
+                                        onConfirmBtnTap: () {
+                                          
+                                          Navigator.of(context).popUntil(ModalRoute.withName('/intro'));
+                                        },
+                                        onCancelBtnTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        type: QuickAlertType.success
+                                      );
+                                    }
+                                    else{
+                                      await QuickAlert.show(
+                                        title: "Add Job",
+                                        context: context, 
+                                        text: response['error'],
+                                        cancelBtnText: "Cancel",
+                                        showCancelBtn: true,
+                                        confirmBtnText: "OK",
+                                        onConfirmBtnTap: () {
+                                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage(),),(route) => false,);
+                                        },
+                                        onCancelBtnTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        type: QuickAlertType.success
+                                      );
+                                    }
+                                    
                                   },
                               child: Text("Post job"))),
                         )

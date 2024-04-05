@@ -70,7 +70,7 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                 ? () async {
                                     if (title ==
                                         StudentHubCategorySignUp.student.name) {
-                                      print("api for sign up student");
+                              
 
                                       await context
                                           .read<AuthenticateProvider>()
@@ -85,7 +85,7 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                               role: StudentHubCategorySignUp
                                                   .values[0].index);
                                     } else {
-                                      print("api for sign up company");
+                    
                                       await context
                                           .read<AuthenticateProvider>()
                                           .signUpWithPassword(

@@ -123,7 +123,10 @@ class _DetailProfileCompanyScreenState
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UpdateCompanyProfileScreen(),
+                    builder: (context) =>  UpdateCompanyProfileScreen(
+                     
+                      titleButton: "Update company profile",
+                    ),
                   ),
                 );
               },

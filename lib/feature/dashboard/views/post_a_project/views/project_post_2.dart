@@ -4,7 +4,7 @@ import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
-List<String> options = ["1 to 3 months", "3 to 6 months"];
+List<String> options = ["0", "1"];
 class ProjectPost_2 extends StatelessWidget{
   String currentOption = options[0];
   @override
@@ -100,7 +100,7 @@ class _TimeForProjectState extends State<TimeForProject> {
             groupValue: widget.currentOption,
             onChanged: (value) {
               setState(() {
-                widget.timeForProjectController.text = value.toString();
+                widget.timeForProjectController.text = value!;
                 widget.currentOption = value.toString();
               });
             },
@@ -113,7 +113,7 @@ class _TimeForProjectState extends State<TimeForProject> {
             groupValue: widget.currentOption,
             onChanged: (value) {
               setState((){
-                widget.timeForProjectController.text = value.toString();
+                widget.timeForProjectController.text = value!;
                 widget.currentOption = value.toString();
               });
             },

@@ -1,10 +1,22 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
+import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class UpdateCompanyProfileScreen extends StatefulWidget {
-  const UpdateCompanyProfileScreen({Key? key}) : super(key: key);
+  UpdateCompanyProfileScreen({
+    Key? key,
+    required this.titleButton,
+  }) : super(key: key);
+  String titleButton;
 
   @override
   State<UpdateCompanyProfileScreen> createState() =>
@@ -44,6 +56,23 @@ class _UpdateCompanyProfileScreenState
       appBar: AppBar(
         title: const Text("Update Company Profile"),
         elevation: 0,
+        scrolledUnderElevation: 0,
+        actions: [
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: IconButton(
+                      
+                      onPressed: ()async {
+                        await context.read<AuthenticateProvider>().signOut();
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                          builder: (context) {
+                            return IntroPage();
+                          },
+                        ), (route) => false,);
+                      },
+                      icon: Icon(Icons.arrow_forward)),
+                )
+              ],
       ),
       body: Column(
         children: [
@@ -95,15 +124,32 @@ class _UpdateCompanyProfileScreenState
                     _buildInputField("Description", _descriptionController),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        // Handle updating company information
-                        _updateCompanyInfo();
+                      onPressed: () async {
+                        await context.read<ProfileProvider>().createProfieForCompany
+                        (
+                          companyName: _nameController.text.trim(), 
+                          size: selectedCompanySize, 
+                          website: _websiteController.text.trim(), 
+                          description: _descriptionController.text.trim(), 
+                          token: context.read<AuthenticateProvider>().authenRepository.token!);
+
+                        if (context.read<ProfileProvider>().status ==
+                            AuthResult.success) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(),
+                              ),
+                              (route) => false);
+                        } else {
+                          await QuickAlert.show(
+                              context: context, type: QuickAlertType.error);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                       ),
-                      child: const Text(
-                        'Update Company Info',
+                      child: Text(
+                        widget.titleButton,
                         style: AppTextStyles.buttonTextStyle,
                       ),
                     ),

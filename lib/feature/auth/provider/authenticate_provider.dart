@@ -53,13 +53,24 @@ class AuthenticateProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> getUserInf()async{
+  Future<Map<String, dynamic>> getUserInf()async{
     await authenRepository.getUserInf();
-    notifyListeners();
+    
+    return {
+      "student": authenRepository.student,
+      "company": authenRepository.company,
+
+    };
   }
 
-  void test(){
+  Future<void> switchProfile({
+    required String role
+  })async{
+    await authenRepository.switchAccount(role: role);
+  }
+  Future<String> test()async{
     state = state.copiedWithIsLoading(true);
-    notifyListeners();
+   
+    return "111";
   }
 }

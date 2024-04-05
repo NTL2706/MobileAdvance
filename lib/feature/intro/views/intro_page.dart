@@ -24,7 +24,7 @@ class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
-
+    print("/intro");
     return role == "" ? Scaffold(
       resizeToAvoidBottomInset: true,
         body: Container(
