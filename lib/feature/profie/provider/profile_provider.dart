@@ -7,7 +7,7 @@ class ProfileProvider extends ChangeNotifier{
   ProfileRepository profileRepository = ProfileRepository();
   Future<void> getAllTechStack()async{
     await profileRepository.getAllTechStack();
-  
+    notifyListeners();
   }
 
   Future<void> getAllSkillSet()async{

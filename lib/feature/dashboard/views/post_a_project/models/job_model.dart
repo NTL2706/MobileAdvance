@@ -24,7 +24,7 @@ class JobModel{
   int? typeFlag;
   int?proposalNumber = 0;
   int?messagesNumber= 0;
-  int?HiredNumber = 0;
+  int?hiredNumber = 0;
   String? state = JobState.pending.name;
   JobModel({
     this.id,
@@ -37,7 +37,9 @@ class JobModel{
     this.numberOfStudents,
     this.typeFlag,
     this.updateAt,
-    this.proposalNumber
+    this.proposalNumber,
+    this.messagesNumber,
+    this.hiredNumber
   });
 
   void updateJob(
@@ -52,6 +54,7 @@ class JobModel{
       int?numberOfStudents,
       int? projectScopeFlag,
       int? typeFlag,
+
     }){
     this.state = state ?? this.state;
     this.companyId = companyId ?? this.companyId;
@@ -77,7 +80,9 @@ class JobModel{
       description: json['description'],
       numberOfStudents: json['numberOfStudents'],
       typeFlag: json['typeFlag'],
-      proposalNumber: json['numberProposal']
+      proposalNumber: json['countProposals'],
+      hiredNumber: json['countHired'],
+      messagesNumber: json['countMessages']
     );
   }
 }

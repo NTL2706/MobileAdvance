@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/projetcs_type.dart';
@@ -8,16 +9,16 @@ import '../provider/project_provider.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;
+  bool disableFlag;
 
-  const ProjectDetailScreen({super.key, required this.project});
+  ProjectDetailScreen({required this.disableFlag,super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
-    final projectProvider = Provider.of<ProjectProvider>(context);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(project.name),
+          title: Text(project.title!),
         ),
         body: Padding(
           padding: EdgeInsets.all(12),
@@ -49,20 +50,9 @@ class ProjectDetailScreen extends StatelessWidget {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: project.describe.map((description) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0, left: 12.0),
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('\u2022'),
-                              SizedBox(width: 8),
-                              Expanded(
-                                  child: Text(description,
-                                      overflow: TextOverflow.visible)),
-                            ]),
-                      );
-                    }).toList(),
+                    children: [
+                      Text(project.describe!)
+                    ]
                   ),
                   SizedBox(height: 24),
                   Row(
@@ -83,7 +73,7 @@ class ProjectDetailScreen extends StatelessWidget {
                           Padding(
                               padding: EdgeInsets.only(left: 12),
                               child: Text(
-                                  '\u2022 ${project.numberOfPeople} ${project.numberOfPeople > 1 ? 'students' : 'student'}'))
+                                  '\u2022 ${project.numberOfPeople} ${project.numberOfPeople! > 1 ? 'students' : 'student'}'))
                         ],
                       ),
                     ],
@@ -107,7 +97,7 @@ class ProjectDetailScreen extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.only(left: 12),
                             child: Text(
-                              '\u2022 ${project.time.join(' - ')} ${project.time.length > 1 || project.time[0] > 1 ? ' months' : ' month'}',
+                              'Time: ${optionsTimeForJob[project.time]!}',
                             ),
                           ),
                         ],
@@ -121,15 +111,15 @@ class ProjectDetailScreen extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () {
-                      projectProvider.toggleFavoriteStatus(project.id);
+                      // projectProvider.toggleFavoriteStatus(project.id);
                     },
                     style: ButtonStyle(
                       minimumSize: MaterialStateProperty.all(
                           Size(150, 55)), // Kích thước nút
                       backgroundColor: MaterialStateProperty.all<Color>(
-                          project.isFavourite
-                              ? Colors.red
-                              : Colors.blue), // Màu nền
+                          disableFlag
+                              ?  Colors.blue:Colors.red
+                              ), // Màu nền
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius:
@@ -138,7 +128,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      project.isFavourite ? 'Saved' : 'Save',
+                      disableFlag ? 'Save':'Saved' ,
                       style: TextStyle(color: Colors.white), // Màu văn bản
                     ),
                   ),

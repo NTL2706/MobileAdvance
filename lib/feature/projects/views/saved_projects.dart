@@ -8,7 +8,8 @@ import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 
 class SavedProjectWidget extends StatefulWidget {
-  const SavedProjectWidget({super.key});
+   SavedProjectWidget(
+    {super.key});
 
   @override
   State<SavedProjectWidget> createState() => _ProjectWidgetState();
@@ -17,7 +18,7 @@ class SavedProjectWidget extends StatefulWidget {
 class _ProjectWidgetState extends State<SavedProjectWidget> {
   @override
   Widget build(BuildContext context) {
-    final projectProvider = Provider.of<ProjectProvider>(context);
+    final favouritedProjectList = context.read<ProjectProvider>().favouriteProjectList;
     return Scaffold(
         appBar: AppBar(
           scrolledUnderElevation: 0,
@@ -29,14 +30,9 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: projectProvider.projects
-                      .where((project) => project.isFavourite == true)
-                      .toList()
-                      .length,
+                  itemCount: favouritedProjectList?.length,
                   itemBuilder: (context, index) {
-                    final project = projectProvider.projects
-                        .where((project) => project.isFavourite == true)
-                        .toList()[index];
+                    final project = Project.fromJson((favouritedProjectList?[index])?['project']);
                     return Container(
                         margin: EdgeInsets.only(bottom: 24.0),
                         decoration: BoxDecoration(
@@ -64,33 +60,32 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                       ),
                                     ),
                                     // Thời gian của animation
-                                    IconButton(
-                                        onPressed: () {
-                                          projectProvider
-                                              .toggleFavoriteStatus(project.id);
-                                        },
-                                        icon: Icon(
-                                          project.isFavourite
-                                              ? Icons
-                                                  .favorite // Nếu true, hiển thị biểu tượng favorite đã được tô màu
-                                              : Icons
-                                                  .favorite_border, // Nếu false, hiển thị biểu tượng favorite_border không thay đổi màu sắc
-                                          color: project.isFavourite
-                                              ? Colors.red
-                                              : null, // Thay đổi màu biểu tượng thành màu trắng nếu là favorite, nếu không thì để mặc định
-                                        )),
+                                    // IconButton(
+                                    //     onPressed: () {
+                                          
+                                    //     },
+                                    //     icon: Icon(
+                                    //       project.isFavourite!
+                                    //           ? Icons
+                                    //               .favorite // Nếu true, hiển thị biểu tượng favorite đã được tô màu
+                                    //           : Icons
+                                    //               .favorite_border, // Nếu false, hiển thị biểu tượng favorite_border không thay đổi màu sắc
+                                    //       color: project.isFavourite!
+                                    //           ? Colors.red
+                                    //           : null, // Thay đổi màu biểu tượng thành màu trắng nếu là favorite, nếu không thì để mặc định
+                                    //     )),
                                   ],
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  project.name,
+                                  project.title!,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Created: ${formatDate(project.createdAt)}',
+                                  'Created: ${formatDate(project.createdAt!)}',
                                 ),
                                 SizedBox(height: 12),
                                 Text(
@@ -99,11 +94,11 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                   maxLines: 1,
                                 ),
                                 SizedBox(height: 12),
-                                Text(
-                                  'Time: ${project.time.join(' - ')} ${project.time.length > 1 || project.time[0] > 1 ? ' months' : ' month'}',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
+                                // Text(
+                                //   'Time: ${project.time.join(' - ')} ${project.time.length > 1 || project.time[0] > 1 ? ' months' : ' month'}',
+                                //   overflow: TextOverflow.ellipsis,
+                                //   maxLines: 1,
+                                // ),
                                 SizedBox(height: 12),
                                 Text(
                                   'Details:',
@@ -117,24 +112,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        ...project.describe
-                                            .take(3)
-                                            .map((description) => Text(
-                                                  '\u2022 $description',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ))
-                                            .toList(),
-                                        if (project.describe.length > 3)
-                                          Text(
-                                            '...',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 24),
-                                          ),
+                                        Text(project.describe!)
                                       ],
                                     )),
                                 Divider(
@@ -154,6 +132,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   ProjectDetailScreen(
+                                                    disableFlag: false,
                                                       project: project)),
                                         );
                                       },
@@ -202,7 +181,8 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                   ],
                                 )
                               ],
-                            )));
+                            ))
+                            );
                   },
                 ),
               ),

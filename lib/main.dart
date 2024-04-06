@@ -5,8 +5,6 @@ import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNot
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
-import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
-import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

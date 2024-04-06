@@ -40,9 +40,15 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                 ),
               ),
               CustomTextField(
+                onChanged: (p0) {
+                  
+                },
                   controller: fullNameSignUpController, hintText: "Fullname"),
               const SizedBox(height: 10),
               CustomTextField(
+                onChanged: (p0) {
+                  
+                },
                 controller: emailSignUpController,
                 hintText: "Work email address",
               ),

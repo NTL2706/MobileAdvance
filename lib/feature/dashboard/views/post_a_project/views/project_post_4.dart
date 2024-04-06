@@ -1,6 +1,7 @@
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ class ProjectPost_4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return BasicPage(
       child: Container(
         child: LayoutBuilder(
@@ -90,7 +90,7 @@ class ProjectPost_4 extends StatelessWidget {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                    "•${JobModel.timeForProjectController.text}")
+                                    "•${optionsTimeForJob[int.parse(JobModel.timeForProjectController.text)]}")
                               ],
                             )
                           ],
@@ -129,52 +129,71 @@ class ProjectPost_4 extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                       elevation: 0.5,
                                       backgroundColor: Colors.white),
-                                  onPressed: () async{
-              
-
-                                    final response =await context.read<JobNotifier>().addJob(
-                                      companyId: context.read<AuthenticateProvider>().authenRepository.company?['id'].toString(),
-                                      title: JobModel.titleController.text,
-                                      projectScopeFlag: int.parse(JobModel.timeForProjectController.text),
-                                      description: JobModel.discriptionController.text, 
-                                      numberOfStudents: int.parse(JobModel.numberStudentController.text));
-                                    if (response['result']!= null){
+                                  onPressed: () async {
+                                    final response = await context
+                                        .read<JobNotifier>()
+                                        .addJob(
+                                            companyId:
+                                                context
+                                                    .read<
+                                                        AuthenticateProvider>()
+                                                    .authenRepository
+                                                    .company?['id']
+                                                    .toString(),
+                                            title: JobModel
+                                                .titleController.text,
+                                            projectScopeFlag: int.parse(
+                                                JobModel
+                                                    .timeForProjectController
+                                                    .text),
+                                            description: JobModel
+                                                .discriptionController.text,
+                                            numberOfStudents: int.parse(JobModel
+                                                .numberStudentController.text));
+                                    if (response['result'] != null) {
                                       await QuickAlert.show(
-                                        context: context, 
-                                        title: "Add Job",
-                                        cancelBtnText: "Cancel",
-                                        showCancelBtn: true,
-                                        confirmBtnText: "OK",
-                                        onConfirmBtnTap: () {
-                                          
-                                          Navigator.of(context).popUntil(ModalRoute.withName('/intro'));
-                                        },
-                                        onCancelBtnTap: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        type: QuickAlertType.success
-                                      );
-                                    }
-                                    else{
+                                          context: context,
+                                          title: "Add Job",
+                                          cancelBtnText: "Cancel",
+                                          showCancelBtn: true,
+                                          confirmBtnText: "OK",
+                                          onConfirmBtnTap: () {
+                                            Navigator.of(context).popUntil(
+                                                ModalRoute.withName('/intro'));
+                                          },
+                                          onCancelBtnTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          type: QuickAlertType.success);
+                                      JobModel.titleController.clear();
+                                      JobModel.discriptionController.clear();
+                                      JobModel.timeForProjectController.clear();
+                                      JobModel.numberStudentController.clear();
+                                    } else {
                                       await QuickAlert.show(
-                                        title: "Add Job",
-                                        context: context, 
-                                        text: response['error'],
-                                        cancelBtnText: "Cancel",
-                                        showCancelBtn: true,
-                                        confirmBtnText: "OK",
-                                        onConfirmBtnTap: () {
-                                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage(),),(route) => false,);
-                                        },
-                                        onCancelBtnTap: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        type: QuickAlertType.success
-                                      );
+                                          title: "Add Job",
+                                          context: context,
+                                          text: response['error'],
+                                          cancelBtnText: "Cancel",
+                                          showCancelBtn: true,
+                                          confirmBtnText: "OK",
+                                          onConfirmBtnTap: () {
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomePage(),
+                                              ),
+                                              (route) => false,
+                                            );
+                                          },
+                                          onCancelBtnTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          type: QuickAlertType.success);
                                     }
-                                    
                                   },
-                              child: Text("Post job"))),
+                                  child: Text("Post job"))),
                         )
                       ],
                     ),

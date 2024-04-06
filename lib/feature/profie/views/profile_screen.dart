@@ -2,6 +2,7 @@ import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
@@ -162,12 +163,10 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
                       title: role == "student"
                           ? Text("Add company")
                           : Text("Add student"),
-                      onTap: () {
-                        if (role == "student") {
-                          print("create company");
-                        } else {
-                          print("create student");
-                        }
+                      onTap: role == "student" ? () {
+                        createProfile("company");
+                      } : () {
+                        createProfile("student");
                       },
                     )
             ],
@@ -177,6 +176,25 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
     );
   }
 
+  void createProfile(String role)async{
+    print(role);
+    await Navigator.of(context).pushAndRemoveUntil(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) => CreateProfilePage(role: role,),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              const begin = Offset(0.0, 1.0);
+                              const end = Offset.zero;
+                              final tween = Tween(begin: begin, end: end);
+                              final offsetAnimation = animation.drive(tween);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
+                            ),
+                            (route) => false);
+  }
   Widget _appProfileAction() {
     return Expanded(
       child: Container(

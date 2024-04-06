@@ -206,7 +206,11 @@ class JobNotifier extends ChangeNotifier {
   )async{
     try{
       print("call getDashboardProject");
-      final response = await http.get(Uri.parse("${env.apiURL}api/project/company/$companyId"));
+      final response = await http.get(
+        headers: {
+          HttpHeaders.authorizationHeader:'Bearer $token'
+        },
+        Uri.parse("${env.apiURL}api/project/company/$companyId"));
       final body = json.decode(response.body);
       if (response.statusCode >= 400) {
 

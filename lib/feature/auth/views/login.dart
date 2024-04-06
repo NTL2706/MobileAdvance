@@ -46,6 +46,9 @@ class LoginPage extends StatelessWidget {
                   height: 10,
                 ),
                 CustomTextField(
+                  onChanged: (p0) {
+                    
+                  },
                   controller: emailSignInController,
                   hintText: "Username or email",
                 ),

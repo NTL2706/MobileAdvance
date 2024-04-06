@@ -4,15 +4,16 @@ import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
-class ProjectPost_1 extends StatelessWidget {
+class ProjectPost_1 extends StatefulWidget {
   const ProjectPost_1({super.key});
 
   @override
+  State<ProjectPost_1> createState() => _ProjectPost_1State();
+}
+
+class _ProjectPost_1State extends State<ProjectPost_1> {
+  @override
   Widget build(BuildContext context) {
-    JobModel.titleController.clear();
-    JobModel.discriptionController.clear();
-    JobModel.timeForProjectController.clear();
-    JobModel.numberStudentController.clear();
     return BasicPage(
       child: Container(
           padding: EdgeInsets.all(20),
@@ -37,6 +38,11 @@ class ProjectPost_1 extends StatelessWidget {
                 height: 20,
               ),
               CustomTextField(
+                  onChanged: (p0) {
+                    setState(() {
+                      
+                    });
+                  },
                   controller: JobModel.titleController,
                   hintText: "write a title for jour post"),
               SizedBox(
@@ -57,12 +63,14 @@ class ProjectPost_1 extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
+              if (JobModel.titleController.text != "") 
               Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           elevation: 1, backgroundColor: Colors.white),
-                      onPressed: () {
+                      onPressed:  () {
+
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) {
                             return ProjectPost_2();

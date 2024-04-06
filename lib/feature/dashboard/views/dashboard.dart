@@ -5,7 +5,6 @@ import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_pro
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -200,12 +199,7 @@ class AllProjectWidget extends StatelessWidget {
                 },
               ));
             },
-            child: FutureBuilder(
-              future: context.read<JobNotifier>().getProjectProposal(
-                projectId: job.id!,
-                token: context.read<AuthenticateProvider>().authenRepository.token!),
-              builder: (context, snapshot) { 
-                return Container(
+            child: Container(
                 margin: EdgeInsets.only(top: 5),
                 height: 165,
                 padding: EdgeInsets.all(8),
@@ -289,7 +283,7 @@ class AllProjectWidget extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(color: Colors.black)),
-                                      child:snapshot.data?['result'] != null ? Text("${snapshot.data?['result']}"): null),
+                                      child:Text("${job.proposalNumber}")),
                                 Text("Proposals")
                               ],
                             ),
@@ -325,7 +319,7 @@ class AllProjectWidget extends StatelessWidget {
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(color: Colors.black)),
-                                    child: Text("${job.HiredNumber}")),
+                                    child: Text("${job.hiredNumber}")),
                                 Text("Hired")
                               ],
                             ),
@@ -335,8 +329,7 @@ class AllProjectWidget extends StatelessWidget {
                     )
                   ],
                 ),
-              );},
-            ),
+              ),
           );
         },
       ),
