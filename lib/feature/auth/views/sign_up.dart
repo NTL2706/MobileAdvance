@@ -2,18 +2,25 @@
 
 import 'dart:async';
 
+import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class SignUpForStudentOrCompany extends StatelessWidget {
   SignUpForStudentOrCompany({super.key, required this.title});
 
   StreamController checkBoxStreamController = StreamController();
-
+  TextEditingController fullNameSignUpController = TextEditingController();
+  TextEditingController emailSignUpController = TextEditingController();
+  TextEditingController passwordSignUpController = TextEditingController();
   final String title;
 
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -32,19 +39,29 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-              CustomTextField(hintText: "Fullname"),
-              SizedBox(height: 10),
               CustomTextField(
+                onChanged: (p0) {
+                  
+                },
+                  controller: fullNameSignUpController, hintText: "Fullname"),
+              const SizedBox(height: 10),
+              CustomTextField(
+                onChanged: (p0) {
+                  
+                },
+                controller: emailSignUpController,
                 hintText: "Work email address",
               ),
-              SizedBox(height: 10),
-              PasswordFielddWidget(),
+              const SizedBox(height: 10),
+              PasswordFielddWidget(
+                controller: passwordSignUpController,
+              ),
               Row(
                 children: [
                   CustomCheckBox(
                     checkBoxStreamController: checkBoxStreamController,
                   ),
-                  Text("Yes, i understand and agree to StudentHub")
+                  const Text("Yes, i understand and agree to StudentHub")
                 ],
               ),
               Container(
@@ -56,21 +73,83 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                         bool check = snapshot.data!;
                         return ElevatedButton(
                             onPressed: check
-                                ? () {
+                                ? () async {
                                     if (title ==
                                         StudentHubCategorySignUp.student.name) {
-                                      print("api for sign up student");
+                              
+
+                                      await context
+                                          .read<AuthenticateProvider>()
+                                          .signUpWithPassword(
+                                              email: emailSignUpController.text
+                                                  .trim(),
+                                              password: passwordSignUpController
+                                                  .text
+                                                  .trim(),
+                                              fullname:
+                                                  fullNameSignUpController.text,
+                                              role: StudentHubCategorySignUp
+                                                  .values[0].index);
                                     } else {
-                                      print("api for sign up company");
+                    
+                                      await context
+                                          .read<AuthenticateProvider>()
+                                          .signUpWithPassword(
+                                              email: emailSignUpController.text
+                                                  .trim(),
+                                              password: passwordSignUpController
+                                                  .text
+                                                  .trim(),
+                                              fullname:
+                                                  fullNameSignUpController.text,
+                                              role: StudentHubCategorySignUp
+                                                  .values[1].index);
                                     }
+
+                                    final results = context
+                                        .read<AuthenticateProvider>()
+                                        .state
+                                        .result;
+
+                                    await QuickAlert.show(
+                                        text: context
+                                            .read<AuthenticateProvider>()
+                                            .state
+                                            .message,
+                                        confirmBtnText: "OK",
+                                        cancelBtnText: "CANCEL",
+                                        onConfirmBtnTap: results ==
+                                                AuthResult.success
+                                            ? () {
+                                                Navigator.of(context).popUntil(
+                                                    ModalRoute.withName(
+                                                        "/intro"));
+                                              }
+                                            : () {
+                                                Navigator.of(context).pop();
+                                              },
+                                        onCancelBtnTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        context: context,
+                                        showCancelBtn: true,
+                                        type: results == AuthResult.success
+                                            ? QuickAlertType.success
+                                            : QuickAlertType.error);
+                                        checkBoxStreamController.add(false);
                                   }
                                 : null,
-                            child: Text("SIGN UP"));
+                            child: context
+                                    .watch<AuthenticateProvider>()
+                                    .state
+                                    .isLoading
+                                ? CircularProgressIndicator()
+                                : const Text("SIGN UP"));
                       })),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Looking for a project? "),
+                  const Text("Looking for a project? "),
                   GestureDetector(
                     onTap: () {
                       if (title == "student") {
@@ -92,11 +171,11 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                       }
                     },
                     child: title == "student"
-                        ? Text(
+                        ? const Text(
                             "Apply as company",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )
-                        : Text(
+                        : const Text(
                             "Apply as student",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),

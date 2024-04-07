@@ -1,15 +1,18 @@
-import 'package:final_project_advanced_mobile/feature/post_a_project/models/job_model.dart';
-import 'package:final_project_advanced_mobile/feature/post_a_project/views/project_post_3.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_3.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
-List<String> options = ["1 to 3 months", "3 to 6 months"];
+Map<int, String> optionsTimeForJob = {
+  0:"1 to 3 months",
+  1:"3 to 6 months"
+};
 class ProjectPost_2 extends StatelessWidget{
-  String currentOption = options[0];
+  int? currentOption = 0;
   @override
   Widget build(BuildContext context) {
-    JobModel.timeForProjectController.text = currentOption;
+    JobModel.timeForProjectController.text = currentOption.toString();
     // TODO: implement build
     return BasicPage(
       child: Container(
@@ -38,7 +41,7 @@ class ProjectPost_2 extends StatelessWidget{
               ),
               TimeForProject(
                 timeForProjectController: JobModel.timeForProjectController,
-                currentOption: currentOption),
+                currentOption: currentOption!),
               SizedBox(
                 height: 10,
               ),
@@ -47,6 +50,9 @@ class ProjectPost_2 extends StatelessWidget{
                 height: 10,
               ),
               CustomTextField(
+                onChanged: (p0) {
+                  
+                },
                 controller: JobModel.numberStudentController,
                 hintText: "number of students"),
               SizedBox(
@@ -82,7 +88,7 @@ class TimeForProject extends StatefulWidget {
     required this.timeForProjectController
   });
 
-  String currentOption;
+  int currentOption;
   TextEditingController timeForProjectController = TextEditingController();
   @override
   State<TimeForProject> createState() => _TimeForProjectState();
@@ -96,12 +102,12 @@ class _TimeForProjectState extends State<TimeForProject> {
         ListTile(
           title: Text("1 to 3 months"),
           leading: Radio(
-            value: options[0],
+            value: 0,
             groupValue: widget.currentOption,
             onChanged: (value) {
-              setState(() {
-                widget.timeForProjectController.text = value.toString();
-                widget.currentOption = value.toString();
+              setState((){
+                  widget.timeForProjectController.text = value.toString();
+                  widget.currentOption = value!;
               });
             },
           ),
@@ -109,12 +115,13 @@ class _TimeForProjectState extends State<TimeForProject> {
         ListTile(
           title: Text("3 to 6 months"),
           leading: Radio(
-            value: options[1],
+            value: 1,
             groupValue: widget.currentOption,
             onChanged: (value) {
-              setState((){
-                widget.timeForProjectController.text = value.toString();
-                widget.currentOption = value.toString();
+              setState(
+                (){
+                  widget.timeForProjectController.text = value.toString();
+                  widget.currentOption = value!;
               });
             },
           ),

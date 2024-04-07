@@ -106,20 +106,3 @@ class MessageWidget extends StatelessWidget {
     );
   }
 }
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ChatProvider(),
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            scrolledUnderElevation: 0,
-            title: Text('Chat Users'),
-          ),
-          body: MessageWidget(), // Display the ChatUserListWidget
-        ),
-      ),
-    ),
-  );
-}
