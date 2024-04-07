@@ -4,9 +4,15 @@ import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
 
 class MeetingScheduleBottomSheet extends StatelessWidget {
+  final String? id;
+
+  const MeetingScheduleBottomSheet({this.id});
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ChatProvider>(context);
+    provider.handleLoadScheduleMeeting(id);
+
     return SingleChildScrollView(
         child: Padding(
       padding:
@@ -119,24 +125,75 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                provider.handleScheduleMeeting();
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Đặt màu nền là màu xanh dương
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(12), // Đặt borderRadius thành zero
-                ),
-              ),
-              child: Text(
-                'Schedule',
-                style:
-                    TextStyle(color: Colors.white), // Đặt màu chữ là màu trắng
-              ),
-            ),
+            id == null
+                ? ElevatedButton(
+                    onPressed: provider.titleController.text.isNotEmpty &&
+                            provider.startTimeController.text.isNotEmpty &&
+                            provider.endTimeController.text.isNotEmpty &&
+                            DateTime.parse(provider.endTimeController.text)
+                                .isAfter(DateTime.parse(
+                                    provider.startTimeController.text))
+                        ? () {
+                            Navigator.pop(context);
+                            provider.handleScheduleMeeting();
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: provider
+                                  .titleController.text.isNotEmpty &&
+                              provider.startTimeController.text.isNotEmpty &&
+                              provider.endTimeController.text.isNotEmpty &&
+                              DateTime.parse(provider.endTimeController.text)
+                                  .isAfter(DateTime.parse(
+                                      provider.startTimeController.text))
+                          ? Colors.blue
+                          : const Color.fromARGB(69, 33, 149,
+                              243), // Đặt màu nền là màu xanh dương
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // Đặt borderRadius thành zero
+                      ),
+                    ),
+                    child: Text(
+                      'Schedule',
+                      style: TextStyle(
+                          color: Colors.white), // Đặt màu chữ là màu trắng
+                    ),
+                  )
+                : ElevatedButton(
+                    onPressed: provider.titleController.text.isNotEmpty &&
+                            provider.startTimeController.text.isNotEmpty &&
+                            provider.endTimeController.text.isNotEmpty &&
+                            DateTime.parse(provider.endTimeController.text)
+                                .isAfter(DateTime.parse(
+                                    provider.startTimeController.text))
+                        ? () {
+                            Navigator.pop(context);
+                            provider.updateScheduleMeeting(id!);
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: provider
+                                  .titleController.text.isNotEmpty &&
+                              provider.startTimeController.text.isNotEmpty &&
+                              provider.endTimeController.text.isNotEmpty &&
+                              DateTime.parse(provider.endTimeController.text)
+                                  .isAfter(DateTime.parse(
+                                      provider.startTimeController.text))
+                          ? Colors.blue
+                          : const Color.fromARGB(69, 33, 149,
+                              243), // Đặt màu nền là màu xanh dương
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // Đặt borderRadius thành zero
+                      ),
+                    ),
+                    child: Text(
+                      'Update',
+                      style: TextStyle(
+                          color: Colors.white), // Đặt màu chữ là màu trắng
+                    ),
+                  ),
           ],
         ),
       ),
