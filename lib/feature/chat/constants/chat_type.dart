@@ -19,14 +19,18 @@ class ChatMessage {
 }
 
 class ShecduleMeeting {
+  final String id;
   final String author;
   final String title;
   final DateTime timeEnd;
   final DateTime timeStart;
+  final int isMeeting;
 
   ShecduleMeeting(
-      {required this.author,
+      {required this.id,
+      required this.author,
       required this.title,
       required this.timeEnd,
-      required this.timeStart});
+      required this.timeStart,
+      required this.isMeeting});
 }

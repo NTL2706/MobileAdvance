@@ -6,23 +6,28 @@ import './schedule.dart';
 import '../constants/chat_type.dart';
 import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
+import '../utils/calc_duration.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatelessWidget {
   final ChatUser chatUser;
+  final ScrollController _scrollController = ScrollController();
 
   ChatScreen({required this.chatUser});
 
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
+  void scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
 
-class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ChatProvider>(context);
+    final provider = Provider.of<ChatProvider>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.chatUser.name),
+        title: Text(chatUser.name),
         actions: [
           PopupMenuButton(
             elevation: 50,
@@ -39,7 +44,6 @@ class _ChatScreenState extends State<ChatScreen> {
               // Thêm các mục menu khác nếu cần
             ],
             onSelected: (value) {
-              // Xử lý khi một mục được chọn
               switch (value) {
                 case 1:
                   showModalBottomSheet(
@@ -59,37 +63,27 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: provider.chatmessage.length,
               itemBuilder: (context, index) {
                 if (provider
                         .chatmessage[provider.chatmessage.length - index - 1]
                     is ShecduleMeeting) {
                   return MeetingCard(
-                    author: provider
-                        .chatmessage[provider.chatmessage.length - index - 1]
-                        .author,
-                    title: provider
-                        .chatmessage[provider.chatmessage.length - index - 1]
-                        .title,
-                    timeStart: provider
-                        .chatmessage[provider.chatmessage.length - index - 1]
-                        .timeStart,
-                    timeEnd: provider
-                        .chatmessage[provider.chatmessage.length - index - 1]
-                        .timeEnd,
+                    index: provider.chatmessage.length - index - 1,
                   );
                 } else {
-                  final int lastIndex = provider.chatmessage.length - index - 1;
+                  final int curIndex = provider.chatmessage.length - index - 1;
                   final message =
-                      lastIndex >= 0 ? provider.chatmessage[lastIndex] : null;
+                      curIndex >= 0 ? provider.chatmessage[curIndex] : null;
 
-                  final int nextIndex = lastIndex - 1;
+                  final int nextIndex = curIndex - 1;
                   final nextmessage = nextIndex >= 0 &&
                           provider.chatmessage[nextIndex] is ChatMessage
                       ? provider.chatmessage[nextIndex]
                       : null;
 
-                  final int prevIndex = lastIndex + 1;
+                  final int prevIndex = curIndex + 1;
                   final prevmessage = prevIndex < provider.chatmessage.length &&
                           provider.chatmessage[prevIndex] is ChatMessage
                       ? provider.chatmessage[prevIndex]
@@ -137,7 +131,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             contentPadding: EdgeInsets.all(
                                 16), // Khoảng cách giữa nội dung và mép hộp đựng
                           ),
-                          onSubmitted: (text) => provider.handleSubmitted(text),
+                          onSubmitted: (text) => {
+                            provider.handleSubmitted(text),
+                            scrollToBottom()
+                          },
                         ),
                       ),
                     ),
@@ -153,7 +150,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         onPressed: () {
                           provider.handleSubmitted(provider.textController
                               .text); // Xử lý khi nhấn nút IconButton
-                          FocusScope.of(context).unfocus(); // Ẩn bàn phím
+                          FocusScope.of(context).unfocus();
+                          scrollToBottom(); // Ẩn bàn phím
                         },
                       ),
                     ),
@@ -222,22 +220,19 @@ class ChatBubble extends StatelessWidget {
 }
 
 class MeetingCard extends StatelessWidget {
-  final String author;
-  final String title;
-  final DateTime timeStart;
-  final DateTime timeEnd;
-  final int duration;
+  final int index;
 
   MeetingCard({
-    required this.author,
-    required this.title,
-    required this.timeStart,
-    required this.timeEnd,
-    this.duration = 60, // Default duration is 60 minutes
+    required this.index, // Default duration is 60 minutes
   });
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ChatProvider>(context);
+    final int duration = calculateTimeDifference(
+        provider.chatmessage[index].timeStart,
+        provider.chatmessage[index].timeEnd);
+
     return Container(
       margin: EdgeInsets.only(top: 4, right: 8, left: 8),
       child: Padding(
@@ -246,7 +241,7 @@ class MeetingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Created by: $author',
+              'Created by: ${provider.chatmessage[index].author}',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -258,7 +253,7 @@ class MeetingCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    provider.chatmessage[index].title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -274,14 +269,14 @@ class MeetingCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Start Time: ${getDateTime(timeStart)}',
+              'Start Time: ${getDateTime(provider.chatmessage[index].timeStart)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              'End Time: ${getDateTime(timeEnd)}',
+              'End Time: ${getDateTime(provider.chatmessage[index].timeEnd)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -290,18 +285,59 @@ class MeetingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle join meeting
-                  },
-                  child: Text('Join'),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // Handle more options
-                  },
-                  icon: Icon(Icons.more_vert),
-                ),
+                provider.chatmessage[index].isMeeting == 1
+                    ? ElevatedButton(
+                        onPressed: () {
+                          // Handle join meeting
+                        },
+                        child: Text('Join'),
+                      )
+                    : Text(
+                        'This meeting has been canceled',
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                provider.chatmessage[index].author == 'Me' &&
+                        provider.chatmessage[index].isMeeting == 1
+                    ? PopupMenuButton(
+                        elevation: 50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.zero,
+                        icon: Icon(Icons.more_vert),
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                          PopupMenuItem(
+                            child: Text('Edit Meeting'),
+                            value: 1,
+                          ),
+                          PopupMenuItem(
+                            child: Text('Cancel Meeting'),
+                            value: 2,
+                          ),
+                          // Thêm các mục menu khác nếu cần
+                        ],
+                        onSelected: (value) {
+                          // Xử lý khi một mục được chọn
+                          switch (value) {
+                            case 1:
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return MeetingScheduleBottomSheet(
+                                      id: provider.chatmessage[index].id);
+                                },
+                              );
+                              break;
+                            case 2:
+                              provider.handleCancelScheduleMeeting(
+                                  provider.chatmessage[index].id);
+                              break;
+                          }
+                        },
+                      )
+                    : SizedBox(),
               ],
             ),
           ],

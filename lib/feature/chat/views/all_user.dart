@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'package:final_project_advanced_mobile/feature/chat/constants/chat_type.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './chat_message.dart';
@@ -10,7 +9,7 @@ import '../utils/Image.dart';
 class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ChatProvider>(context);
+    final provider = Provider.of<ChatProvider>(context, listen: true);
 
     return Scaffold(
       body: Column(
