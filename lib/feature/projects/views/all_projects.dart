@@ -150,28 +150,36 @@ class _ProjectPageState extends State<ProjectPage> {
                                           )),
                                     ],
                                   ),
+
                                   SizedBox(height: 12),
+
                                   Text(
                                     project.title!,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+
                                   SizedBox(height: 12),
+
                                   Text(
                                     'Created: ${formatDate(project.createdAt!)}',
                                   ),
+
                                   SizedBox(height: 12),
+
                                   Text(
                                     'Student needed: ${project.numberOfPeople}',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
+
                                   SizedBox(height: 12),
 
                                   Text(
-                                    'Time: ${optionsTimeForJob[project.time]!}',
+                                    'Time: ${optionsTimeForJob[project.time ?? 0]!}',
                                   ),
+
                                   SizedBox(height: 12),
                                   Text(
                                     'Details:',
@@ -235,8 +243,11 @@ class _ProjectPageState extends State<ProjectPage> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ApplyProject()),
+                                              builder: (context) =>
+                                              ApplyProject(
+                                                disableFlag: disableFlag,
+                                                project: project,
+                                              )),
                                           );
                                         },
                                         style: ButtonStyle(

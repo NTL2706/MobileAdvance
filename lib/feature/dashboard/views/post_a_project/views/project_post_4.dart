@@ -133,6 +133,7 @@ class ProjectPost_4 extends StatelessWidget {
                                     final response = await context
                                         .read<JobNotifier>()
                                         .addJob(
+                                            token: context.read<AuthenticateProvider>().authenRepository.token! ,
                                             companyId:
                                                 context
                                                     .read<
@@ -158,8 +159,9 @@ class ProjectPost_4 extends StatelessWidget {
                                           showCancelBtn: true,
                                           confirmBtnText: "OK",
                                           onConfirmBtnTap: () {
-                                            Navigator.of(context).popUntil(
-                                                ModalRoute.withName('/intro'));
+                                            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
+                                              return HomePage();
+                                            },), (route) => false);
                                           },
                                           onCancelBtnTap: () {
                                             Navigator.of(context).pop();
@@ -170,6 +172,7 @@ class ProjectPost_4 extends StatelessWidget {
                                       JobModel.timeForProjectController.clear();
                                       JobModel.numberStudentController.clear();
                                     } else {
+                                      
                                       await QuickAlert.show(
                                           title: "Add Job",
                                           context: context,
@@ -178,14 +181,7 @@ class ProjectPost_4 extends StatelessWidget {
                                           showCancelBtn: true,
                                           confirmBtnText: "OK",
                                           onConfirmBtnTap: () {
-                                            Navigator.of(context)
-                                                .pushAndRemoveUntil(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomePage(),
-                                              ),
-                                              (route) => false,
-                                            );
+                                            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
                                           },
                                           onCancelBtnTap: () {
                                             Navigator.of(context).pop();

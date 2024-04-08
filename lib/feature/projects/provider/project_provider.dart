@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../constants/projetcs_type.dart';
 import "package:http/http.dart" as http;
 class ProjectProvider extends ChangeNotifier {
-  HttpResponse<List<Map<String,dynamic>>> responseHttp = HttpResponse<List<Map<String,dynamic>>>.unknown();
+  HttpResponse responseHttp = HttpResponse<List<Map<String,dynamic>>>.unknown();
   List<Map<String,dynamic>>? favouriteProjectList;
   // List<Project> _projects = [ 
   //   Project(
@@ -185,6 +185,7 @@ class ProjectProvider extends ChangeNotifier {
     }
   )async{
     try{
+      responseHttp = HttpResponse<List<Map<String,dynamic>>>.unknown();
       final rs = await http.get(
         headers: {
           HttpHeaders.authorizationHeader:'Bearer $token'
@@ -211,10 +212,53 @@ class ProjectProvider extends ChangeNotifier {
         "result": result,
         "status": rs.statusCode
       });
-      return responseHttp;
+      return responseHttp as HttpResponse<List<Map<String,dynamic>>>;
     }on Exception catch(e){
       print(e);
-      return responseHttp;
+      return responseHttp as HttpResponse<List<Map<String,dynamic>>>;
+    }
+  }
+
+  Future<void> applyProposal({
+    required String token,
+    required int projectId,
+    required int studentId,
+    required String coverLetter,
+    required bool disableFlag
+  })async{
+    try{
+      responseHttp = HttpResponse<Map<String,dynamic>>.unknown();
+      Map<String, dynamic> data = Map();
+      data['projectId'] = projectId;
+      data['studentId'] = studentId;
+      data['coverLetter'] = coverLetter;
+      data['statusFlag'] = 0;
+      data['disableFlag'] = disableFlag == false ? 0 : 1;
+      final rs = await http.post(
+        Uri.parse("${env.apiURL}api/proposal"),
+        headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token",
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode(data)
+      );
+
+      final body = json.decode(rs.body);
+      if (body["errorDetails"] != null){
+        throw Exception(body["errorDetails"]);
+      }
+      
+      final result = Map<String,dynamic>.from(body['result']);
+      responseHttp.updateResponse({
+        "result": result,
+        "status": rs.statusCode
+      });
+    }on Exception catch(e){
+      print(e);
+      responseHttp.updateResponse({
+        "message": e.toString()
+      });
     }
   }
 }

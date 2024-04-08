@@ -5,9 +5,12 @@ import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
 Map<int, String> optionsTimeForJob = {
-  0:"1 to 3 months",
-  1:"3 to 6 months"
+  0:"lessthanonemonth",
+  1:"1 to 3 months",
+  2:"3 to 6 months",
+  3:"MoreThanSixMOnth"
 };
+
 class ProjectPost_2 extends StatelessWidget{
   int? currentOption = 0;
   @override

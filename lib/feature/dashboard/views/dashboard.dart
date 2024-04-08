@@ -6,6 +6,7 @@ import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_pro
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 // List<JobModel> jobList = [
@@ -182,156 +183,170 @@ class AllProjectWidget extends StatelessWidget {
     // jobList = jobList.where((element){
     //   return element.state == state;
     // },).toList();
+    final role = context.read<AuthenticateProvider>().authenRepository.role;
+
     jobList = jobList.where((element) {
       return element['deletedAt'] == null;
     }).toList();
     
     return Container(
-      child: ListView.builder(
-        itemCount: jobList.length,
-        itemBuilder: (context, index){
-          JobModel job = JobModel.jsonFrom(jobList[index]);
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) {
-                  return ManageProject();
-                },
-              ));
-            },
-            child: Container(
-                margin: EdgeInsets.only(top: 5),
-                height: 165,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: Colors.grey.shade200,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(job.title!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.bold)),
-                        SizedBox(
-                            height: 30,
-                            child: PopupMenuButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (role == "student")
+          Text("Your proposal(${jobList.length})",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold
+          ), ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: jobList.length,
+              itemBuilder: (context, index){
+                JobModel job = JobModel.jsonFrom(jobList[index]);
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return ManageProject();
+                      },
+                    ));
+                  },
+                  child: Container(
+                      margin: EdgeInsets.only(top: 5),
+                      height: 165,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: Colors.grey.shade200,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(job.title!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(fontWeight: FontWeight.bold)),
+                              if(role == "company")
+                              SizedBox(
+                                  height: 30,
+                                  child: PopupMenuButton(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30)
+                                    ),
+                                    color: Colors.white,
+                                    itemBuilder: (context) {
+                                      return [
+                                        PopupMenuItem(  
+                                          onTap: (){},
+                                          child: Text("View proposals")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: (){},
+                                          child: Text("View messages")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: (){},
+                                          child: Text("View hired")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: (){},
+                                          child: Text("View job posting")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: (){},
+                                          child: Text("Edit posting")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: ()async{
+                                            await context.read<JobNotifier>().deleteJob(id:job.id!);
+                                          },
+                                          child: Text("Remove posting")
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: (){
+                                            // context.read<JobNotifier>().updateJob(id: job.id!, state: JobState.working.name);
+                                          },
+                                          child: Text("Start working")
+                                        ),
+                                      ];
+                                    }, 
+                                  ) 
+                                )
+                            ],
+                          ),
+                          Text(job.createAt!),
+                          Text("Student are looking for"),
+                          Text("${"-\r${job.description}"}"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                            alignment: Alignment.center,
+                                            height: 25,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: Colors.black)),
+                                            child:Text("${job.proposalNumber}")),
+                                      Text("Proposals")
+                                    ],
+                                  ),
+                                ),
                               ),
-                              color: Colors.white,
-                              itemBuilder: (context) {
-                                return [
-                                  PopupMenuItem(  
-                                    onTap: (){},
-                                    child: Text("View proposals")
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height: 25,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.black)),
+                                          child: Text("${job.messagesNumber}")),
+                                      Text("Messages")
+                                    ],
                                   ),
-                                  PopupMenuItem(
-                                    onTap: (){},
-                                    child: Text("View messages")
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height: 25,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.black)),
+                                          child: Text("${job.hiredNumber}")),
+                                      Text("Hired")
+                                    ],
                                   ),
-                                  PopupMenuItem(
-                                    onTap: (){},
-                                    child: Text("View hired")
-                                  ),
-                                  PopupMenuItem(
-                                    onTap: (){},
-                                    child: Text("View job posting")
-                                  ),
-                                  PopupMenuItem(
-                                    onTap: (){},
-                                    child: Text("Edit posting")
-                                  ),
-                                  PopupMenuItem(
-                                    onTap: ()async{
-                                      await context.read<JobNotifier>().deleteJob(id:job.id!);
-                                    },
-                                    child: Text("Remove posting")
-                                  ),
-                                  PopupMenuItem(
-                                    onTap: (){
-                                      // context.read<JobNotifier>().updateJob(id: job.id!, state: JobState.working.name);
-                                    },
-                                    child: Text("Start working")
-                                  ),
-                                ];
-                              }, 
-                            ) 
+                                ),
+                              ),
+                            ],
                           )
-                      ],
+                        ],
+                      ),
                     ),
-                    Text(job.createAt!),
-                    Text("Student are looking for"),
-                    Text("${"-\r${job.description}"}"),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: [
-                                Container(
-                                      alignment: Alignment.center,
-                                      height: 25,
-                                      width: 20,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.black)),
-                                      child:Text("${job.proposalNumber}")),
-                                Text("Proposals")
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: [
-                                Container(
-                                    alignment: Alignment.center,
-                                    height: 25,
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.black)),
-                                    child: Text("${job.messagesNumber}")),
-                                Text("Messages")
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: [
-                                Container(
-                                    alignment: Alignment.center,
-                                    height: 25,
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.black)),
-                                    child: Text("${job.hiredNumber}")),
-                                Text("Hired")
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-          );
-        },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

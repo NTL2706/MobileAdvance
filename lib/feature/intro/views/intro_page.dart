@@ -19,12 +19,16 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future.delayed(Duration(milliseconds: 100),() {
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+    },); 
   }
 
   @override
   Widget build(BuildContext context) {
     String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
     print("/intro");
+
     return role == "" ? Scaffold(
       resizeToAvoidBottomInset: true,
         body: Container(

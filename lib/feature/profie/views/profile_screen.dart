@@ -245,10 +245,8 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
               title: "Logout",
               onTap: () async {
                 await context.read<AuthenticateProvider>().signOut();
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => IntroPage(),
-                    ),
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/intro',
                     (route) => false);
               },
             ),
