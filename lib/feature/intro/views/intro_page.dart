@@ -19,17 +19,20 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(milliseconds: 100),() {
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-    },); 
+    String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
+    if (role != ""){
+      Future.delayed(Duration(milliseconds: 100),() {
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+      },); 
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
+    
     print("/intro");
-
-    return role == "" ? Scaffold(
+    
+    return  Scaffold(
       resizeToAvoidBottomInset: true,
         body: Container(
             color: Color(0xFFCE5A67),
@@ -127,6 +130,6 @@ class _IntroPageState extends State<IntroPage> {
                   ),
                 ],
               ),
-            ))): HomePage();
+            )));
   }
 }

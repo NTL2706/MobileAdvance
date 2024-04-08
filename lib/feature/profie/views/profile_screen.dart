@@ -11,12 +11,13 @@ import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
-  
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProviderStateMixin{
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
   bool isAccountListVisible = false;
   late AnimationController _controller;
   late Animation _animation;
@@ -31,25 +32,33 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
     _controller.forward();
     super.initState();
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
     _controller.dispose();
-    
+
     super.dispose();
-   
   }
+
   @override
   Widget build(BuildContext context) {
     String? role = context.read<AuthenticateProvider>().authenRepository.role;
-    String? username = context.read<AuthenticateProvider>().authenRepository.username;
+    String? username =
+        context.read<AuthenticateProvider>().authenRepository.username;
     Map<String, dynamic>? switchProfile;
-
+    if (role == null || username == null) {
+      Future.delayed(Duration(milliseconds: 200), () {
+        context.read<AuthenticateProvider>().signOut();
+        return IntroPage();
+      });
+    }
     if (role == "company") {
-      switchProfile = context.read<AuthenticateProvider>().authenRepository.company;
+      switchProfile =
+          context.read<AuthenticateProvider>().authenRepository.company;
       username = switchProfile?['companyName'];
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
@@ -97,6 +106,14 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
     Map<String, dynamic>? switchProfile;
     String? username =
         context.read<AuthenticateProvider>().authenRepository.username;
+
+    if (role == null || username == null) {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+        builder: (context) {
+          return IntroPage();
+        },
+      ), (route) => false);
+    }
     if (role == "student") {
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.company;
@@ -105,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.student;
     }
-    
+
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
       opacity: isAccountListVisible ? 1.0 : 0.0,
@@ -124,9 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(username!),
-                          if(role == 'student')
-                          Icon(Icons.home)
-                        ],),
+                          if (role == 'student') Icon(Icons.home)
+                        ],
+                      ),
                       onTap: () async {
                         if (role == "student") {
                           await context
@@ -137,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
                               .read<AuthenticateProvider>()
                               .switchProfile(role: "student");
                         }
-                        
+
                         await Navigator.of(context).pushAndRemoveUntil(
                             PageRouteBuilder(
                               pageBuilder:
@@ -146,9 +163,9 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
                                 const begin = Offset(0.0, 1.0);
-                            const end = Offset.zero;
-                            final tween = Tween(begin: begin, end: end);
-                            final offsetAnimation = animation.drive(tween);
+                                const end = Offset.zero;
+                                final tween = Tween(begin: begin, end: end);
+                                final offsetAnimation = animation.drive(tween);
                                 return SlideTransition(
                                   position: offsetAnimation,
                                   child: child,
@@ -163,11 +180,13 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
                       title: role == "student"
                           ? Text("Add company")
                           : Text("Add student"),
-                      onTap: role == "student" ? () {
-                        createProfile("company");
-                      } : () {
-                        createProfile("student");
-                      },
+                      onTap: role == "student"
+                          ? () {
+                              createProfile("company");
+                            }
+                          : () {
+                              createProfile("student");
+                            },
                     )
             ],
           ),
@@ -176,25 +195,28 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
     );
   }
 
-  void createProfile(String role)async{
+  void createProfile(String role) async {
     print(role);
     await Navigator.of(context).pushAndRemoveUntil(
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) => CreateProfilePage(role: role,),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              const begin = Offset(0.0, 1.0);
-                              const end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final offsetAnimation = animation.drive(tween);
-                                return SlideTransition(
-                                  position: offsetAnimation,
-                                  child: child,
-                                );
-                              },
-                            ),
-                            (route) => false);
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              CreateProfilePage(
+            role: role,
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0);
+            const end = Offset.zero;
+            final tween = Tween(begin: begin, end: end);
+            final offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+        ),
+        (route) => false);
   }
+
   Widget _appProfileAction() {
     return Expanded(
       child: Container(
@@ -245,9 +267,8 @@ class _ProfileScreenState extends State<ProfileScreen>  with SingleTickerProvide
               title: "Logout",
               onTap: () async {
                 await context.read<AuthenticateProvider>().signOut();
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/intro',
-                    (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/intro', (route) => false);
               },
             ),
             const SizedBox(height: 20),
