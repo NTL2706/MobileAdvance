@@ -9,8 +9,6 @@ import '../utils/Image.dart';
 class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ChatProvider>(context, listen: true);
-
     return Scaffold(
       body: Column(
         children: [
@@ -35,7 +33,9 @@ class MessageWidget extends StatelessWidget {
             child: Container(
               color: Colors.grey[200],
               child: ListView.builder(
-                itemCount: provider.chatusers
+                itemCount: context
+                    .watch<ChatProvider>()
+                    .chatusers
                     .length, // Replace this with your actual data count
                 itemBuilder: (context, index) {
                   return Padding(
@@ -44,9 +44,16 @@ class MessageWidget extends StatelessWidget {
                         leading: Container(
                           width: 55, // Kích thước mặc định bạn muốn đặt
                           height: 55,
-                          child: provider.chatusers[index].avatar != null
+                          child: context
+                                      .read<ChatProvider>()
+                                      .chatusers[index]
+                                      .avatar !=
+                                  null
                               ? CustomImage(
-                                  imageUrl: provider.chatusers[index].avatar,
+                                  imageUrl: context
+                                      .read<ChatProvider>()
+                                      .chatusers[index]
+                                      .avatar,
                                   borderRadius: BorderRadius.circular(50),
                                 )
                               : Icon(
@@ -57,9 +64,15 @@ class MessageWidget extends StatelessWidget {
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(provider.chatusers[index].name), // User name
+                            Text(context
+                                .read<ChatProvider>()
+                                .chatusers[index]
+                                .name), // User name
                             Text(
-                              provider.chatusers[index].role,
+                              context
+                                  .read<ChatProvider>()
+                                  .chatusers[index]
+                                  .role,
                               style: TextStyle(
                                   color: Colors.redAccent,
                                   fontSize: 16,
@@ -69,10 +82,17 @@ class MessageWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  provider.chatusers[index].message[0],
+                                  context
+                                      .read<ChatProvider>()
+                                      .chatusers[index]
+                                      .message[0],
                                   style: TextStyle(color: Colors.black38),
                                 ),
-                                if (provider.chatusers[index].seen == true)
+                                if (context
+                                        .read<ChatProvider>()
+                                        .chatusers[index]
+                                        .seen ==
+                                    true)
                                   Icon(
                                     Icons.circle,
                                     size: 10,
@@ -90,7 +110,9 @@ class MessageWidget extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                    chatUser: provider.chatusers[
+                                    chatUser: context
+                                            .read<ChatProvider>()
+                                            .chatusers[
                                         index])), // Điều hướng đến màn hình chat
                           );
                           // Handle tapping on the message

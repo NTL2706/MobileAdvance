@@ -133,18 +133,21 @@ class ProjectPost_4 extends StatelessWidget {
                                     final response = await context
                                         .read<JobNotifier>()
                                         .addJob(
-                                            token: context.read<AuthenticateProvider>().authenRepository.token! ,
-                                            companyId:
+                                            token:
                                                 context
                                                     .read<
                                                         AuthenticateProvider>()
                                                     .authenRepository
-                                                    .company?['id']
-                                                    .toString(),
-                                            title: JobModel
-                                                .titleController.text,
-                                            projectScopeFlag: int.parse(
-                                                JobModel
+                                                    .token!,
+                                            companyId: context
+                                                .read<AuthenticateProvider>()
+                                                .authenRepository
+                                                .company?['id']
+                                                .toString(),
+                                            title:
+                                                JobModel.titleController.text,
+                                            projectScopeFlag: int
+                                                .parse(JobModel
                                                     .timeForProjectController
                                                     .text),
                                             description: JobModel
@@ -159,9 +162,13 @@ class ProjectPost_4 extends StatelessWidget {
                                           showCancelBtn: true,
                                           confirmBtnText: "OK",
                                           onConfirmBtnTap: () {
-                                            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {
-                                              return HomePage();
-                                            },), (route) => false);
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                              builder: (context) {
+                                                return HomePage();
+                                              },
+                                            ), (route) => false);
                                           },
                                           onCancelBtnTap: () {
                                             Navigator.of(context).pop();
@@ -172,7 +179,6 @@ class ProjectPost_4 extends StatelessWidget {
                                       JobModel.timeForProjectController.clear();
                                       JobModel.numberStudentController.clear();
                                     } else {
-                                      
                                       await QuickAlert.show(
                                           title: "Add Job",
                                           context: context,
@@ -181,7 +187,8 @@ class ProjectPost_4 extends StatelessWidget {
                                           showCancelBtn: true,
                                           confirmBtnText: "OK",
                                           onConfirmBtnTap: () {
-                                            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                                            Navigator.of(context).popUntil(
+                                                ModalRoute.withName('/home'));
                                           },
                                           onCancelBtnTap: () {
                                             Navigator.of(context).pop();

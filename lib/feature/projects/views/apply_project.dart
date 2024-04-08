@@ -75,7 +75,7 @@ class ApplyProject extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.green,
                           content: Text(
-                            "Sended fail",
+                            "Sended success",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
