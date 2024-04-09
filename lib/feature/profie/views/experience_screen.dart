@@ -1,6 +1,7 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
-import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/project_experience.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/skill.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/input.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +20,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
   final TextEditingController _controller =
       TextEditingController(text: 'DevOps');
 
-  List<String> selectedSkills = [];
+  List<Skill> selectedSkills = [];
 
   final List<Project> projects = [];
 
@@ -128,7 +129,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                             children: [
                               ...projects[index].skillSet.map((skill) {
                                 return Chip(
-                                  label: Text(skill),
+                                  label: Text(skill.name),
                                   onDeleted: () {},
                                 );
                               }).toList(),
@@ -192,19 +193,10 @@ class ProjectFormScreen extends StatefulWidget {
 }
 
 class _ProjectFormScreenState extends State<ProjectFormScreen> {
-  List<String> skills = [
-    'Flutter',
-    'Dart',
-    'Firebase',
-    'UI/UX Design',
-    'Backend Development',
-    'Frontend Development',
-    'Mobile Development',
-    'Web Development',
-    'Database Management'
+  List<Skill> skills = [
   ];
 
-  List<String> selectedSkills = [];
+  List<Skill> selectedSkills = [];
 
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -242,11 +234,16 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
             ),
             SizedBox(height: 16.0),
             SkillWidget(
-              selectedSkills: selectedSkills,
+              selectedSkills: selectedSkills.map((skill) => Skill(id: skill.id, name: skill.name)).toList(),
               skills: skills,
-              onSkillSelected: (String value) {
+              onSkillSelected: (Skill value) {
                 setState(() {
                   selectedSkills.add(value);
+                });
+              },
+              onSkillRemoved: (Skill value) {
+                setState(() {
+                  selectedSkills.remove(value);
                 });
               },
             ),

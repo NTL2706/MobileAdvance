@@ -22,16 +22,15 @@ class EducationWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: TextFormField(
-                controller:
-                    TextEditingController(), // Tạo một TextEditingController mới
-                enabled: false,
-                decoration: const InputDecoration(
-                  labelText: 'Education',
-                  labelStyle: AppTextStyles.bodyStyle,
-                  disabledBorder: InputBorder.none,
-                ),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Education",
+                    style: AppTextStyles.headerStyle,
+                  )
+                ],
               ),
             ),
             IconButton(

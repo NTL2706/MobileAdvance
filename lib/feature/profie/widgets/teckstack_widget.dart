@@ -1,15 +1,18 @@
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/techstack.dart';
 import 'package:flutter/material.dart';
 
 class TechstackWidget extends StatelessWidget {
-  final String selectedTech;
+  final TechStack selectedTech;
+  final List<TechStack> techStacks;
   final TextEditingController controller = TextEditingController();
-  final Function(String) onExpertiseSelected;
+  final Function(TechStack) onExpertiseSelected;
 
   TechstackWidget({
     Key? key,
     required this.selectedTech,
     required this.onExpertiseSelected,
+    required this.techStacks,
   }) : super(key: key);
 
   @override
@@ -17,36 +20,36 @@ class TechstackWidget extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: TextFormField(
-            controller: TextEditingController(text: selectedTech),
-            enabled: false,
-            decoration: const InputDecoration(
-              labelText: 'Tech stack',
-              labelStyle: AppTextStyles.headerStyle,
-              disabledBorder: InputBorder.none,
-            ),
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Căn lề văn bản sang bên trái
+            children: [
+              const Text(
+                'Tech stack',
+                style: AppTextStyles.headerStyle, // Style cho label
+              ),
+              Text(
+                selectedTech.name,
+                style: AppTextStyles.bodyStyle,
+              ),
+            ],
           ),
         ),
-        PopupMenuButton<String>(
-            onSelected: onExpertiseSelected,
-            itemBuilder: (BuildContext context) => [
-                  'Fullstack',
-                  'Mobile',
-                  'Backend',
-                  'Frontend',
-                  'DevOps',
-                  'QA',
-                  'Other'
-                ].map<PopupMenuItem<String>>((String value) {
-                  return PopupMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-            icon: const Icon(Icons.edit),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            )),
+        PopupMenuButton<TechStack>(
+          onSelected: onExpertiseSelected,
+          itemBuilder: (BuildContext context) {
+            return techStacks.map((TechStack value) {
+              return PopupMenuItem<TechStack>(
+                value: value,
+                child: Text(value.name),
+              );
+            }).toList();
+          },
+          icon: const Icon(Icons.edit),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
       ],
     );
   }

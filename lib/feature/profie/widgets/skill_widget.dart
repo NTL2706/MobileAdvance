@@ -1,16 +1,19 @@
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/skill.dart';
 import 'package:flutter/material.dart';
 
 class SkillWidget extends StatelessWidget {
-  final List<String> selectedSkills;
-  final List<String> skills;
-  final Function(String) onSkillSelected;
+  final List<Skill> selectedSkills;
+  final List<Skill> skills;
+  final Function(Skill) onSkillSelected;
+  final Function(Skill) onSkillRemoved;
 
   const SkillWidget({
     Key? key,
     required this.selectedSkills,
     required this.skills,
     required this.onSkillSelected,
+    required this.onSkillRemoved,
   }) : super(key: key);
 
   @override
@@ -20,25 +23,28 @@ class SkillWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: null, // Tạo một TextEditingController mới
-                enabled: false,
-                decoration: const InputDecoration(
-                  labelText: 'Skill',
-                  labelStyle: AppTextStyles.bodyStyle,
-                  disabledBorder: InputBorder.none,
-                ),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Căn lề văn bản sang bên trái
+                children: [
+                  Text(
+                    'Skill',
+                    style: AppTextStyles.headerStyle, // Style cho label
+                  ),
+                ],
               ),
             ),
-            PopupMenuButton<String>(
+            PopupMenuButton<Skill>(
               onSelected: onSkillSelected,
-              itemBuilder: (BuildContext context) => skills.map((String skill) {
-                return PopupMenuItem<String>(
-                  value: skill,
-                  child: Text(skill),
-                );
-              }).toList(),
+              itemBuilder: (BuildContext context) {
+                return skills.map((Skill skill) {
+                  return PopupMenuItem<Skill>(
+                    value: skill,
+                    child: Text(skill.name),
+                  );
+                }).toList();
+              },
               icon: Icon(Icons.add),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -53,12 +59,9 @@ class SkillWidget extends StatelessWidget {
           children: [
             ...selectedSkills.map((skill) {
               return Chip(
-                label: Text(skill),
+                label: Text(skill.name ?? ''),
                 onDeleted: () {
-                  // Remove the skill from the list when the chip is deleted
-                  // Notify the parent widget about the change
-                  selectedSkills.remove(skill);
-                  onSkillSelected(skill);
+                  onSkillRemoved(skill);
                 },
               );
             }).toList(),

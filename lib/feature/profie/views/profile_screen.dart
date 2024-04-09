@@ -1,6 +1,8 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/providers/profile_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
@@ -15,7 +17,23 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileProvider profileProvider = ProfileProvider();
+
   bool isAccountListVisible = false;
+  Profile? profile = null;
+
+  void _loadSkillsDefault() async {
+    await profileProvider.getProfileUser();
+    setState(() {
+      profile = profileProvider.profile;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkillsDefault();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +54,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _appProfileBar() {
     return Container(
       padding: const EdgeInsets.all(10.0),
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundImage: AssetImage("assets/images/logo.png"),
             radius: 40,
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Column(
             children: [
               Text(
-                "Nguyen Van A",
-                style: TextStyle(
+                profile != null ? profile!.name : "",
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text("Profile"),
+              const Text("Profile"),
             ],
           ),
         ],
@@ -129,7 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                     // builder: (context) => const DetailProfileCompanyScreen(),
-                    builder: (context) => const DetailProfileStudentScreen(),
+                    builder: (context) => DetailProfileStudentScreen(
+                      profile: profile,
+                    ),
                   ),
                 );
               },
@@ -144,9 +164,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileListTile(
               icon: Icons.logout,
               title: "Logout",
-              onTap: () async{
+              onTap: () async {
                 await context.read<AuthenticateProvider>().signOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => IntroPage(),), (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => IntroPage(),
+                    ),
+                    (route) => false);
               },
             ),
             const SizedBox(height: 20),

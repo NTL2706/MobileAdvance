@@ -1,9 +1,11 @@
+import 'package:final_project_advanced_mobile/feature/profie/models/skill.dart';
+
 class Project {
   String name;
   DateTime startDate;
   DateTime endDate;
   String description;
-  List<String> skillSet;
+  List<Skill> skillSet;
 
   Project({
     required this.name,

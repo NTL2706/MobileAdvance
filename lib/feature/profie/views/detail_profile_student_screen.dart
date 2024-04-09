@@ -1,6 +1,10 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/education_info.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/skill.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/techstack.dart';
+import 'package:final_project_advanced_mobile/feature/profie/providers/profile_student_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/experience_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/education_widger.dart';
@@ -10,7 +14,9 @@ import 'package:final_project_advanced_mobile/feature/profie/widgets/teckstack_w
 import 'package:flutter/material.dart';
 
 class DetailProfileStudentScreen extends StatefulWidget {
-  const DetailProfileStudentScreen({super.key});
+  Profile? profile;
+
+  DetailProfileStudentScreen({super.key, required this.profile});
 
   @override
   State<DetailProfileStudentScreen> createState() =>
@@ -19,31 +25,34 @@ class DetailProfileStudentScreen extends StatefulWidget {
 
 class _DetailProfileStudentScreenState
     extends State<DetailProfileStudentScreen> {
-  final TextEditingController _controller =
-      TextEditingController(text: 'DevOps');
+  final profileStudentProvider = ProfileStudentProvider();
 
-  String selectedTech = 'Fullstack';
+  TechStack selectedTech = TechStack(name: "", id: 1);
+  List<Skill> selectedSkills = [];
+  List<Skill> skills = [];
+  List<TechStack> techStacks = [];
+  List<EducationInfo> educationList = [];
 
-  List<String> skills = [
-    'Flutter',
-    'Dart',
-    'Firebase',
-    'UI/UX Design',
-    'Backend Development',
-    'Frontend Development',
-    'Mobile Development',
-    'Web Development',
-    'Database Management'
-  ];
+  bool shouldUpdate = false;
 
-  List<EducationInfo> educationList = [
-    EducationInfo('School A', 2021, 2002),
-    EducationInfo('School B', 2022, 2002),
-    EducationInfo('School C', 2023, 2002),
-    EducationInfo('School D', 2024, 2002),
-  ];
+  void _loadSkillsDefault() async {
+    await profileStudentProvider.getSkillsDefault();
+    await profileStudentProvider.getTechStackDefault();
 
-  List<String> selectedSkills = [];
+    setState(() {
+      skills = profileStudentProvider.skills;
+      techStacks = profileStudentProvider.techStack;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkillsDefault();
+    selectedTech = widget.profile!.studentProfile!.techStack;
+    selectedSkills = widget.profile!.studentProfile!.skill ?? [];
+    educationList = widget.profile!.studentProfile!.educationInfo ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +70,10 @@ class _DetailProfileStudentScreenState
   Widget _appDetailProfileBar() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 80,
             height: 80,
             child: CircleAvatar(
@@ -72,12 +81,12 @@ class _DetailProfileStudentScreenState
               radius: 40,
             ),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Nguyen Van A",
+                widget.profile!.name ?? "",
                 style: AppTextStyles.headerStyle,
               ),
               Text("HCMUS", style: AppTextStyles.bodyStyle),
@@ -127,37 +136,65 @@ class _DetailProfileStudentScreenState
                 );
               },
             ),
-
+            const SizedBox(height: 20),
             // Tech stack
             TechstackWidget(
-                selectedTech: selectedTech,
-                onExpertiseSelected: (String value) {
-                  setState(() {
-                    selectedTech = value;
-                  });
-                }),
+              selectedTech: selectedTech,
+              onExpertiseSelected: (TechStack value) {
+                print(value.name);
+                setState(() {
+                  selectedTech = value;
+                  shouldUpdate = true;
+                });
+              },
+              techStacks: techStacks,
+            ),
+            const SizedBox(height: 20),
             // Skills
             SkillWidget(
               selectedSkills: selectedSkills,
               skills: skills,
-              onSkillSelected: (String value) {
+              onSkillSelected: (Skill value) {
                 setState(() {
                   selectedSkills.add(value);
+                  shouldUpdate = true;
+                });
+              },
+              onSkillRemoved: (Skill value) {
+                setState(() {
+                  selectedSkills.remove(value);
+                  shouldUpdate = true;
                 });
               },
             ),
+            const SizedBox(height: 20),
+
+            // Button update tech stack and skills
+            shouldUpdate
+                ? ElevatedButton(
+                    onPressed: _handleUpdate,
+                    child: Text('Update'),
+                  )
+                : SizedBox(),
+
             // Education history
             EducationWidget(
               educationList: educationList,
               addEducationInfo: () {
                 setState(() {
                   educationList.add(EducationInfo(
-                      'New School', DateTime.now().year, DateTime.now().year));
+                    schoolName: 'New School',
+                    startYear: DateTime.now().year,
+                    endYear: DateTime.now().year,
+                    id: 21,
+                  ));
+                  shouldUpdate = true;
                 });
               },
               deleteEducationInfo: (index) {
                 setState(() {
                   educationList.removeAt(index);
+                  shouldUpdate = true;
                 });
               },
               editEducationInfo: (index, schoolName, startYear, endYear) {
@@ -165,6 +202,7 @@ class _DetailProfileStudentScreenState
                   educationList[index].schoolName = schoolName;
                   educationList[index].startYear = int.parse(startYear);
                   educationList[index].endYear = int.parse(endYear);
+                  educationList[index].id = 12;
                 });
                 Navigator.of(context).pop();
               },
@@ -173,5 +211,11 @@ class _DetailProfileStudentScreenState
         ),
       ),
     );
+  }
+
+  void _handleUpdate() {
+    setState(() {
+      shouldUpdate = false;
+    });
   }
 }

@@ -2,6 +2,12 @@ class EducationInfo {
   String schoolName;
   int startYear;
   int endYear;
+  int id;
 
-  EducationInfo(this.schoolName, this.startYear, this.endYear);
+  EducationInfo({
+    required this.id,
+    required this.schoolName,
+    required this.startYear,
+    required this.endYear,
+  });
 }
