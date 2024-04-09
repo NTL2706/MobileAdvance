@@ -31,11 +31,6 @@ class ProfileRepository {
       final body = json.decode(result.body);
 
       _skillSetList = List<Map<String, dynamic>>.from(body['result']);
-      // (body['result'] as List<dynamic>).forEach((element) {
-      //   // print(element as Map<String, dynamic>);
-      //   a.add(element as Map<String, dynamic>);
-      // });
-      // _skillSetList = a;
 
       return AuthResult.success;
     } on Exception catch (e) {
@@ -98,6 +93,4 @@ class ProfileRepository {
       return AuthResult.failure;
     }
   }
-
-  
 }
