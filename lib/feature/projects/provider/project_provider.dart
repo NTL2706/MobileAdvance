@@ -8,8 +8,7 @@ import "package:http/http.dart" as http;
 import 'package:collection/collection.dart';
 
 class ProjectProvider extends ChangeNotifier {
-  HttpResponse responseHttp =
-      HttpResponse<List<Map<String, dynamic>>>.unknown();
+  HttpResponse responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
   List<Map<String, dynamic>>? favouriteProjectList;
   List<Project> _projects = [];
   List<Project> _filteredProjects = [];

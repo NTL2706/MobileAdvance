@@ -22,6 +22,7 @@ class ProjectPage extends StatefulWidget {
 class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
+    print("rebuild");
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -100,7 +101,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   // final project = projectProvider.projects[index];
                   // final project =
                   //     Project.fromJson(snapshot.data?.result?[index]);
-
+                  print("Hello");
                   final project =
                       context.read<ProjectProvider>().projects[index];
 

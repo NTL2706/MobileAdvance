@@ -1,7 +1,11 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:provider/provider.dart';
 
 class DetailProfileStudentScreen extends StatefulWidget {
   const DetailProfileStudentScreen({super.key});
@@ -16,7 +20,7 @@ class _DetailProfileStudentScreenState
   final TextEditingController _controller =
       TextEditingController(text: 'DevOps');
 
-  String? selectedExpertise = 'Fullstack';
+  String? selectedExpertise = 'Fullstack Engineer';
 
   List<String> skills = [
     'Flutter',
@@ -34,21 +38,57 @@ class _DetailProfileStudentScreenState
 
   @override
   Widget build(BuildContext context) {
+    final studentId =
+        context.read<AuthenticateProvider>().authenRepository.student?['id'];
+    final token = context.read<AuthenticateProvider>().authenRepository.token;
+   
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
         elevation: 0,
       ),
-      body: Column(
-        children: [_appDetailProfileBar(), _appDetailProfile()],
-      ),
+      body: FutureBuilder(
+          future: Future.wait([
+            context.read<ProfileProvider>().getProfileStudent(studentId: studentId, token: token!),
+            context.read<ProfileProvider>().getAllSkillSet(),
+            context.read<ProfileProvider>().getAllTechStack(),
+
+          ]),
+          builder: (context, snapshot) {
+            final getSkillSet = context.read<ProfileProvider>().studentProfile?['skillSets'];
+            String teckStack = context.read<ProfileProvider>().studentProfile?['techStack']['name'];
+            List<Map<String,dynamic>> allOfTechStack = context.read<ProfileProvider>().profileRepository.techStackList!;
+            List<Map<String,dynamic>> allOfSkillSets = context.read<ProfileProvider>().profileRepository.techStackList!;
+            List<MultiSelectItem<String>> skillSetList =
+                List<Map<String, dynamic>>.from(getSkillSet).map(
+              (e) {
+                return MultiSelectItem<String>(e['id'].toString(), e['name']);
+              },
+            ).toList();
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container();
+            }
+
+            return Column(
+              children: [
+                _appDetailProfileBar(), 
+                detailProfile(
+                  skillSetList: skillSetList,
+                  teckStack: teckStack,
+                  allOfTechStack: allOfTechStack,
+                )],
+            );
+          }),
     );
   }
 
   Widget _appDetailProfileBar() {
+    final fullname =
+        context.read<ProfileProvider>().studentProfile?['fullname'];
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
@@ -64,7 +104,7 @@ class _DetailProfileStudentScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Nguyen Van A",
+                fullname,
                 style: AppTextStyles.headerStyle,
               ),
               Text("HCMUS", style: AppTextStyles.bodyStyle),
@@ -76,7 +116,65 @@ class _DetailProfileStudentScreenState
     );
   }
 
-  Widget _appDetailProfile() {
+}
+
+class detailProfile extends StatefulWidget{
+  
+   detailProfile(
+    {
+      super.key,
+      required this.teckStack,
+      required this.skillSetList,
+      required this.allOfTechStack
+    });
+  String teckStack;
+  List<MultiSelectItem<String>> skillSetList;
+  List<Map<String,dynamic>> allOfTechStack;
+  @override
+  State<detailProfile> createState() => _detailProfileState();
+}
+
+class _detailProfileState extends State<detailProfile> {
+  List<String> _selectedSkillset = [];
+  void _showMultiSelect(BuildContext context,List<MultiSelectItem<String>> selectedSkillSetList) async {
+    await showModalBottomSheet(
+      isScrollControlled: true, // required for min/max child size
+      context: context,
+      builder: (ctx) {
+        return MultiSelectBottomSheet<String>(
+          listType: MultiSelectListType.CHIP,
+          items: context.read<ProfileProvider>().profileRepository.skillSetList?.map(
+            (e) => MultiSelectItem(e['id'].toString(), e['name'].toString()),
+          ).toList() ?? [],
+          initialValue: _selectedSkillset,
+          onConfirm: (values) {
+            final skillSetList = context.read<ProfileProvider>().profileRepository.skillSetList;
+            print(values);
+            setState(() {
+              widget.skillSetList = [];
+              values.forEach((element) {
+
+              });
+              values.forEach(( selectedElement) {
+                skillSetList?.forEach((skillSet) {
+                  if (skillSet['id'] == int.parse(selectedElement)){
+                    widget.skillSetList.add(MultiSelectItem(skillSet['id'].toString(), skillSet['name']));
+                    print(selectedSkillSetList);
+                  }
+                });
+               });
+            });
+          },
+          maxChildSize: 0.8,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(20.0),
@@ -104,144 +202,77 @@ class _DetailProfileStudentScreenState
             Row(
               children: [
                 Expanded(
-                  child: TextFormField(
-                    controller: TextEditingController(text: selectedExpertise),
-                    enabled: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Tech stack',
-                      labelStyle: AppTextStyles.headerStyle,
-                      disabledBorder: InputBorder.none,
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Tech stack",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                  ),
+                    Text(
+                      widget.teckStack,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.white),
+                    ),
+                  ],
+                )),
+                SizedBox(
+                  height: 10,
                 ),
-                PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    setState(() {
-                      setState(() {
-                        selectedExpertise = value;
-                      });
-                    });
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    'Fullstack',
-                    'Mobile',
-                    'Backend',
-                    'Frontend',
-                    'DevOps',
-                    'QA',
-                    'Other'
-                  ].map<PopupMenuItem<String>>((String value) {
-                    return PopupMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                Consumer(
+                  builder: (context, value, child) {
+                    return PopupMenuButton<String>(
+                      initialValue:  widget.teckStack,
+                      onSelected: (String value) {
+                        print(value);
+                        final getTechStack = widget.allOfTechStack.where((element) => element['id'].toString() ==  value,).first;
+                        print(getTechStack['name']);
+                        setState(() {
+                          widget.teckStack = getTechStack['name'];
+                        });
+                      },
+                      itemBuilder: (context) {
+                        return widget.allOfTechStack.map((e){
+                          return PopupMenuItem<String>(
+                            value: e['id'].toString(),
+                            child: Text(e['name']));
+                        }).toList();
+                      },
+                      icon: Icon(Icons.edit),
                     );
-                  }).toList(),
-                  icon: Icon(Icons.edit),
-                ),
+                  },
+                )
               ],
             ),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: null, // Tạo một TextEditingController mới
-                        enabled: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Skill',
-                          labelStyle: AppTextStyles.bodyStyle,
-                          disabledBorder: InputBorder.none,
-                        ),
-                      ),
+                    Text(
+                      "Skillsets",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    PopupMenuButton<String>(
-                      onSelected: (String value) {
-                        setState(() {
-                          setState(() {
-                            selectedSkills.add(value);
-                          });
-                        });
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          skills.map((String skill) {
-                        return PopupMenuItem<String>(
-                          value: skill,
-                          child: Text(skill),
-                        );
-                      }).toList(),
-                      icon: Icon(Icons.add),
-                    ),
+                    IconButton(onPressed: ()async {
+                      _showMultiSelect(context, widget.skillSetList);
+                    }, icon: Icon(Icons.edit))
                   ],
                 ),
                 // Wrap widget to display selected skills
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: [
-                    ...selectedSkills.map((skill) {
-                      return Chip(
-                        label: Text(skill),
-                        onDeleted: () {
-                          setState(() {
-                            selectedSkills.remove(skill);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ],
+                MultiSelectChipDisplay(
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.black)),
+                  items: widget.skillSetList,
+                  onTap: (value) {},
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller:
-                        TextEditingController(), // Tạo một TextEditingController mới
-                    enabled: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Skill',
-                      labelStyle: AppTextStyles.bodyStyle,
-                      disabledBorder: InputBorder.none,
-                    ),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    setState(() {
-                      setState(() {
-                        selectedSkills.add(value);
-                      });
-                    });
-                  },
-                  itemBuilder: (BuildContext context) =>
-                      skills.map((String skill) {
-                    return PopupMenuItem<String>(
-                      value: skill,
-                      child: Text(skill),
-                    );
-                  }).toList(),
-                  icon: Icon(Icons.add),
-                ),
-              ],
-            ),
-            // Wrap widget to display selected skills
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: [
-                ...selectedSkills.map((skill) {
-                  return Chip(
-                    label: Text(skill),
-                    onDeleted: () {
-                      setState(() {
-                        selectedSkills.remove(skill);
-                      });
-                    },
-                  );
-                }).toList(),
               ],
             ),
           ],
