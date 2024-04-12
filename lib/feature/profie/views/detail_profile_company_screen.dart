@@ -1,10 +1,14 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/company_profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/update_company_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class DetailProfileCompanyScreen extends StatefulWidget {
-  const DetailProfileCompanyScreen({super.key});
+  Profile? profile;
+
+  DetailProfileCompanyScreen({super.key, required this.profile});
 
   @override
   State<DetailProfileCompanyScreen> createState() =>
@@ -13,11 +17,24 @@ class DetailProfileCompanyScreen extends StatefulWidget {
 
 class _DetailProfileCompanyScreenState
     extends State<DetailProfileCompanyScreen> {
+  Company? company;
+
   TextEditingController _employeesController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _websiteController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    company = widget.profile!.company;
+    _employeesController =
+        TextEditingController(text: company!.numberOfEmployees.toString());
+    _nameController = TextEditingController(text: company!.name);
+    _websiteController = TextEditingController(text: company!.website);
+    _descriptionController = TextEditingController(text: company!.description);
+  }
 
   @override
   void dispose() {
@@ -45,10 +62,10 @@ class _DetailProfileCompanyScreenState
   Widget _appDetailProfileBar() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 80,
             height: 80,
             child: CircleAvatar(
@@ -56,16 +73,17 @@ class _DetailProfileCompanyScreenState
               radius: 40,
             ),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Nguyen Van A",
+                widget.profile!.name ?? "",
                 style: AppTextStyles.headerStyle,
               ),
-              Text("Multinational company", style: AppTextStyles.bodyStyle),
-              Text("Company", style: AppTextStyles.bodyStyle),
+              const Text("Multinational company",
+                  style: AppTextStyles.bodyStyle),
+              const Text("Company", style: AppTextStyles.bodyStyle),
             ],
           ),
         ],
@@ -119,13 +137,12 @@ class _DetailProfileCompanyScreenState
               ),
               onPressed: () {
                 // TODO: Update company info
-                print("Update company info");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  UpdateCompanyProfileScreen(
-                     
+                    builder: (context) => UpdateCompanyProfileScreen(
                       titleButton: "Update company profile",
+                      company: company,
                     ),
                   ),
                 );

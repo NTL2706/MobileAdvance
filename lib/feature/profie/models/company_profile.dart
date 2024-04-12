@@ -1,11 +1,13 @@
 class Company {
-  final String name;
-  final int numberOfEmployees;
-  final String address;
-  final String website;
-  final String description;
+  int? id;
+  String name;
+  int numberOfEmployees;
+  String address;
+  String website;
+  String description;
 
   Company({
+    this.id,
     required this.name,
     required this.numberOfEmployees,
     required this.address,

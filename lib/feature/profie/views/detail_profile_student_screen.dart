@@ -1,9 +1,14 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/cv_transcript_screen.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/education_widger.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/experience_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/teckstack_widget.dart';
 import 'package:flutter/material.dart';
 
 class DetailProfileStudentScreen extends StatefulWidget {
@@ -18,7 +23,7 @@ class DetailProfileStudentScreen extends StatefulWidget {
 
 class _DetailProfileStudentScreenState
     extends State<DetailProfileStudentScreen> {
-  final profileStudentProvider = ProfileStudentProvider();
+  final profileStudentProvider = ProfileProvider();
 
   TechStack selectedTech = TechStack(name: "", id: 1);
   List<Skill> selectedSkills = [];
@@ -110,12 +115,31 @@ class _DetailProfileStudentScreenState
             //       context,
             //       MaterialPageRoute(
             //         // builder: (context) => const DetailProfileCompanyScreen(),
-            //         builder: (context) => MyApp(),
+            //         builder: (context) => CvTranscriptScreen(
+            //           studentId: widget.profile!.studentProfile!.id,
+            //           name: widget.profile!.name,
+            //         ),
             //       ),
             //     );
             //   },
             //   child: Text('Update'),
             // ),
+            ProfileListTile(
+              icon: Icons.article,
+              title: "CV & Transcript",
+              onTap: () {
+                // move to profile screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CvTranscriptScreen(
+                      studentId: widget.profile!.studentProfile!.id,
+                      name: widget.profile!.name,
+                    ),
+                  ),
+                );
+              },
+            ),
             ProfileListTile(
               icon: Icons.work_outlined,
               title: "Experience",
@@ -124,7 +148,10 @@ class _DetailProfileStudentScreenState
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ExperienceScreen(),
+                    builder: (context) => ExperienceScreen(
+                      selectedSkills: selectedSkills,
+                      studentId: widget.profile!.studentProfile!.id,
+                    ),
                   ),
                 );
               },
@@ -134,7 +161,6 @@ class _DetailProfileStudentScreenState
             TechstackWidget(
               selectedTech: selectedTech,
               onExpertiseSelected: (TechStack value) {
-                print(value.name);
                 setState(() {
                   selectedTech = value;
                   shouldUpdate = true;
@@ -181,22 +207,22 @@ class _DetailProfileStudentScreenState
                     endYear: DateTime.now().year,
                     id: 21,
                   ));
-                  shouldUpdate = true;
                 });
               },
               deleteEducationInfo: (index) {
                 setState(() {
                   educationList.removeAt(index);
-                  shouldUpdate = true;
                 });
+                _handleUpdateEducation();
               },
               editEducationInfo: (index, schoolName, startYear, endYear) {
                 setState(() {
                   educationList[index].schoolName = schoolName;
                   educationList[index].startYear = int.parse(startYear);
                   educationList[index].endYear = int.parse(endYear);
-                  educationList[index].id = 12;
+                  educationList[index].id = null;
                 });
+                _handleUpdateEducation();
                 Navigator.of(context).pop();
               },
             ),
@@ -209,6 +235,23 @@ class _DetailProfileStudentScreenState
   void _handleUpdate() {
     setState(() {
       shouldUpdate = false;
+      var skillsId = selectedSkills.map((e) => e.id.toString()).toList();
+      widget.profile!.studentProfile!.techStack = selectedTech;
+      widget.profile!.studentProfile!.skill = selectedSkills;
+
+      // call api update student profile
+      profileStudentProvider.updateProfileStudent(
+        studentId: widget.profile!.studentProfile!.id,
+        skillSets: skillsId,
+        techStackId: selectedTech.id,
+      );
     });
+  }
+
+  void _handleUpdateEducation() {
+    profileStudentProvider.updateEducationStudent(
+      educationList,
+      widget.profile!.studentProfile!.id,
+    );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PasswordFielddWidget extends StatefulWidget {
-  PasswordFielddWidget({
-    super.key,
-    required this.controller
-  });
+  String? title = "Password";
+
+  PasswordFielddWidget(
+      {super.key, required this.controller, this.title = "Password"});
   TextEditingController? controller;
   @override
   State<PasswordFielddWidget> createState() => _PasswordFielddWidgetState();
@@ -30,7 +30,7 @@ class _PasswordFielddWidgetState extends State<PasswordFielddWidget> {
                 BorderSide(color: Colors.black, style: BorderStyle.solid)),
         border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(15))),
-        hintText: "Password",
+        hintText: widget.title,
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {

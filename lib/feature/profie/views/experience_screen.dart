@@ -1,25 +1,43 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
-
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/input.dart';
+import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ExperienceScreen extends StatefulWidget {
-  const ExperienceScreen({super.key});
+  List<Skill> selectedSkills = [];
+  int studentId;
+
+  ExperienceScreen(
+      {super.key, this.selectedSkills = const [], required this.studentId});
 
   @override
   State<ExperienceScreen> createState() => _ExperienceScreenState();
 }
 
 class _ExperienceScreenState extends State<ExperienceScreen> {
-  final TextEditingController _controller =
-      TextEditingController(text: 'DevOps');
+  List<Project> projects = [];
+  final profileStudentProvider = ProfileProvider();
 
-  List<Skill> selectedSkills = [];
+  void _loadSkillsDefault() async {
+    await profileStudentProvider.getProjectByStudentId(widget.studentId);
 
-  final List<Project> projects = [];
+    setState(() {
+      projects = profileStudentProvider.projects;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadSkillsDefault();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,34 +121,66 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                 child: ListView.builder(
                   itemCount: projects.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(projects[index].name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
+                      child: Stack(
                         children: [
-                          Text(
-                            'Start Date: ${DateFormat('dd/MM/yyyy').format(projects[index].startDate)}',
-                            style: AppTextStyles.bodyStyle,
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color.fromARGB(255, 84, 68, 68),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ListTile(
+                              title: Text(projects[index].name,
+                                  style: AppTextStyles.titleStyle),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Start Date: ${DateFormat('dd/MM/yyyy').format(projects[index].startDate)}',
+                                    style: AppTextStyles.bodyStyle,
+                                  ),
+                                  Text(
+                                    'End Date: ${DateFormat('dd/MM/yyyy').format(projects[index].endDate)}',
+                                    style: AppTextStyles.bodyStyle,
+                                  ),
+                                  Text(
+                                    'Description: ${projects[index].description}',
+                                    style: AppTextStyles.bodyStyle,
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Wrap(
+                                    spacing: 8.0,
+                                    runSpacing: 8.0,
+                                    children: [
+                                      ...projects[index].skillSet.map((skill) {
+                                        return Chip(
+                                          label: Text(skill.name),
+                                        );
+                                      }).toList(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          Text(
-                            'End Date: ${DateFormat('dd/MM/yyyy').format(projects[index].endDate)}',
-                            style: AppTextStyles.bodyStyle,
-                          ),
-                          Text(
-                            'Description: ${projects[index].description}',
-                            style: AppTextStyles.bodyStyle,
-                          ),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 8.0,
-                            children: [
-                              ...projects[index].skillSet.map((skill) {
-                                return Chip(
-                                  label: Text(skill.name),
-                                  onDeleted: () {},
-                                );
-                              }).toList(),
-                            ],
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                setState(() {
+                                  projects.removeAt(index);
+                                });
+                                profileStudentProvider.updatedProjectStudent(
+                                    studentId: widget.studentId,
+                                    projects: projects);
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -160,14 +210,18 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ProjectFormScreen(
-            project: project,
-            onSave: (Project? editedProject) {
-              if (editedProject != null) {
-                setState(() {
-                  projects.add(editedProject);
-                });
-              }
-            }),
+          project: project,
+          onSave: (Project? editedProject) {
+            if (editedProject != null) {
+              setState(() {
+                projects.add(editedProject);
+              });
+              profileStudentProvider.updatedProjectStudent(
+                  studentId: widget.studentId, projects: projects);
+            }
+          },
+          skills: widget.selectedSkills,
+        ),
       ),
     );
 
@@ -175,6 +229,9 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
       setState(() {
         projects.add(updatedProject);
       });
+
+      profileStudentProvider.updatedProjectStudent(
+          studentId: widget.studentId, projects: projects);
     }
   }
 }
@@ -183,15 +240,19 @@ class ProjectFormScreen extends StatefulWidget {
   final Project project;
   final Function(Project) onSave;
 
-  ProjectFormScreen({super.key, required this.project, required this.onSave});
+  List<Skill> skills = [];
+
+  ProjectFormScreen(
+      {super.key,
+      required this.project,
+      required this.onSave,
+      this.skills = const []});
 
   @override
   _ProjectFormScreenState createState() => _ProjectFormScreenState();
 }
 
 class _ProjectFormScreenState extends State<ProjectFormScreen> {
-  List<Skill> skills = [];
-
   List<Skill> selectedSkills = [];
 
   TextEditingController nameController = TextEditingController();
@@ -200,6 +261,8 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
 
   DateTime _selectedEndDate = DateTime.now();
   DateTime _selectedStartDate = DateTime.now();
+
+  final profileStudentProvider = ProfileProvider();
 
   @override
   void initState() {
@@ -233,7 +296,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
               selectedSkills: selectedSkills
                   .map((skill) => Skill(id: skill.id, name: skill.name))
                   .toList(),
-              skills: skills,
+              skills: widget.skills,
               onSkillSelected: (Skill value) {
                 setState(() {
                   selectedSkills.add(value);

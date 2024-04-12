@@ -1,117 +1,118 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
-class SchoolInfo {
-  String schoolName;
-  int academicYear;
-
-  SchoolInfo(this.schoolName, this.academicYear);
-}
-
-class SchoolListScreen extends StatefulWidget {
+class UploadPage extends StatefulWidget {
   @override
-  _SchoolListScreenState createState() => _SchoolListScreenState();
+  _UploadPageState createState() => _UploadPageState();
 }
 
-class _SchoolListScreenState extends State<SchoolListScreen> {
-  List<SchoolInfo> schoolList = [
-    SchoolInfo('School A', 2021),
-    SchoolInfo('School B', 2022),
-    SchoolInfo('School C', 2023),
-    SchoolInfo('School D', 2024),
-  ];
+class _UploadPageState extends State<UploadPage> {
+  File? _resumeFile;
+  File? _transcriptFile;
+
+  Future pickResume() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc'],
+    );
+
+    if (result != null) {
+      setState(() {
+        _resumeFile = File(result.files.single.path!);
+      });
+    } else {
+      print('No resume file selected.');
+    }
+  }
+
+  Future pickTranscript() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc'],
+    );
+
+    if (result != null) {
+      setState(() {
+        _transcriptFile = File(result.files.single.path!);
+      });
+    } else {
+      print('No transcript file selected.');
+    }
+  }
+
+  Widget buildUploadButton(String title, Function() onPressed, File? file) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.file_upload),
+              color: Colors.grey,
+              onPressed: onPressed,
+              iconSize: 50,
+            ),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            if (file != null)
+              Column(
+                children: [
+                  Icon(
+                    file.path.endsWith('.pdf')
+                        ? Icons.picture_as_pdf
+                        : file.path.endsWith('.jpg') ||
+                                file.path.endsWith('.png')
+                            ? Icons.image
+                            : Icons.insert_drive_file, // This is the new icon
+                    size: 70, // Adjust the icon size here
+                  ),
+                  Text(
+                    'File: ' +
+                        (file.path.split('/').last.length > 15
+                            ? file.path.split('/').last.substring(0, 15) + '...'
+                            : file.path.split('/').last),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('School List'),
+        title: Text('Upload Page'),
       ),
-      body: ListView.builder(
-        itemCount: schoolList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(schoolList[index].schoolName),
-            subtitle: Text('Academic Year: ${schoolList[index].academicYear}'),
-            onTap: () {
-              _editSchoolInfo(index);
-            },
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _deleteSchoolInfo(index);
-              },
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addSchoolInfo,
-        tooltip: 'Add School',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  void _addSchoolInfo() {
-    setState(() {
-      schoolList.add(SchoolInfo('New School', DateTime.now().year));
-    });
-  }
-
-  void _editSchoolInfo(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String schoolName = schoolList[index].schoolName;
-        int academicYear = schoolList[index].academicYear;
-        TextEditingController nameController =
-            TextEditingController(text: schoolName);
-        TextEditingController yearController =
-            TextEditingController(text: academicYear.toString());
-
-        return AlertDialog(
-          title: Text('Edit School Info'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'School Name'),
-              ),
-              TextField(
-                controller: yearController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Academic Year'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  schoolList[index].schoolName = nameController.text;
-                  schoolList[index].academicYear =
-                      int.parse(yearController.text);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Save'),
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                child: buildUploadButton(
+                    'Upload Resume/CV', pickResume, _resumeFile)),
+            SizedBox(height: 20),
+            Expanded(
+                child: buildUploadButton(
+                    'Upload Transcript', pickTranscript, _transcriptFile)),
           ],
-        );
-      },
+        ),
+      ),
     );
-  }
-
-  void _deleteSchoolInfo(int index) {
-    setState(() {
-      schoolList.removeAt(index);
-    });
   }
 }

@@ -2,6 +2,9 @@ import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/change_pw_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
@@ -21,6 +24,9 @@ class _ProfileScreenState extends State<ProfileScreen>
   bool isAccountListVisible = false;
   late AnimationController _controller;
   late Animation _animation;
+  Profile? profile = null;
+  final ProfileProvider profileProvider = ProfileProvider();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -30,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _controller.forward();
+    _loadSkillsDefault();
     super.initState();
   }
 
@@ -41,18 +48,27 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.dispose();
   }
 
+  void _loadSkillsDefault() async {
+    await profileProvider.getProfileUser();
+    setState(() {
+      profile = profileProvider.profile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     String? role = context.read<AuthenticateProvider>().authenRepository.role;
     String? username =
         context.read<AuthenticateProvider>().authenRepository.username;
     Map<String, dynamic>? switchProfile;
+
     if (role == null || username == null) {
       Future.delayed(Duration(milliseconds: 200), () {
         context.read<AuthenticateProvider>().signOut();
         return IntroPage();
       });
     }
+
     if (role == "company") {
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.company;
@@ -218,6 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _appProfileAction() {
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12.0),
@@ -246,13 +263,27 @@ class _ProfileScreenState extends State<ProfileScreen>
               title: "Profile",
               onTap: () {
                 // move to profile screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    // builder: (context) => const DetailProfileCompanyScreen(),
-                    builder: (context) => const DetailProfileStudentScreen(),
-                  ),
-                );
+                if (role == "student") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // builder: (context) => const DetailProfileCompanyScreen(),
+                      builder: (context) => DetailProfileStudentScreen(
+                        profile: profile,
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // builder: (context) => const DetailProfileCompanyScreen(),
+                      builder: (context) => DetailProfileCompanyScreen(
+                        profile: profile,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
             ProfileListTile(
@@ -260,6 +291,20 @@ class _ProfileScreenState extends State<ProfileScreen>
               title: "Settings",
               onTap: () {
                 print("Settings button clicked");
+              },
+            ),
+            ProfileListTile(
+              icon: Icons.password_outlined,
+              title: "Change password",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    // builder: (context) => const DetailProfileCompanyScreen(),
+                    builder: (context) =>
+                        ChangePwScreen(apiForLogin: "/change-pw", title: "HUB"),
+                  ),
+                );
               },
             ),
             ProfileListTile(
