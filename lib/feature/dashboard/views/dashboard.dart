@@ -1,11 +1,11 @@
+import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 // List<JobModel> jobList = [
@@ -104,6 +104,7 @@ class DashBoard extends StatelessWidget {
                     Text("Your projects",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white)),
+                    if (context.read<AuthenticateProvider>().authenRepository.role ==  StudentHubCategorySignUp.company.name)
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           elevation: 0.2,
@@ -209,7 +210,7 @@ class AllProjectWidget extends StatelessWidget {
                             color: Colors.white,
                             itemBuilder: (context) {
                               return [
-                                PopupMenuItem(
+                                PopupMenuItem(  
                                   onTap: (){},
                                   child: Text("View proposals")
                                 ),

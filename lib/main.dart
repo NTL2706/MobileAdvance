@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
@@ -5,10 +6,15 @@ import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dar
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 import 'package:final_project_advanced_mobile/widgets/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './feature/projects/provider/project_provider.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+late SharedPreferences sharedPreferences;
+void main() async{
+  
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferences = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -22,7 +28,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => ProjectProvider()),
           ChangeNotifierProvider(create: (context) => JobNotifier()),
-          ChangeNotifierProvider(create: (context) => ChatProvider(),)
+          ChangeNotifierProvider(create: (context) => ChatProvider(),),
+          ChangeNotifierProvider(create: (context) => AuthenticateProvider(),),
+
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

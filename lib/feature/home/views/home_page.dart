@@ -1,7 +1,13 @@
+
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
+import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,12 +24,15 @@ class _HomePageState extends State<HomePage> {
     ProjectPage(),
     DashBoard(),
     MessageWidget(),
-    Text(
-      'Index 4: Alerts',
-      style: optionStyle,
-    ),
+    NoticationPage(),
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<AuthenticateProvider>().getUserInf().then((value) => print("get user"));
+  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -40,7 +49,11 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: EdgeInsets.all(8),
-            child: IconButton(onPressed: () {}, icon: Icon(Icons.person)),
+            child: IconButton(onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return ProfileScreen();
+              },));
+            }, icon: Icon(Icons.person)),
           )
         ],
       ),

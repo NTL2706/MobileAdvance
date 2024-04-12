@@ -1,12 +1,31 @@
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
+import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
+import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class IntroPage extends StatelessWidget {
+class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
+
+  @override
+  State<IntroPage> createState() => _IntroPageState();
+}
+
+class _IntroPageState extends State<IntroPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
+
+    return role == "" ? Scaffold(
       resizeToAvoidBottomInset: true,
         body: Container(
             color: Color(0xFFCE5A67),
@@ -104,6 +123,6 @@ class IntroPage extends StatelessWidget {
                   ),
                 ],
               ),
-            )));
+            ))): HomePage();
   }
 }

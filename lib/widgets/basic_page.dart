@@ -13,6 +13,7 @@ class BasicPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text("Student Hub"),
       ),
       body: child
