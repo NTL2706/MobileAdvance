@@ -1,30 +1,34 @@
+import 'package:final_project_advanced_mobile/feature/profie/models/company_profile.dart';
+
 class Profile {
-  final int id;
-  final String name;
-  final List<int> roles;
-  final StudentProfile? studentProfile;
+  int id;
+  String name;
+  List<int> roles;
+  StudentProfile? studentProfile;
+  Company? company;
 
   Profile({
     required this.id,
     required this.name,
     required this.roles,
     this.studentProfile,
+    this.company,
   });
 }
 
 class StudentProfile {
-  final int id;
-  final String name;
-  final TechStack techStack;
-  final List<Skill>? skill;
-  final List<EducationInfo>? educationInfo;
+  int id;
+  TechStack techStack;
+  List<Skill>? skill;
+  List<EducationInfo>? educationInfo;
+  List<Project>? project;
 
   StudentProfile({
     required this.id,
-    required this.name,
     required this.techStack,
     this.skill,
     this.educationInfo,
+    this.project,
   });
 }
 
@@ -32,10 +36,10 @@ class EducationInfo {
   String schoolName;
   int startYear;
   int endYear;
-  int id;
+  int? id;
 
   EducationInfo({
-    required this.id,
+    this.id,
     required this.schoolName,
     required this.startYear,
     required this.endYear,
@@ -43,8 +47,8 @@ class EducationInfo {
 }
 
 class TechStack {
-  final int id;
-  final String name;
+  int id;
+  String name;
 
   TechStack({
     required this.id,
@@ -53,11 +57,27 @@ class TechStack {
 }
 
 class Skill {
-  final int id;
-  final String name;
+  int id;
+  String name;
 
   Skill({
     required this.id,
     required this.name,
+  });
+}
+
+class Project {
+  String name;
+  DateTime startDate;
+  DateTime endDate;
+  String description;
+  List<Skill> skillSet;
+
+  Project({
+    required this.name,
+    required this.startDate,
+    required this.endDate,
+    required this.description,
+    required this.skillSet,
   });
 }

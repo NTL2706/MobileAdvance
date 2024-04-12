@@ -4,6 +4,7 @@ import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/company_profile.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +13,11 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
 class UpdateCompanyProfileScreen extends StatefulWidget {
-  UpdateCompanyProfileScreen({
-    Key? key,
-    required this.titleButton,
-  }) : super(key: key);
+  Company? company;
   String titleButton;
+
+  UpdateCompanyProfileScreen(
+      {Key? key, required this.company, required this.titleButton});
 
   @override
   State<UpdateCompanyProfileScreen> createState() =>
@@ -32,6 +33,22 @@ class _UpdateCompanyProfileScreenState
   TextEditingController _descriptionController = TextEditingController();
 
   int selectedCompanySize = 10;
+
+  ProfileProvider profileProvider = ProfileProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.company != null) {
+      _employeesController = TextEditingController(
+          text: widget.company!.numberOfEmployees.toString());
+      _nameController = TextEditingController(text: widget.company!.name);
+      _websiteController = TextEditingController(text: widget.company!.website);
+      _descriptionController =
+          TextEditingController(text: widget.company!.description);
+      selectedCompanySize = widget.company!.numberOfEmployees;
+    }
+  }
 
   @override
   void dispose() {
@@ -58,21 +75,23 @@ class _UpdateCompanyProfileScreenState
         elevation: 0,
         scrolledUnderElevation: 0,
         actions: [
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: IconButton(
-                      
-                      onPressed: ()async {
-                        await context.read<AuthenticateProvider>().signOut();
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                          builder: (context) {
-                            return IntroPage();
-                          },
-                        ), (route) => false,);
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: IconButton(
+                onPressed: () async {
+                  await context.read<AuthenticateProvider>().signOut();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return IntroPage();
                       },
-                      icon: Icon(Icons.arrow_forward)),
-                )
-              ],
+                    ),
+                    (route) => false,
+                  );
+                },
+                icon: Icon(Icons.arrow_forward)),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -125,24 +144,39 @@ class _UpdateCompanyProfileScreenState
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
-                        await context.read<ProfileProvider>().createProfieForCompany
-                        (
-                          companyName: _nameController.text.trim(), 
-                          size: selectedCompanySize, 
-                          website: _websiteController.text.trim(), 
-                          description: _descriptionController.text.trim(), 
-                          token: context.read<AuthenticateProvider>().authenRepository.token!);
-
-                        if (context.read<ProfileProvider>().status ==
-                            AuthResult.success) {
+                        if (widget.company != null) {
+                          print("======1l");
+                          _updateCompanyInfo();
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => HomePage(),
                               ),
                               (route) => false);
                         } else {
-                          await QuickAlert.show(
-                              context: context, type: QuickAlertType.error);
+                          await context
+                              .read<ProfileProvider>()
+                              .createProfieForCompany(
+                                  companyName: _nameController.text.trim(),
+                                  size: selectedCompanySize,
+                                  website: _websiteController.text.trim(),
+                                  description:
+                                      _descriptionController.text.trim(),
+                                  token: context
+                                      .read<AuthenticateProvider>()
+                                      .authenRepository
+                                      .token!);
+
+                          if (context.read<ProfileProvider>().status ==
+                              AuthResult.success) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(),
+                                ),
+                                (route) => false);
+                          } else {
+                            await QuickAlert.show(
+                                context: context, type: QuickAlertType.error);
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -179,7 +213,6 @@ class _UpdateCompanyProfileScreenState
   void _updateCompanyInfo() {
     // Update company information
     if (_nameController.text.isEmpty ||
-        _addressController.text.isEmpty ||
         _websiteController.text.isEmpty ||
         _descriptionController.text.isEmpty) {
       // Show error dialog when any field is empty
@@ -206,6 +239,17 @@ class _UpdateCompanyProfileScreenState
       String website = _websiteController.text;
       String description = _descriptionController.text;
 
+      print("===============");
+      if (widget.company != null) {
+        print("heehe");
+        profileProvider
+            .updateProfileCompany(companyId: widget.company!.id!, data: {
+          'name': companyName,
+          'website': website,
+          'description': description,
+          'size': selectedCompanySize,
+        });
+      }
       // TODO: Call API to update company information
       print("Company name: $companyName");
       print("Address: $address");

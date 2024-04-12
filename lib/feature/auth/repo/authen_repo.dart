@@ -52,7 +52,8 @@ class AuthenRepository {
       required String fullname,
       required int role}) async {
     try {
-      final response = await http.post(Uri.parse("${env.apiURL}api/auth/sign-up"), body: {
+      final response =
+          await http.post(Uri.parse("${env.apiURL}api/auth/sign-up"), body: {
         "email": email,
         "password": password,
         "fullname": fullname,
@@ -73,32 +74,54 @@ class AuthenRepository {
 
   Future<AuthResult> getUserInf() async {
     try {
-      final response = await http.get(
-          Uri.parse("${env.apiURL}api/auth/me"),
+      final response = await http.get(Uri.parse("${env.apiURL}api/auth/me"),
           headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
       final body = json.decode(response.body);
 
       _id = body['result']['id'];
-      _username =  body['result']['fullname'];
-      if ( body['result']['student'] != null){
-        _student =Map<String, dynamic>.from(body['result']['student']);
+      _username = body['result']['fullname'];
+      if (body['result']['student'] != null) {
+        _student = Map<String, dynamic>.from(body['result']['student']);
       }
-      if ( body['result']['company'] != null){
-      _company = Map<String, dynamic>.from(body['result']['company']);
+      if (body['result']['company'] != null) {
+        _company = Map<String, dynamic>.from(body['result']['company']);
       }
-     
+
       return AuthResult.success;
     } on Exception catch (e) {
       return AuthResult.failure;
     }
   }
 
-  Future<AuthResult> switchAccount({required String role})async {
-    try{
+  Future<AuthResult> switchAccount({required String role}) async {
+    try {
       await sharedPreferences.setString('role', role);
       return AuthResult.success;
-    }on Exception catch(e){
+    } on Exception catch (e) {
       return AuthResult.failure;
+    }
+  }
+
+  Future<Map<dynamic, dynamic>> changePassword({
+    required String oldPw,
+    required String password,
+  }) async {
+    try {
+      final response = await http.put(
+          Uri.parse("${env.apiURL}api/user/changePassword"),
+          body: {"oldPassword": oldPw, "newPassword": password},
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+
+      final body = json.decode(response.body);
+
+      if (response.statusCode != 200) {
+        throw Exception(body['errorDetails']);
+      }
+      return {
+        "result": AuthResult.success,
+      };
+    } on Exception catch (e) {
+      return {"result": AuthResult.failure, "message": e.toString()};
     }
   }
 

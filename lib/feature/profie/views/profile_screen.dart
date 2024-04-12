@@ -2,8 +2,12 @@ import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/change_pw_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
-
+import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
+import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +24,9 @@ class _ProfileScreenState extends State<ProfileScreen>
   bool isAccountListVisible = false;
   late AnimationController _controller;
   late Animation _animation;
+  Profile? profile = null;
+  final ProfileProvider profileProvider = ProfileProvider();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -29,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _controller.forward();
+    _loadSkillsDefault();
     super.initState();
   }
 
@@ -38,6 +46,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     _controller.dispose();
 
     super.dispose();
+  }
+
+  void _loadSkillsDefault() async {
+    await profileProvider.getProfileUser();
+    setState(() {
+      profile = profileProvider.profile;
+    });
   }
 
   @override
@@ -65,10 +80,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         title: const Text(""),
         elevation: 0,
       ),
-      body: Column( 
+      body: Column(
         children: [
           _appProfileBar(username),
-          _appProfileAction(role!, username!, switchProfile),
+          _appProfileAction(),
         ],
       ),
     );
@@ -102,7 +117,19 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _switchAccountAction(bool isAccountListVisible, String role, String username, Map<String, dynamic>? switchProfile  ){
+  Widget _switchAccountAction(bool isAccountListVisible) {
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
+    Map<String, dynamic>? switchProfile;
+    String? username =
+        context.read<AuthenticateProvider>().authenRepository.username;
+
+    if (role == null || username == null) {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+        builder: (context) {
+          return IntroPage();
+        },
+      ), (route) => false);
+    }
     if (role == "student") {
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.company;
@@ -129,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(username),
+                          Text(username!),
                           if (role == 'student') Icon(Icons.home)
                         ],
                       ),
@@ -206,7 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         (route) => false);
   }
 
-  Widget _appProfileAction(String role, String username, Map<String, dynamic>? switchProfile) {
+  Widget _appProfileAction() {
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12.0),
@@ -229,15 +257,33 @@ class _ProfileScreenState extends State<ProfileScreen>
                 });
               },
             ),
-
-            _switchAccountAction(isAccountListVisible, role, username, switchProfile),
-
+            _switchAccountAction(isAccountListVisible),
             ProfileListTile(
               icon: Icons.person,
               title: "Profile",
               onTap: () {
                 // move to profile screen
-                
+                if (role == "student") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // builder: (context) => const DetailProfileCompanyScreen(),
+                      builder: (context) => DetailProfileStudentScreen(
+                        profile: profile,
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // builder: (context) => const DetailProfileCompanyScreen(),
+                      builder: (context) => DetailProfileCompanyScreen(
+                        profile: profile,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
             ProfileListTile(
@@ -245,6 +291,20 @@ class _ProfileScreenState extends State<ProfileScreen>
               title: "Settings",
               onTap: () {
                 print("Settings button clicked");
+              },
+            ),
+            ProfileListTile(
+              icon: Icons.password_outlined,
+              title: "Change password",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    // builder: (context) => const DetailProfileCompanyScreen(),
+                    builder: (context) =>
+                        ChangePwScreen(apiForLogin: "/change-pw", title: "HUB"),
+                  ),
+                );
               },
             ),
             ProfileListTile(
