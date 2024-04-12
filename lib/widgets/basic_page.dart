@@ -23,7 +23,8 @@ class BasicPage extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   child: IconButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
                           builder: (context) {
                             return ProfileScreen();
                           },

@@ -47,8 +47,7 @@ class _HomePageState extends State<HomePage> {
           Map<String, dynamic>? student = snapshot.data?['student'];
           Map<String, dynamic>? company = snapshot.data?['company'];
 
-          final role =
-              context.read<AuthenticateProvider>().authenRepository.role;
+          final role = context.read<AuthenticateProvider>().authenRepository.role;
           print(context.read<AuthenticateProvider>().authenRepository.token);
           if (role == "student" && student == null) {
             return CreateProfilePage(

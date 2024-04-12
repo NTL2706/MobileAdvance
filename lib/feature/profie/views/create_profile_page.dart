@@ -72,7 +72,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    
+  
     return widget.role == "student" ? BasicPage(
         child: Container(
       child: SingleChildScrollView(

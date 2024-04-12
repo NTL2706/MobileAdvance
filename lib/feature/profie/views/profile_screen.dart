@@ -47,12 +47,14 @@ class _ProfileScreenState extends State<ProfileScreen>
     String? username =
         context.read<AuthenticateProvider>().authenRepository.username;
     Map<String, dynamic>? switchProfile;
+    
     if (role == null || username == null) {
       Future.delayed(Duration(milliseconds: 200), () {
         context.read<AuthenticateProvider>().signOut();
         return IntroPage();
       });
     }
+
     if (role == "company") {
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.company;
@@ -64,10 +66,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         title: const Text(""),
         elevation: 0,
       ),
-      body: Column(
+      body: Column( 
         children: [
           _appProfileBar(username),
-          _appProfileAction(),
+          _appProfileAction(role!, username!, switchProfile),
         ],
       ),
     );
@@ -101,19 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _switchAccountAction(bool isAccountListVisible) {
-    String? role = context.read<AuthenticateProvider>().authenRepository.role;
-    Map<String, dynamic>? switchProfile;
-    String? username =
-        context.read<AuthenticateProvider>().authenRepository.username;
-
-    if (role == null || username == null) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-        builder: (context) {
-          return IntroPage();
-        },
-      ), (route) => false);
-    }
+  Widget _switchAccountAction(bool isAccountListVisible, String role, String username, Map<String, dynamic>? switchProfile  ){
     if (role == "student") {
       switchProfile =
           context.read<AuthenticateProvider>().authenRepository.company;
@@ -140,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(username!),
+                          Text(username),
                           if (role == 'student') Icon(Icons.home)
                         ],
                       ),
@@ -217,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         (route) => false);
   }
 
-  Widget _appProfileAction() {
+  Widget _appProfileAction(String role, String username, Map<String, dynamic>? switchProfile) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12.0),
@@ -240,7 +230,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 });
               },
             ),
-            _switchAccountAction(isAccountListVisible),
+
+            _switchAccountAction(isAccountListVisible, role, username, switchProfile),
+
             ProfileListTile(
               icon: Icons.person,
               title: "Profile",

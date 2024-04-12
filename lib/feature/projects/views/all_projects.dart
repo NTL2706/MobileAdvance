@@ -89,7 +89,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       bool disableFlag = true;
                       final favouriteProjectList = context.read<ProjectProvider>().favouriteProjectList;
 
-                      favouriteProjectList?.forEach(
+                      favouriteProjectList?.forEach(    
                         (element) {
                           
                           if(project.id == element['project']['id']){
