@@ -42,6 +42,15 @@ class ProjectPost_3 extends StatelessWidget {
               ),
               TextField(
                 controller: JobModel.discriptionController,
+                onChanged: (value) => {
+                  print(
+                      "NoChange ${JobModel.discriptionController.text.length}"),
+                  if (JobModel.discriptionController.text.length >= 250)
+                    {
+                      JobModel.discriptionController.text =
+                          JobModel.discriptionController.text.substring(0, 270)
+                    }
+                },
                 maxLines: 8,
                 decoration: InputDecoration(
                   focusedBorder: const OutlineInputBorder(
@@ -57,17 +66,18 @@ class ProjectPost_3 extends StatelessWidget {
               ),
               Expanded(
                 child: Align(
-                alignment: Alignment.topRight,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                  elevation: 0.5,
-                  backgroundColor: Colors.white
-                ),
-                  onPressed: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                    return ProjectPost_4();
-                  },));
-                }, child: Text("Review your post"))),
+                    alignment: Alignment.topRight,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 0.5, backgroundColor: Colors.white),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return ProjectPost_4();
+                            },
+                          ));
+                        },
+                        child: Text("Review your post"))),
               )
             ],
           ),

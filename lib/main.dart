@@ -13,8 +13,7 @@ import 'package:flutter/material.dart';
 
 late SharedPreferences sharedPreferences;
 late configEnv env;
-void main() async{
-  
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   sharedPreferences = await SharedPreferences.getInstance();
@@ -32,8 +31,12 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => ProjectProvider()),
           ChangeNotifierProvider(create: (context) => JobNotifier()),
-          ChangeNotifierProvider(create: (context) => ChatProvider(),),
-          ChangeNotifierProvider(create: (context) => AuthenticateProvider(),),
+          ChangeNotifierProvider(
+            create: (context) => ChatProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => AuthenticateProvider(),
+          ),
           ChangeNotifierProvider(create: (context) => ProfileProvider())
         ],
         child: MaterialApp(
@@ -42,8 +45,7 @@ class MyApp extends StatelessWidget {
           initialRoute: '/intro',
           routes: {
             '/intro': (context) => IntroPage(),
-            '/home': (context) => HomePage( 
-            ),
+            '/home': (context) => HomePage(),
           },
           theme: ThemeData(
             // This is the theme of your application.
@@ -64,7 +66,6 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-        )
-      );
+        ));
   }
 }

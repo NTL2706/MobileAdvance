@@ -3,8 +3,7 @@ import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
-import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
-import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
+
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     String? username =
         context.read<AuthenticateProvider>().authenRepository.username;
     Map<String, dynamic>? switchProfile;
-    
+
     if (role == null || username == null) {
       Future.delayed(Duration(milliseconds: 200), () {
         context.read<AuthenticateProvider>().signOut();
@@ -238,13 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               title: "Profile",
               onTap: () {
                 // move to profile screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    // builder: (context) => const DetailProfileCompanyScreen(),
-                    builder: (context) => const DetailProfileStudentScreen(),
-                  ),
-                );
+                
               },
             ),
             ProfileListTile(

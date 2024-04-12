@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  CustomTextField({
-    super.key,
-    required this.hintText,
-    this.controller,
-    this.onChanged
-  }); 
+  CustomTextField(
+      {super.key, required this.hintText, this.controller, this.onChanged});
   final TextEditingController? controller;
   final String hintText;
   Function(String)? onChanged;
@@ -16,15 +12,13 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged!,
       controller: controller,
       decoration: InputDecoration(
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
-          borderSide: BorderSide(color: Colors.black, style: BorderStyle.solid)
-        ),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15))
-        ),
-        hintText: hintText
-      ),
+          focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderSide:
+                  BorderSide(color: Colors.black, style: BorderStyle.solid)),
+          border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          hintText: hintText),
     );
   }
 }

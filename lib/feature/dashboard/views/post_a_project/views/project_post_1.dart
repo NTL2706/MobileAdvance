@@ -39,9 +39,11 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
               ),
               CustomTextField(
                   onChanged: (p0) {
-                    setState(() {
-                      
-                    });
+                    if (JobModel.titleController.text.length >= 80) {
+                      JobModel.titleController.text =
+                          JobModel.titleController.text.substring(0, 80);
+                    }
+                    setState(() {});
                   },
                   controller: JobModel.titleController,
                   hintText: "write a title for jour post"),
@@ -63,21 +65,20 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
               SizedBox(
                 height: 20,
               ),
-              if (JobModel.titleController.text != "") 
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 1, backgroundColor: Colors.white),
-                      onPressed:  () {
-
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) {
-                            return ProjectPost_2();
-                          },
-                        ));
-                      },
-                      child: Text("Next: Scope")))
+              if (JobModel.titleController.text != "")
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 1, backgroundColor: Colors.white),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return ProjectPost_2();
+                            },
+                          ));
+                        },
+                        child: Text("Next: Scope")))
             ],
           )),
     );

@@ -6,16 +6,17 @@ import 'package:provider/provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 import '../provider/project_provider.dart';
+import './apply_project.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final Project project;
   bool disableFlag;
 
-  ProjectDetailScreen({required this.disableFlag,super.key, required this.project});
+  ProjectDetailScreen(
+      {required this.disableFlag, super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           title: Text(project.title!),
@@ -49,11 +50,8 @@ class ProjectDetailScreen extends StatelessWidget {
                     ),
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(project.describe!)
-                    ]
-                  ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [Text(project.describe!)]),
                   SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -117,9 +115,7 @@ class ProjectDetailScreen extends StatelessWidget {
                       minimumSize: MaterialStateProperty.all(
                           Size(150, 55)), // Kích thước nút
                       backgroundColor: MaterialStateProperty.all<Color>(
-                          disableFlag
-                              ?  Colors.blue:Colors.red
-                              ), // Màu nền
+                          disableFlag ? Colors.blue : Colors.red), // Màu nền
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius:
@@ -128,13 +124,22 @@ class ProjectDetailScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      disableFlag ? 'Save':'Saved' ,
+                      disableFlag ? 'Save' : 'Saved',
                       style: TextStyle(color: Colors.white), // Màu văn bản
                     ),
                   ),
                   SizedBox(width: 24),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ApplyProject(
+                                  project: project,
+                                  disableFlag: disableFlag,
+                                )),
+                      );
+                    },
                     style: ButtonStyle(
                       minimumSize: MaterialStateProperty.all(Size(150, 55)),
                       backgroundColor: MaterialStateProperty.all<Color>(
