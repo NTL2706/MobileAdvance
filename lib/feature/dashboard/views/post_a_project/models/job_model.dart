@@ -25,6 +25,7 @@ class JobModel{
   int?proposalNumber = 0;
   int?messagesNumber= 0;
   int?hiredNumber = 0;
+  List<Map<String,dynamic>>? proposals;
   String? state = JobState.pending.name;
   JobModel({
     this.id,
@@ -39,7 +40,8 @@ class JobModel{
     this.updateAt,
     this.proposalNumber,
     this.messagesNumber,
-    this.hiredNumber
+    this.hiredNumber,
+    this.proposals
   });
 
   void updateJob(
@@ -82,7 +84,8 @@ class JobModel{
       typeFlag: json['typeFlag'],
       proposalNumber: json['countProposals'],
       hiredNumber: json['countHired'],
-      messagesNumber: json['countMessages']
+      messagesNumber: json['countMessages'],
+      proposals:List<Map<String,dynamic>>.from(json['proposals'])
     );
   }
 }

@@ -217,11 +217,14 @@ class AllProjectWidget extends StatelessWidget {
               itemCount: jobList.length,
               itemBuilder: (context, index) {
                 JobModel job = JobModel.jsonFrom(jobList[index]);
+                print(job.proposals);
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return ManageProject();
+                        return ManageProject(
+                          proposals: job.proposals!,
+                        );
                       },
                     ));
                   },
@@ -280,7 +283,9 @@ class AllProjectWidget extends StatelessWidget {
                                             onTap: () async {
                                               await context
                                                   .read<JobNotifier>()
-                                                  .deleteJob(id: job.id!);
+                                                  .deleteJob(
+                                                    token: context.read<AuthenticateProvider>().authenRepository.token!,
+                                                    id: job.id!);
                                             },
                                             child: Text("Remove posting")),
                                         PopupMenuItem(

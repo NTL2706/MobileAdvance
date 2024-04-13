@@ -4,6 +4,12 @@ import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
 
 class ManageProject extends StatelessWidget{
+  ManageProject(
+  {
+    super.key,
+    required this.proposals
+  });
+  List<Map<String,dynamic>> proposals;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -29,7 +35,9 @@ class ManageProject extends StatelessWidget{
                   ),),
                 ],
                  tab_views: [
-                  ManageProjectProposal(),
+                  ManageProjectProposal(
+                    proposals: proposals,
+                  ),
                   Container(child: Center(child: Text("Detail"),)),
                   Container(child: Center(child: Text("Message"),)),
                   Container(child: Center(child: Text("Hired"),)),

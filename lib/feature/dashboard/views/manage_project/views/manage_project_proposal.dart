@@ -1,4 +1,5 @@
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/models/student_models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 List<StudentModel> studentLists = [
@@ -10,13 +11,21 @@ List<StudentModel> studentLists = [
 ];
 
 class ManageProjectProposal extends StatelessWidget {
+  ManageProjectProposal(
+    {
+      super.key,
+      required this.proposals
+    });
+  List<Map<String,dynamic>> proposals;
   @override
   Widget build(BuildContext context) {
+    print(proposals);
     return Container(
       child: ListView.builder(
-        itemCount: studentLists.length,
+        itemCount: proposals.length,
         itemBuilder: (context, index) {
           StudentModel student = studentLists[index];
+          final proposal = proposals[index];
           return Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(8),
@@ -35,10 +44,10 @@ class ManageProjectProposal extends StatelessWidget {
                         flex: 8,
                         child: Column(
                           children: [
-                            Text(student.name!,style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            Text('ID: ${proposal['id']}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold
                             ),),
-                            Text(student.age.toString())
+                            // Text(student.age.toString())
                           ],
                         ))
                   ],
@@ -46,11 +55,16 @@ class ManageProjectProposal extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(student.position!),
-                    Text("excellent")
+                    Text(student.position!,style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold
+                    ),),
+                    // Text("excellent")
                   ],
                 ),
-                Text("I have gone through your project and it seem like a great project. I will commit for your project...")
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("${proposal['coverLetter']}"))
                 ,
                 Row(
                   children: [
