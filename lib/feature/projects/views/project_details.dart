@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,7 @@ class ProjectDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Scaffold(
         appBar: AppBar(
           title: Text(project.title!),
@@ -107,6 +110,7 @@ class ProjectDetailScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if(role == "student")
                   TextButton(
                     onPressed: () {
                       // projectProvider.toggleFavoriteStatus(project.id);
@@ -129,6 +133,7 @@ class ProjectDetailScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 24),
+                  if(role == "student")
                   TextButton(
                     onPressed: () {
                       Navigator.push(

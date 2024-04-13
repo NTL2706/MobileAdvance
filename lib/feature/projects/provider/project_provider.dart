@@ -125,11 +125,11 @@ class ProjectProvider extends ChangeNotifier {
       final body = json.decode(rs.body);
 
       final result = List<Map<String, dynamic>>.from(body['result']);
-
+      
       _projects = result.map((e) {
         return Project.fromJson(e);
       }).toList();
-
+      
       _filteredProjects = _projects;
 
       final favouriteProject =

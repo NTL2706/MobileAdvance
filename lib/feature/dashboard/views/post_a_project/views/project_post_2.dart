@@ -4,12 +4,7 @@ import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 
-Map<int, String> optionsTimeForJob = {
-  0:"lessthanonemonth",
-  1:"1 to 3 months",
-  2:"3 to 6 months",
-  3:"MoreThanSixMOnth"
-};
+
 
 class ProjectPost_2 extends StatelessWidget{
   int? currentOption = 0;
@@ -103,7 +98,7 @@ class _TimeForProjectState extends State<TimeForProject> {
     return Column(
       children: [
         ListTile(
-          title: Text("1 to 3 months"),
+          title: Text("Less than one month"),
           leading: Radio(
             value: 0,
             groupValue: widget.currentOption,
@@ -116,9 +111,35 @@ class _TimeForProjectState extends State<TimeForProject> {
           ),
         ),
         ListTile(
-          title: Text("3 to 6 months"),
+          title: Text("1 - 3 months"),
           leading: Radio(
             value: 1,
+            groupValue: widget.currentOption,
+            onChanged: (value) {
+              setState((){
+                  widget.timeForProjectController.text = value.toString();
+                  widget.currentOption = value!;
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: Text("3 to 6 months"),
+          leading: Radio(
+            value: 2,
+            groupValue: widget.currentOption,
+            onChanged: (value) {
+              setState((){
+                  widget.timeForProjectController.text = value.toString();
+                  widget.currentOption = value!;
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: Text("more than 6 months"),
+          leading: Radio(
+            value: 3,
             groupValue: widget.currentOption,
             onChanged: (value) {
               setState(

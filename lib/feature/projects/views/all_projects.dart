@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     print("rebuild");
+    final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -101,7 +103,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   // final project = projectProvider.projects[index];
                   // final project =
                   //     Project.fromJson(snapshot.data?.result?[index]);
-                  print("Hello");
+                
                   final project =
                       context.read<ProjectProvider>().projects[index];
 
@@ -116,7 +118,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       }
                     },
                   );
-
+                  
                   return Container(
                       margin: EdgeInsets.only(bottom: 24.0),
                       decoration: BoxDecoration(
@@ -144,6 +146,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     ),
                                   ),
                                   // Thời gian của animation
+                                  if (role == "student")
                                   IconButton(
                                       onPressed: () async {
                                         setState(() {});
@@ -251,6 +254,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                           color: Colors.white), // Màu văn bản
                                     ),
                                   ),
+                                  if (role == "student")
                                   TextButton(
                                     onPressed: () {
                                       Navigator.push(

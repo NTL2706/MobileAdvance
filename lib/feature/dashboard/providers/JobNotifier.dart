@@ -28,15 +28,14 @@ class JobNotifier extends ChangeNotifier {
   Future<Map<String, dynamic>> getProposalOfStudent(
       {required int studentId, required String token}) async {
     try {
-      print(studentId);
       final response = await http.get(headers: {
         HttpHeaders.authorizationHeader: "Bearer $token",
         'Content-type': 'application/json',
         'Accept': 'application/json',
       }, Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
-
       final body = json.decode(response.body);
-
+   
+  
       List<Map<String, dynamic>> projectList = [];
 
       if (response.statusCode >= 400) {
@@ -45,7 +44,7 @@ class JobNotifier extends ChangeNotifier {
 
       final proposalListOfStudent =
           List<Map<String, dynamic>>.from(body['result']);
-      print(proposalListOfStudent[0]);
+      
       for (int i = 0; i < proposalListOfStudent.length; i++) {
         try {
           final project = await http.get(
@@ -58,9 +57,9 @@ class JobNotifier extends ChangeNotifier {
                   "${env.apiURL}api/project/${proposalListOfStudent[i]['projectId']}"));
 
           final bodyProject = json.decode(project.body);
-          print(bodyProject);
+       
           Map<String, dynamic> convertToProject =
-              Map<String, dynamic>.from(bodyProject['result']['project']);
+              Map<String, dynamic>.from(bodyProject['result']);
 
           convertToProject.addAll({
             'countProposals': bodyProject['result']['countProposals'],
@@ -73,10 +72,12 @@ class JobNotifier extends ChangeNotifier {
           }
 
           projectList.add(convertToProject);
-        } catch (e) {
+        } 
+        catch (e) {
+          print(e);
         }
       }
-
+      print(projectList);
       return {"result": projectList, "error": null};
     } on Exception catch (e) {
       return {"error": e.toString()};

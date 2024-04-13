@@ -192,6 +192,7 @@ class AllProjectWidget extends StatelessWidget {
     // jobList = jobList.where((element){
     //   return element.state == state;
     // },).toList();
+
     final role = context.read<AuthenticateProvider>().authenRepository.role;
 
     jobList = jobList.where((element) {
