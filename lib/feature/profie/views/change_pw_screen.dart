@@ -70,7 +70,9 @@ class ChangePwScreen extends StatelessWidget {
                         AuthResult result =
                             context.read<AuthenticateProvider>().state.result!;
                         if (result == AuthResult.success) {
-                          await context.read<AuthenticateProvider>().signOut();
+                          await context.read<AuthenticateProvider>().signOut(
+                            token: context.read<AuthenticateProvider>().authenRepository.token!
+                          );
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               '/intro', (route) => false);
                         } else {

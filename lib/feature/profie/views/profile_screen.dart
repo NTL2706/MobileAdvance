@@ -64,7 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     if (role == null || username == null) {
       Future.delayed(Duration(milliseconds: 200), () {
-        context.read<AuthenticateProvider>().signOut();
+        context.read<AuthenticateProvider>().signOut(
+          token: context.read<AuthenticateProvider>().authenRepository.token!
+        );
         return IntroPage();
       });
     }
@@ -75,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       username = switchProfile?['companyName'];
     }
 
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(
         title: const Text(""),
         elevation: 0,
@@ -311,7 +313,9 @@ class _ProfileScreenState extends State<ProfileScreen>
               icon: Icons.logout,
               title: "Logout",
               onTap: () async {
-                await context.read<AuthenticateProvider>().signOut();
+                await context.read<AuthenticateProvider>().signOut(
+                  token: context.read<AuthenticateProvider>().authenRepository.token!
+                );
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/intro', (route) => false);
               },

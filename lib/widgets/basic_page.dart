@@ -17,7 +17,7 @@ class BasicPage extends StatelessWidget {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-
+        backgroundColor: Colors.white,
         actions: [
                 Padding(
                   padding: EdgeInsets.all(8),
@@ -26,7 +26,9 @@ class BasicPage extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                           builder: (context) {
-                            return ProfileScreen();
+                            return ProfileScreen(
+                              
+                            );
                           },
                         ));
                       },

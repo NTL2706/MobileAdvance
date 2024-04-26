@@ -106,7 +106,13 @@ class DashBoard extends StatelessWidget {
                   .read<AuthenticateProvider>()
                   .authenRepository
                   .student?['id']),
-      builder: (context, snapshot) => Container(
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting){
+          return Container(
+            child: Center(child: CircularProgressIndicator(),),
+          );
+        }
+        return Container(
         decoration: BoxDecoration(color: Colors.white),
         child: Padding(
           padding: const EdgeInsets.all(0),
@@ -177,7 +183,7 @@ class DashBoard extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      );}
     );
   }
 }
@@ -198,7 +204,8 @@ class AllProjectWidget extends StatelessWidget {
     jobList = jobList.where((element) {
       return element['deletedAt'] == null;
     }).toList();
-
+    
+    
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -216,21 +223,24 @@ class AllProjectWidget extends StatelessWidget {
             child: ListView.builder(
               itemCount: jobList.length,
               itemBuilder: (context, index) {
+            
                 JobModel job = JobModel.jsonFrom(jobList[index]);
-                print(job.proposals);
+           
                 return GestureDetector(
-                  onTap: () {
+                  onTap: role == "company" ? () {
+                    
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
                         return ManageProject(
+                          job: job,
                           proposals: job.proposals!,
                         );
                       },
                     ));
-                  },
+                  }: null,
                   child: Container(
                     margin: EdgeInsets.only(top: 5),
-                    height: 180,
+                    height: role == "company" ? 180 : 120,
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
@@ -305,6 +315,8 @@ class AllProjectWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
+
+                        if (role == "company")
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

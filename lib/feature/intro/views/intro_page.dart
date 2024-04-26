@@ -19,8 +19,8 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    String? role = context.read<AuthenticateProvider>().authenRepository.role ?? "";
-    if (role != ""){
+    String? role = context.read<AuthenticateProvider>().authenRepository.role;
+    if (role != null){
       Future.delayed(Duration(milliseconds: 100),() {
         Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       },); 

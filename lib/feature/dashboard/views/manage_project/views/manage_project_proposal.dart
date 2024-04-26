@@ -2,13 +2,6 @@ import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_pro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-List<StudentModel> studentLists = [
-  StudentModel(name: "Hung", age: "4th year student", position: "Full stack"),
-  StudentModel(name: "Khoi", age: "2th year student", position: "Backend"),
-  StudentModel(name: "Tien", age: "3th year student", position: "Mobile"),
-  StudentModel(name: "Nghia", age: "3th year student", position: "Data engineer"),
-  StudentModel(name: "Khoi", age:"2th year student", position: "Data engineer"),
-];
 
 class ManageProjectProposal extends StatelessWidget {
   ManageProjectProposal(
@@ -24,8 +17,9 @@ class ManageProjectProposal extends StatelessWidget {
       child: ListView.builder(
         itemCount: proposals.length,
         itemBuilder: (context, index) {
-          StudentModel student = studentLists[index];
+
           final proposal = proposals[index];
+          final date = DateTime.parse(proposal['createdAt'].toString());
           return Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(8),
@@ -44,18 +38,21 @@ class ManageProjectProposal extends StatelessWidget {
                         flex: 8,
                         child: Column(
                           children: [
-                            Text('ID: ${proposal['id']}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            Text('${proposal['student']['user']['fullname']}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold
                             ),),
-                            // Text(student.age.toString())
+                            Text('${date.day}-${date.month}-${date.year}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.normal
+                            ),),
                           ],
+
                         ))
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(student.position!,style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    Text(proposal['student']['techStack']['name'],style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold
                     ),),
                     // Text("excellent")

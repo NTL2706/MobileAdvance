@@ -25,10 +25,12 @@ class AuthenRepository {
       required String password,
       required String role}) async {
     try {
+      print("${env.apiURL}api/auth/sign-in");
       final response = await http.post(
           Uri.parse("${env.apiURL}api/auth/sign-in"),
           body: {"email": email, "password": password});
       final body = json.decode(response.body);
+
       if (response.statusCode == 201) {
         await sharedPreferences.setString(
             'token', body['result']['token'].toString().trim());
@@ -125,5 +127,27 @@ class AuthenRepository {
     }
   }
 
-  void logOut() {}
+  Future<Map<dynamic, dynamic>> SignOut({
+    required String token
+  })async{
+    try {
+      final response = await http.post(
+        headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token"
+        },
+        Uri.parse("${env.apiURL}api/auth/logout")
+      );
+      final body = json.decode(response.body);
+      print(body);
+       if (response.statusCode >= 400) {
+        throw Exception(body['errorDetails']);
+      }
+
+      return {
+        "result": AuthResult.success,
+      };
+    } catch (e) {
+      return {"result": AuthResult.failure, "message": e.toString()};
+    }
+  }
 }
