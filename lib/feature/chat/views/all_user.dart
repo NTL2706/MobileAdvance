@@ -19,8 +19,7 @@ class MessageWidget extends StatelessWidget {
       body: FutureBuilder(
           future: context.read<ChatProvider>().fetchDataAllChat(
               token:
-                  context.read<AuthenticateProvider>().authenRepository.token ??
-                      ''),
+                  context.read<AuthenticateProvider>().authenRepository.token!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
