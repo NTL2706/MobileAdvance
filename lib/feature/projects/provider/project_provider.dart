@@ -8,7 +8,8 @@ import "package:http/http.dart" as http;
 import 'package:collection/collection.dart';
 
 class ProjectProvider extends ChangeNotifier {
-  HttpResponse responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
+  HttpResponse responseHttp =
+      HttpResponse<List<Map<String, dynamic>>>.unknown();
   List<Map<String, dynamic>>? favouriteProjectList;
   List<Project> _projects = [];
   List<Project> _filteredProjects = [];
@@ -113,6 +114,7 @@ class ProjectProvider extends ChangeNotifier {
   Future<HttpResponse<List<Map<String, dynamic>>>> getAllProjectForStudent(
       {required String token, required int studentId}) async {
     try {
+      print("$token");
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
       final rs = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
@@ -124,15 +126,15 @@ class ProjectProvider extends ChangeNotifier {
       final bodyFavourite = json.decode(favoriteProjectResponse.body);
       final body = json.decode(rs.body);
 
-      final result = List<Map<String, dynamic>>.from(body['result']);
       
+      final result = List<Map<String, dynamic>>.from(body['result']);
       _projects = result.map((e) {
         return Project.fromJson(e);
       }).toList();
-      
-      _filteredProjects = _projects;
 
-      final favouriteProject =
+      _filteredProjects = _projects;
+    
+      final favouriteProject  =
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
       favouriteProjectList = favouriteProject;
 

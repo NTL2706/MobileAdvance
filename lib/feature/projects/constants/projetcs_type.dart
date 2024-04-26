@@ -20,7 +20,7 @@ class Project {
 
   factory Project.fromJson(Map<String, dynamic>? json) {
     return Project(
-        id: json?['projectId'],
+        id: json?['id'],
         title: json?['title'],
         createdAt: DateTime.parse(json?['createdAt']),
         numberOfPeople: json?['numberOfStudents'],

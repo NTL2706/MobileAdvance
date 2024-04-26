@@ -1,50 +1,99 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, non_constant_identifier_names
 
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-import 'dart:math';
+
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class SocketManager {
+  IO.Socket? socket;
+
+  SocketManager({required String token, required String projectId}) {
+    initSocket(token: token, projectId: projectId);
+  }
+
+  void initSocket({required String token, required String projectId}) {
+    socket = IO.io(
+      dotenv.env['API_URL'], // Server url
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    );
+
+    socket!.io.options?['extraHeaders'] = {
+      'Authorization': 'Bearer $token',
+    };
+
+    socket!.io.options?['query'] = {
+      'project_id': projectId,
+    };
+
+    socket!.connect();
+
+    socket!.onConnect((_) {
+      print('Connected');
+    });
+
+    socket!.onDisconnect((_) {
+      print('Disconnected');
+    });
+
+    socket!.onConnectError((data) {
+      print('Connect error: $data');
+    });
+
+    socket!.onError((data) {
+      print('Error: $data');
+    });
+
+    socket!.on('RECEIVE_MESSAGE', (data) {
+      // Your code to update UI
+    });
+
+    socket!.on("ERROR", (data) {
+      print('Socket error: $data');
+    });
+  }
+
+  void sendMessage({
+    required String content,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    int messageFlag = 0,
+  }) {
+    if (socket != null) {
+      socket!.emit("SEND_MESSAGE", {
+        "content": content,
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "messageFlag": messageFlag,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void dispose() {
+    if (socket != null && socket!.connected) {
+      socket!.disconnect();
+    }
+  }
+}
 
 class ChatProvider extends ChangeNotifier {
-  List<ChatUser> _chatusers = [
-    ChatUser('1', 'Khân Đồi', 'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser('2', 'Quang Tú', 'Junior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], true, null),
-    ChatUser('3', '17 lúi', 'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser('4', 'Ngài Morgan', 'Junior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser(
-        '5',
-        'Hần Đoài',
-        'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'],
-        true,
-        'https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/232991495_2936758473209297_7122906719741291747_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEeu1ofd2v9zW2nx1f98eKiL8qzVUaE10kvyrNVRoTXSbCwEp0wYXqt6P04MD5agItuDWdM2WLXg5szjm9Zq7nI&_nc_ohc=KZ2qS9CwwDsAb6eGqq1&_nc_ht=scontent.fsgn5-10.fna&oh=00_AfDNvuudIFStmUW0p_-AKybJDyheWNVWyjvqg772wMbXPw&oe=66174FF1'),
-    ChatUser('6', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null),
-    ChatUser('7', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null),
-    ChatUser('8', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        true, null),
-    ChatUser('9', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null)
-  ];
-  List<dynamic> _chatmessage = [
-    ShecduleMeeting(
-        id: 'test',
-        author: 'Me',
-        title: 'Meeting',
-        timeStart: DateTime.now(),
-        timeEnd: DateTime.now(),
-        isMeeting: 1),
-    ChatMessage(sender: 'Me', text: 'Hello!', time: DateTime.now()),
-    ChatMessage(sender: 'You', text: 'Hi there!', time: DateTime.now()),
-    ChatMessage(sender: 'Me', text: 'Are you oke!', time: DateTime.now()),
-    ChatMessage(sender: 'You', text: 'Haha!', time: DateTime.now()),
-  ];
-  String?
-      prevId; // dùng để tránh việc get lại default data liên tục của modalbottomsheet
+  List<ChatUser> _chatusers = [];
+  List<dynamic> _chatmessage = [];
+  String? prevId;
 
   final TextEditingController _textController =
       TextEditingController(); // Thêm controller này
@@ -58,6 +107,22 @@ class ChatProvider extends ChangeNotifier {
   TextEditingController get titleController => _titleController;
   TextEditingController get startTimeController => _startTimeController;
   TextEditingController get endTimeController => _endTimeController;
+
+  Future<Map<String, dynamic>> fetchDataAllChat({required String token}) async {
+    String apiUrl = "${DotEnv.dotenv.env['API_URL']!}api/message";
+    try {
+      http.Response response = await http.get(Uri.parse(apiUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      throw Exception('Failed to fetch data: $error');
+    }
+  }
 
   void handleSubmitted(String text) {
     _textController.value.text.isNotEmpty

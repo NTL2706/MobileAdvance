@@ -103,10 +103,10 @@ class _ProjectPageState extends State<ProjectPage> {
                   // final project = projectProvider.projects[index];
                   // final project =
                   //     Project.fromJson(snapshot.data?.result?[index]);
-                
+
                   final project =
                       context.read<ProjectProvider>().projects[index];
-
+                  print(project.id);
                   bool disableFlag = true;
                   final favouriteProjectList =
                       context.read<ProjectProvider>().favouriteProjectList;
@@ -118,7 +118,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       }
                     },
                   );
-                  
+
                   return Container(
                       margin: EdgeInsets.only(bottom: 24.0),
                       decoration: BoxDecoration(
@@ -147,35 +147,35 @@ class _ProjectPageState extends State<ProjectPage> {
                                   ),
                                   // Thời gian của animation
                                   if (role == "student")
-                                  IconButton(
-                                      onPressed: () async {
-                                        setState(() {});
-                                        await context
-                                            .read<ProjectProvider>()
-                                            .toggleFavoriteStatus(
-                                                token: context
-                                                    .read<
-                                                        AuthenticateProvider>()
-                                                    .authenRepository
-                                                    .token!,
-                                                studentId: context
-                                                    .read<
-                                                        AuthenticateProvider>()
-                                                    .authenRepository
-                                                    .student?['id'],
-                                                projectId: project.id!,
-                                                disableFlag: disableFlag);
-                                        // Gọi hàm toggleFavoriteStatus với chỉ số index
-                                      },
-                                      icon: Icon(
-                                        disableFlag
-                                            ? // Nếu true, hiển thị biểu tượng favorite đã được tô màu
-                                            Icons.favorite_border
-                                            : Icons
-                                                .favorite, // Nếu false, hiển thị biểu tượng favorite_border không thay đổi màu sắc
-                                        color: Colors
-                                            .red, // Thay đổi màu biểu tượng thành màu trắng nếu là favorite, nếu không thì để mặc định
-                                      )),
+                                    IconButton(
+                                        onPressed: () async {
+                                          setState(() {});
+                                          await context
+                                              .read<ProjectProvider>()
+                                              .toggleFavoriteStatus(
+                                                  token: context
+                                                      .read<
+                                                          AuthenticateProvider>()
+                                                      .authenRepository
+                                                      .token!,
+                                                  studentId: context
+                                                      .read<
+                                                          AuthenticateProvider>()
+                                                      .authenRepository
+                                                      .student?['id'],
+                                                  projectId: project.id!,
+                                                  disableFlag: disableFlag);
+                                          // Gọi hàm toggleFavoriteStatus với chỉ số index
+                                        },
+                                        icon: Icon(
+                                          disableFlag
+                                              ? // Nếu true, hiển thị biểu tượng favorite đã được tô màu
+                                              Icons.favorite_border
+                                              : Icons
+                                                  .favorite, // Nếu false, hiển thị biểu tượng favorite_border không thay đổi màu sắc
+                                          color: Colors
+                                              .red, // Thay đổi màu biểu tượng thành màu trắng nếu là favorite, nếu không thì để mặc định
+                                        )),
                                 ],
                               ),
                               SizedBox(height: 12),
@@ -255,37 +255,38 @@ class _ProjectPageState extends State<ProjectPage> {
                                     ),
                                   ),
                                   if (role == "student")
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ApplyProject(
-                                                  disableFlag: disableFlag,
-                                                  project: project,
-                                                )),
-                                      );
-                                    },
-                                    style: ButtonStyle(
-                                      minimumSize: MaterialStateProperty.all(
-                                          Size(80, 45)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.blue), // Màu nền
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Đặt border radius
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ApplyProject(
+                                                    disableFlag: disableFlag,
+                                                    project: project,
+                                                  )),
+                                        );
+                                      },
+                                      style: ButtonStyle(
+                                        minimumSize: MaterialStateProperty.all(
+                                            Size(80, 45)),
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Colors.blue), // Màu nền
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                10), // Đặt border radius
+                                          ),
                                         ),
                                       ),
+                                      child: Text(
+                                        'Apply',
+                                        style: TextStyle(
+                                            color: Colors.white), // Màu văn bản
+                                      ),
                                     ),
-                                    child: Text(
-                                      'Apply',
-                                      style: TextStyle(
-                                          color: Colors.white), // Màu văn bản
-                                    ),
-                                  ),
                                 ],
                               )
                             ],
