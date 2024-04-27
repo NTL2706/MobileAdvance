@@ -40,7 +40,7 @@ class JobNotifier extends ChangeNotifier {
       }
 
       projectList = List<Map<String,dynamic>>.from(body['result']).map((e) => Map<String,dynamic>.from(e['project'])).toList();
-
+      
       // final proposalListOfStudent = List<Map<String, dynamic>>.from(body['result']);
 
       // for (int i = 0; i < proposalListOfStudent.length; i++) {

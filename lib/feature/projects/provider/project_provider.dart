@@ -111,10 +111,11 @@ class ProjectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
   Future<HttpResponse<List<Map<String, dynamic>>>> getAllProjectForStudent(
       {required String token, required int studentId}) async {
     try {
-      print("$token");
+      
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
       final rs = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
@@ -137,11 +138,11 @@ class ProjectProvider extends ChangeNotifier {
       final favouriteProject  =
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
       favouriteProjectList = favouriteProject;
-
+ 
       if (rs.statusCode >= 400) {
         throw Exception(body);
       }
-
+      
       responseHttp.updateResponse({"result": result, "status": rs.statusCode});
       return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     } on Exception catch (e) {
@@ -150,6 +151,38 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> checkApply(
+    {
+      required String token,
+      required int studentId
+    }
+  )async{
+    try {
+      responseHttp = HttpResponse<bool>.unknown();
+      final rs = await http.get(
+        headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token"
+        }
+        ,Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
+      final body = json.decode(rs.body);
+      if (rs.statusCode >= 400){
+        throw Exception(body);
+      }
+     
+      final proposals = List<Map<String,dynamic>>.from(body['result']);
+      proposals.forEach((proposal) {
+        _filteredProjects.removeWhere((element){
+          // print(element.id ==  proposal['projectId']);
+          if(proposal['projectId'] == element.id){
+            print(element.title);
+          }
+          return proposal['projectId'] == element.id;});
+      });
+      notifyListeners();
+    }on Exception catch (e) {
+      print(e);
+    }
+  }
   Future<void> applyProposal(
       {required String token,
       required int projectId,
