@@ -50,7 +50,13 @@ class _ChatScreenState extends State<ChatScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
-
+  
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    socketManager.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     socketManager.socket?.on("RECEIVE_MESSAGE", (data) {

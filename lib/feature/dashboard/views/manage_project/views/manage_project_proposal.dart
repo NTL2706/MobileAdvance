@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/models/student_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,10 @@ class ManageProjectProposal extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                    
                         ),),
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
+                          ChatScreen(projectId: proposal['projectId'], receiveId: proposal['student']['userId'], nameReceiver:proposal['student']['user']['fullname'] ),));
+                        },
                     )),
                     SizedBox(
                       width: 10,
