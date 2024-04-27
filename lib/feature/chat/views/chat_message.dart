@@ -73,6 +73,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(onPressed: () {
+          Navigator.of(context).pop(true);
+        }, icon: Icon(Icons.arrow_back)),
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         title: Text(widget.nameReceiver),
         actions: [

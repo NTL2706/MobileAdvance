@@ -7,9 +7,14 @@ import './chat_message.dart';
 import '../provider/chat_provider.dart';
 import '../utils/Image.dart';
 
-class MessageWidget extends StatelessWidget {
+class MessageWidget extends StatefulWidget {
   const MessageWidget({super.key});
 
+  @override
+  State<MessageWidget> createState() => _MessageWidgetState();
+}
+
+class _MessageWidgetState extends State<MessageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,8 +94,8 @@ class MessageWidget extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                onTap: () {
-                                  Navigator.push(
+                                onTap: () async{
+                                  final rs = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ChatScreen(
@@ -122,6 +127,11 @@ class MessageWidget extends StatelessWidget {
                                                       .data![index].sender.id,
                                             )), // Điều hướng đến màn hình chat
                                   );
+                                  if (rs){
+                                    setState(() {
+                                      
+                                    });
+                                  }
                                   // Handle tapping on the message
                                 },
                               ));
