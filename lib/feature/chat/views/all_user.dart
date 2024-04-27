@@ -10,11 +10,6 @@ import '../utils/Image.dart';
 class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SocketManager socket = SocketManager(
-      token: context.read<AuthenticateProvider>().authenRepository.token!,
-      projectId: '1',
-    );
-
     return Scaffold(
       body: FutureBuilder(
           future: context.read<ChatProvider>().fetchDataAllChat(
@@ -22,7 +17,7 @@ class MessageWidget extends StatelessWidget {
                   context.read<AuthenticateProvider>().authenRepository.token!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                   child:
                       CircularProgressIndicator()); // Hiển thị spinner khi dữ liệu đang được tải
             } else if (snapshot.hasError) {
@@ -35,7 +30,7 @@ class MessageWidget extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -51,10 +46,8 @@ class MessageWidget extends StatelessWidget {
                     child: Container(
                       color: Colors.grey[200],
                       child: ListView.builder(
-                        itemCount: context
-                            .watch<ChatProvider>()
-                            .chatusers
-                            .length, // Replace this with your actual data count
+                        itemCount: snapshot.data?.length.toInt() ??
+                            0, // Replace this with your actual data count
                         itemBuilder: (context, index) {
                           return Padding(
                               padding: EdgeInsets.only(top: 12, bottom: 12),
@@ -62,68 +55,36 @@ class MessageWidget extends StatelessWidget {
                                 leading: Container(
                                   width: 55, // Kích thước mặc định bạn muốn đặt
                                   height: 55,
-                                  child: context
-                                              .read<ChatProvider>()
-                                              .chatusers[index]
-                                              .avatar !=
-                                          null
-                                      ? CustomImage(
-                                          imageUrl: context
-                                              .read<ChatProvider>()
-                                              .chatusers[index]
-                                              .avatar,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        )
-                                      : Icon(
-                                          Icons.person,
-                                          size: 55,
-                                        ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 55,
+                                  ),
                                 ),
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(context
-                                        .read<ChatProvider>()
-                                        .chatusers[index]
-                                        .name), // User name
                                     Text(
-                                      context
-                                          .read<ChatProvider>()
-                                          .chatusers[index]
-                                          .role,
+                                      snapshot.data?[index].sender.id ==
+                                              context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .id
+                                          ? snapshot
+                                              .data![index].receiver.fullname
+                                          : snapshot
+                                              .data![index].sender.fullname,
+                                    ),
+                                    Text(
+                                      snapshot.data![index].project.title,
                                       style: TextStyle(
                                           color: Colors.redAccent,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          context
-                                              .read<ChatProvider>()
-                                              .chatusers[index]
-                                              .message[0],
-                                          style:
-                                              TextStyle(color: Colors.black38),
-                                        ),
-                                        if (context
-                                                .read<ChatProvider>()
-                                                .chatusers[index]
-                                                .seen ==
-                                            true)
-                                          Icon(
-                                            Icons.circle,
-                                            size: 10,
-                                            color: Colors.green,
-                                          )
-                                      ],
+                                    Text(
+                                      snapshot.data![index].content,
+                                      style: TextStyle(color: Colors.black38),
                                     ),
-
-                                    // Last message
-                                    // Time of last message
                                   ],
                                 ),
                                 onTap: () {
@@ -131,10 +92,33 @@ class MessageWidget extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ChatScreen(
-                                            chatUser: context
-                                                    .read<ChatProvider>()
-                                                    .chatusers[
-                                                index])), // Điều hướng đến màn hình chat
+                                              nameReceiver: snapshot
+                                                          .data![index]
+                                                          .sender
+                                                          .id ==
+                                                      context
+                                                          .read<
+                                                              AuthenticateProvider>()
+                                                          .authenRepository
+                                                          .id
+                                                  ? snapshot.data![index]
+                                                      .receiver.fullname
+                                                  : snapshot.data![index].sender
+                                                      .fullname,
+                                              projectId: snapshot
+                                                  .data![index].project.id,
+                                              receiveId: snapshot.data?[index]
+                                                          .sender.id ==
+                                                      context
+                                                          .read<
+                                                              AuthenticateProvider>()
+                                                          .authenRepository
+                                                          .id
+                                                  ? snapshot
+                                                      .data![index].receiver.id
+                                                  : snapshot
+                                                      .data![index].sender.id,
+                                            )), // Điều hướng đến màn hình chat
                                   );
                                   // Handle tapping on the message
                                 },

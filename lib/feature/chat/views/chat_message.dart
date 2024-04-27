@@ -10,10 +10,15 @@ import '../utils/convert_time.dart';
 import '../utils/calc_duration.dart';
 
 class ChatScreen extends StatelessWidget {
-  final ChatUser chatUser;
+  final String nameReceiver;
+  final int projectId;
+  final int receiveId;
   final ScrollController _scrollController = ScrollController();
 
-  ChatScreen({required this.chatUser});
+  ChatScreen(
+      {required this.projectId,
+      required this.receiveId,
+      required this.nameReceiver});
 
   void scrollToBottom() {
     _scrollController.animateTo(
@@ -25,16 +30,13 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SocketManager socket = SocketManager(
-      token: context.read<AuthenticateProvider>().authenRepository.token!,
-      projectId: '1',
-    );
-
-    print(socket);
+    SocketManager socket = context.read<ChatProvider>().initSocket(
+        token: context.read<AuthenticateProvider>().authenRepository.token!,
+        projectId: projectId.toString());
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(chatUser.name),
+        title: Text(nameReceiver),
         actions: [
           PopupMenuButton(
             elevation: 50,
@@ -67,149 +69,172 @@ class ChatScreen extends StatelessWidget {
         ],
       ),
       body: FutureBuilder(
-          future: context.read<ChatProvider>().fetchDataAllChat(
+          future: context.read<ChatProvider>().fetchDataIdUser(
               token:
-                  context.read<AuthenticateProvider>().authenRepository.token!),
+                  context.read<AuthenticateProvider>().authenRepository.token!,
+              projectid: projectId,
+              userid: receiveId),
           builder: (context, snapshot) {
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: context.watch<ChatProvider>().chatmessage.length,
-                    itemBuilder: (context, index) {
-                      if (context.watch<ChatProvider>().chatmessage[
-                          context.watch<ChatProvider>().chatmessage.length -
-                              index -
-                              1] is ShecduleMeeting) {
-                        return MeetingCard(
-                          index:
-                              context.watch<ChatProvider>().chatmessage.length -
-                                  index -
-                                  1,
-                        );
-                      } else {
-                        final int curIndex =
-                            context.watch<ChatProvider>().chatmessage.length -
-                                index -
-                                1;
-                        final message = curIndex >= 0
-                            ? context
-                                .watch<ChatProvider>()
-                                .chatmessage[curIndex]
-                            : null;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child:
+                      CircularProgressIndicator()); // Hiển thị spinner khi dữ liệu đang được tải
+            } else {
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        if (snapshot.data?[index].interview != null) {
+                          return null;
+                          // MeetingCard(
+                          //   index:
+                          //       context.watch<ChatProvider>().chatmessage.length -
+                          //           index -
+                          //           1,
+                          // );
+                        } else {
+                          final int curIndex = index;
+                          final message = snapshot.data?[index].content;
 
-                        final int nextIndex = curIndex - 1;
-                        final nextmessage = nextIndex >= 0 &&
-                                context
-                                    .watch<ChatProvider>()
-                                    .chatmessage[nextIndex] is ChatMessage
-                            ? context
-                                .watch<ChatProvider>()
-                                .chatmessage[nextIndex]
-                            : null;
+                          final int nextIndex = curIndex + 1;
+                          final nextmessage = nextIndex >= snapshot.data!.length
+                              ? null
+                              : snapshot.data?[index].content;
 
-                        final int prevIndex = curIndex + 1;
-                        final prevmessage = prevIndex <
+                          final int prevIndex = curIndex - 1;
+                          final prevmessage = prevIndex <= 0
+                              ? null
+                              : snapshot.data?[index].content;
+
+                          return ChatBubble(
+                            message: message!,
+                            isMe: message != null &&
+                                snapshot.data?[index].sender.id ==
                                     context
-                                        .watch<ChatProvider>()
-                                        .chatmessage
-                                        .length &&
-                                context
-                                    .watch<ChatProvider>()
-                                    .chatmessage[prevIndex] is ChatMessage
-                            ? context
-                                .watch<ChatProvider>()
-                                .chatmessage[prevIndex]
-                            : null;
-
-                        return ChatBubble(
-                          message: message!,
-                          isMe: message != null &&
-                              message.sender ==
-                                  'Me', // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
-                          isFirst: prevmessage == null ||
-                              prevmessage?.sender !=
-                                  message
-                                      .sender, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
-                          isLast: nextmessage == null ||
-                              nextmessage?.sender !=
-                                  message
-                                      .sender, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
-                        );
-                      }
-                    },
+                                        .watch<AuthenticateProvider>()
+                                        .authenRepository
+                                        .id, // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
+                            isFirst: prevmessage == null ||
+                                snapshot.data?[index].sender.id !=
+                                    snapshot.data?[index - 1].sender
+                                        .id, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
+                            isLast: nextmessage == null ||
+                                snapshot.data?[index].sender.id !=
+                                    snapshot.data?[index + 1].sender
+                                        .id, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 12, right: 8, left: 8),
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 12, right: 8, left: 8),
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color:
+                                      Colors.grey[200], // Màu nền của hộp đựng
+                                ),
+                                child: TextField(
+                                  style: TextStyle(fontSize: 18),
+                                  controller: context
+                                      .watch<ChatProvider>()
+                                      .textController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter your message...',
+                                    border: InputBorder
+                                        .none, // Loại bỏ viền của TextField
+                                    contentPadding: EdgeInsets.all(
+                                        16), // Khoảng cách giữa nội dung và mép hộp đựng
+                                  ),
+                                  onSubmitted: (text) => {
+                                    text.isNotEmpty
+                                        ? {
+                                            socket.sendMessage(
+                                                content: text,
+                                                projectId: projectId,
+                                                receiverId: receiveId,
+                                                senderId: context
+                                                    .read<
+                                                        AuthenticateProvider>()
+                                                    .authenRepository
+                                                    .id!,
+                                                messageFlag: 0),
+                                            context
+                                                .read<ChatProvider>()
+                                                .textController
+                                                .clear(),
+                                          }
+                                        : null,
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey[200], // Màu nền của hộp đựng
+                                color:
+                                    Colors.blue, // Màu nền của nút IconButton
                               ),
-                              child: TextField(
-                                style: TextStyle(fontSize: 18),
-                                controller: context
-                                    .watch<ChatProvider>()
-                                    .textController,
-                                decoration: InputDecoration(
-                                  hintText: 'Enter your message...',
-                                  border: InputBorder
-                                      .none, // Loại bỏ viền của TextField
-                                  contentPadding: EdgeInsets.all(
-                                      16), // Khoảng cách giữa nội dung và mép hộp đựng
-                                ),
-                                onSubmitted: (text) => {
+                              child: IconButton(
+                                icon: Icon(Icons.send_rounded),
+                                color: Colors.white, // Màu của Icon
+                                onPressed: () {
                                   context
-                                      .watch<ChatProvider>()
-                                      .handleSubmitted(text),
-                                  scrollToBottom()
+                                          .watch<ChatProvider>()
+                                          .textController
+                                          .text
+                                          .isNotEmpty
+                                      ? {
+                                          socket.sendMessage(
+                                              content: context
+                                                  .watch<ChatProvider>()
+                                                  .textController
+                                                  .text,
+                                              projectId: projectId,
+                                              receiverId: receiveId,
+                                              senderId: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .id!,
+                                              messageFlag: 0),
+                                          context
+                                              .watch<ChatProvider>()
+                                              .textController
+                                              .clear()
+                                        }
+                                      : null;
+                                  FocusScope.of(context).unfocus();
+                                  scrollToBottom(); // Ẩn bàn phím
                                 },
                               ),
                             ),
-                          ),
-                          SizedBox(width: 12),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.blue, // Màu nền của nút IconButton
-                            ),
-                            child: IconButton(
-                              icon: Icon(Icons.send_rounded),
-                              color: Colors.white, // Màu của Icon
-                              onPressed: () {
-                                context.watch<ChatProvider>().handleSubmitted(
-                                    context
-                                        .watch<ChatProvider>()
-                                        .textController
-                                        .text); // Xử lý khi nhấn nút IconButton
-                                FocusScope.of(context).unfocus();
-                                scrollToBottom(); // Ẩn bàn phím
-                              },
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            );
+                  )
+                ],
+              );
+            }
           }),
     );
   }
 }
 
 class ChatBubble extends StatelessWidget {
-  final ChatMessage message;
+  final String message;
   final bool isMe;
   final bool isFirst;
   final bool isLast;
@@ -244,12 +269,13 @@ class ChatBubble extends StatelessWidget {
                 isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Text(
-                message.text,
+                message,
                 style: TextStyle(
                     color: isMe ? Colors.white : Colors.black, fontSize: 20),
               ),
               Text(
-                getTimeFromDateTime(message.time).toString(),
+                '11 - 00',
+                // getTimeFromDateTime(message.time).toString(),
                 style: TextStyle(
                     fontSize: 12.0, color: isMe ? Colors.white60 : Colors.grey),
               ),
