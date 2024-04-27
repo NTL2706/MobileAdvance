@@ -164,11 +164,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                     ),
                   ),
-                  SizedBox(height: 12),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 12, right: 8, left: 8),
+                      padding: EdgeInsets.only(
+                          bottom: 12, right: 8, left: 8, top: 12),
                       child: Container(
                         color: Colors.transparent,
                         child: Row(
@@ -290,7 +290,9 @@ class ChatBubble extends StatelessWidget {
       children: [
         Container(
           margin: EdgeInsets.only(
-              top: 4.0, right: isMe ? 8 : 0, left: isMe ? 0 : 8),
+              top: isLast ? 20.0 : 4.0,
+              right: isMe ? 8 : 48,
+              left: isMe ? 48 : 8),
           padding: EdgeInsets.all(12.0),
           decoration: BoxDecoration(
             color: isMe ? Colors.blue : Colors.grey[300],
