@@ -129,15 +129,12 @@ class JobNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteJob({required int id,required String token}) async {
+  Future<void> deleteJob({required int id, required String token}) async {
     try {
       print(id);
-      final response =
-          await http.delete(
-            headers: {
-              HttpHeaders.authorizationHeader:"Bearer $token"
-            },
-            Uri.parse("${env.apiURL}api/project/$id"));
+      final response = await http.delete(
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+          Uri.parse("${env.apiURL}api/project/$id"));
       final body = json.decode(response.body);
 
       notifyListeners();

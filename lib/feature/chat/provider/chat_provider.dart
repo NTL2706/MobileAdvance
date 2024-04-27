@@ -20,6 +20,9 @@ class SocketManager {
   }
 
   void initSocket({required String token, required String projectId}) {
+    int projectID =
+        int.tryParse(projectId) ?? 0; // Đảm bảo rằng projectID là một số nguyên
+
     socket = IO.io(
       dotenv.env['API_URL'], // Server url
       IO.OptionBuilder()
@@ -55,7 +58,7 @@ class SocketManager {
     });
 
     socket!.on('RECEIVE_MESSAGE', (data) {
-      // Your code to update UI
+      print(data);
     });
 
     socket!.on("ERROR", (data) {
@@ -91,7 +94,7 @@ class SocketManager {
 }
 
 class ChatProvider extends ChangeNotifier {
-  List<ChatUser> _chatusers = [];
+  Future<List<Message>>? _cachedDataIdUser;
   List<dynamic> _chatmessage = [];
   String? prevId;
 
@@ -101,21 +104,22 @@ class ChatProvider extends ChangeNotifier {
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
 
-  List<ChatUser> get chatusers => _chatusers;
   List<dynamic> get chatmessage => _chatmessage;
   TextEditingController get textController => _textController;
   TextEditingController get titleController => _titleController;
   TextEditingController get startTimeController => _startTimeController;
   TextEditingController get endTimeController => _endTimeController;
 
-  Future<Map<String, dynamic>> fetchDataAllChat({required String token}) async {
+  Future<List<MessageUser>> fetchDataAllChat({required String token}) async {
     String apiUrl = "${DotEnv.dotenv.env['API_URL']!}api/message";
     try {
       http.Response response = await http.get(Uri.parse(apiUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
-        return data;
+        var parsedJson = jsonDecode(response.body);
+        List<MessageUser> messages = List<MessageUser>.from(
+            parsedJson['result'].map((i) => MessageUser.fromJson(i)));
+        return messages;
       } else {
         throw Exception('Failed to load data');
       }
@@ -124,16 +128,31 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  void handleSubmitted(String text) {
-    _textController.value.text.isNotEmpty
-        ? _chatmessage.insert(
-            0,
-            ChatMessage(sender: 'Me', text: text, time: DateTime.now()),
-          )
-        : null;
+  Future<List<Message>> fetchDataIdUser({
+    required String token,
+    required int projectid,
+    required int userid,
+  }) async {
+    String apiUrl =
+        "${DotEnv.dotenv.env['API_URL']!}api/message/$projectid/user/$userid";
+    try {
+      http.Response response = await http.get(Uri.parse(apiUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        List<Message> messages = List<Message>.from(
+            parsedJson['result'].map((i) => Message.fromJson(i)));
+        return messages;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      throw Exception('Failed to fetch data: $error');
+    }
+  }
 
-    _textController.clear();
-    notifyListeners();
+  SocketManager initSocket({required String token, required String projectId}) {
+    return SocketManager(token: token, projectId: projectId);
   }
 
   void handleScheduleMeeting() async {
