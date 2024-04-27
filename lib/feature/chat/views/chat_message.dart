@@ -36,6 +36,7 @@ class ChatScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text(nameReceiver),
         actions: [
           PopupMenuButton(
@@ -85,7 +86,8 @@ class ChatScreen extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       controller: _scrollController,
-                      itemCount: snapshot.data!.length,
+                      itemCount:
+                          context.watch<ChatProvider>().messages?.length ?? 0,
                       itemBuilder: (context, index) {
                         if (snapshot.data?[index].interview != null) {
                           return null;
@@ -110,13 +112,13 @@ class ChatScreen extends StatelessWidget {
                               : snapshot.data?[index].content;
 
                           return ChatBubble(
+                            time: snapshot.data![index].createdAt,
                             message: message!,
-                            isMe: message != null &&
-                                snapshot.data?[index].sender.id ==
-                                    context
-                                        .watch<AuthenticateProvider>()
-                                        .authenRepository
-                                        .id, // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
+                            isMe: snapshot.data?[index].sender.id ==
+                                context
+                                    .watch<AuthenticateProvider>()
+                                    .authenRepository
+                                    .id, // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
                             isFirst: prevmessage == null ||
                                 snapshot.data?[index].sender.id !=
                                     snapshot.data?[index - 1].sender
@@ -130,6 +132,7 @@ class ChatScreen extends StatelessWidget {
                       },
                     ),
                   ),
+                  SizedBox(height: 12),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Padding(
@@ -170,6 +173,23 @@ class ChatScreen extends StatelessWidget {
                                                     .authenRepository
                                                     .id!,
                                                 messageFlag: 0),
+                                            context.read<ChatProvider>().addMessage(
+                                                message: text,
+                                                createdAt: DateTime.now(),
+                                                sender: User(
+                                                    id: context
+                                                        .read<
+                                                            AuthenticateProvider>()
+                                                        .authenRepository
+                                                        .id!,
+                                                    fullname: context
+                                                        .read<
+                                                            AuthenticateProvider>()
+                                                        .authenRepository
+                                                        .username!),
+                                                receiver: User(
+                                                    id: receiveId,
+                                                    fullname: nameReceiver)),
                                             context
                                                 .read<ChatProvider>()
                                                 .textController
@@ -238,12 +258,14 @@ class ChatBubble extends StatelessWidget {
   final bool isMe;
   final bool isFirst;
   final bool isLast;
+  final DateTime time;
 
   const ChatBubble(
       {required this.message,
       required this.isMe,
       required this.isFirst,
-      required this.isLast});
+      required this.isLast,
+      required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -257,12 +279,19 @@ class ChatBubble extends StatelessWidget {
           padding: EdgeInsets.all(12.0),
           decoration: BoxDecoration(
             color: isMe ? Colors.blue : Colors.grey[300],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(isFirst ? 16.0 : 0),
-              bottomLeft: Radius.circular(16.0),
-              bottomRight: Radius.circular(isLast ? 16.0 : 0.0),
-            ),
+            borderRadius: isMe
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(isFirst ? 16.0 : 0),
+                    bottomLeft: Radius.circular(16.0),
+                    bottomRight: Radius.circular(isLast ? 16.0 : 0.0),
+                  )
+                : BorderRadius.only(
+                    topRight: Radius.circular(16.0),
+                    topLeft: Radius.circular(isFirst ? 16.0 : 0),
+                    bottomRight: Radius.circular(16.0),
+                    bottomLeft: Radius.circular(isLast ? 16.0 : 0.0),
+                  ),
           ),
           child: Column(
             crossAxisAlignment:
@@ -274,7 +303,7 @@ class ChatBubble extends StatelessWidget {
                     color: isMe ? Colors.white : Colors.black, fontSize: 20),
               ),
               Text(
-                '11 - 00',
+                '${time.hour}:${time.minute.toString().padLeft(2, '0')}',
                 // getTimeFromDateTime(message.time).toString(),
                 style: TextStyle(
                     fontSize: 12.0, color: isMe ? Colors.white60 : Colors.grey),
