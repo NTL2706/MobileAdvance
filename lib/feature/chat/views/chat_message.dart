@@ -9,17 +9,25 @@ import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
 import '../utils/calc_duration.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   final String nameReceiver;
   final int projectId;
   final int receiveId;
-  final ScrollController _scrollController = ScrollController();
 
   ChatScreen(
       {required this.projectId,
       required this.receiveId,
       required this.nameReceiver});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  late ChatProvider chatProvider;
+  late SocketManager socketManager;
   void scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
@@ -29,15 +37,38 @@ class ChatScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    SocketManager socket = context.read<ChatProvider>().initSocket(
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    chatProvider = context.read<ChatProvider>();
+    socketManager = chatProvider.initSocket(
         token: context.read<AuthenticateProvider>().authenRepository.token!,
-        projectId: projectId.toString());
+        projectId: widget.projectId.toString());
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    socketManager.socket?.on("RECEIVE_MESSAGE", (data) {
+      chatProvider.addMessage(
+          message: data['content'],
+          createdAt: DateTime.now(),
+          sender: User(id: data['senderId'], fullname: widget.nameReceiver),
+          receiver: User(
+              id: data['receiverId'],
+              fullname: context
+                  .read<AuthenticateProvider>()
+                  .authenRepository
+                  .username!));
+    });
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text(nameReceiver),
+        title: Text(widget.nameReceiver),
         actions: [
           PopupMenuButton(
             elevation: 50,
@@ -73,8 +104,8 @@ class ChatScreen extends StatelessWidget {
           future: context.read<ChatProvider>().fetchDataIdUser(
               token:
                   context.read<AuthenticateProvider>().authenRepository.token!,
-              projectid: projectId,
-              userid: receiveId),
+              projectid: widget.projectId,
+              userid: widget.receiveId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -85,6 +116,7 @@ class ChatScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ListView.builder(
+                      reverse: true,
                       controller: _scrollController,
                       itemCount:
                           context.watch<ChatProvider>().messages?.length ?? 0,
@@ -163,33 +195,16 @@ class ChatScreen extends StatelessWidget {
                                   onSubmitted: (text) => {
                                     text.isNotEmpty
                                         ? {
-                                            socket.sendMessage(
+                                            socketManager.sendMessage(
                                                 content: text,
-                                                projectId: projectId,
-                                                receiverId: receiveId,
+                                                projectId: widget.projectId,
+                                                receiverId: widget.receiveId,
                                                 senderId: context
                                                     .read<
                                                         AuthenticateProvider>()
                                                     .authenRepository
                                                     .id!,
                                                 messageFlag: 0),
-                                            context.read<ChatProvider>().addMessage(
-                                                message: text,
-                                                createdAt: DateTime.now(),
-                                                sender: User(
-                                                    id: context
-                                                        .read<
-                                                            AuthenticateProvider>()
-                                                        .authenRepository
-                                                        .id!,
-                                                    fullname: context
-                                                        .read<
-                                                            AuthenticateProvider>()
-                                                        .authenRepository
-                                                        .username!),
-                                                receiver: User(
-                                                    id: receiveId,
-                                                    fullname: nameReceiver)),
                                             context
                                                 .read<ChatProvider>()
                                                 .textController
@@ -217,13 +232,13 @@ class ChatScreen extends StatelessWidget {
                                           .text
                                           .isNotEmpty
                                       ? {
-                                          socket.sendMessage(
+                                          socketManager.sendMessage(
                                               content: context
                                                   .watch<ChatProvider>()
                                                   .textController
                                                   .text,
-                                              projectId: projectId,
-                                              receiverId: receiveId,
+                                              projectId: widget.projectId,
+                                              receiverId: widget.receiveId,
                                               senderId: context
                                                   .read<AuthenticateProvider>()
                                                   .authenRepository
@@ -282,15 +297,15 @@ class ChatBubble extends StatelessWidget {
             borderRadius: isMe
                 ? BorderRadius.only(
                     topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(isFirst ? 16.0 : 0),
+                    topRight: Radius.circular(isLast ? 16.0 : 0),
                     bottomLeft: Radius.circular(16.0),
-                    bottomRight: Radius.circular(isLast ? 16.0 : 0.0),
+                    bottomRight: Radius.circular(isFirst ? 16.0 : 0.0),
                   )
                 : BorderRadius.only(
                     topRight: Radius.circular(16.0),
-                    topLeft: Radius.circular(isFirst ? 16.0 : 0),
+                    topLeft: Radius.circular(isLast ? 16.0 : 0),
                     bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(isLast ? 16.0 : 0.0),
+                    bottomLeft: Radius.circular(isFirst ? 16.0 : 0.0),
                   ),
           ),
           child: Column(

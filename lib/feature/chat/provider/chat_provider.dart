@@ -16,7 +16,6 @@ class SocketManager {
   SocketManager({
     required String token,
     required String projectId,
-    void addMessage,
   }) {
     initSocket(token: token, projectId: projectId);
   }
@@ -58,10 +57,6 @@ class SocketManager {
 
     socket!.onError((data) {
       print('Error: $data');
-    });
-
-    socket!.on('RECEIVE_MESSAGE', (data) {
-      
     });
 
     socket!.on("ERROR", (data) {
@@ -147,6 +142,7 @@ class ChatProvider extends ChangeNotifier {
         var parsedJson = jsonDecode(response.body);
         List<Message> messages = List<Message>.from(
             parsedJson['result'].map((i) => Message.fromJson(i)));
+        messages.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         _messages = messages;
         return messages;
       } else {
@@ -163,13 +159,15 @@ class ChatProvider extends ChangeNotifier {
       required User sender,
       required User receiver,
       int? interview}) {
-    _messages!.add(Message(
-        id: 1,
-        createdAt: createdAt,
-        content: message,
-        sender: sender,
-        receiver: receiver,
-        interview: interview));
+    _messages!.insert(
+        0,
+        Message(
+            id: 1,
+            createdAt: createdAt,
+            content: message,
+            sender: sender,
+            receiver: receiver,
+            interview: interview));
     notifyListeners();
   }
 
