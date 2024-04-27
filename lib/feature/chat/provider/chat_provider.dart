@@ -8,18 +8,21 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SocketManager {
   IO.Socket? socket;
 
-  SocketManager({required String token, required String projectId}) {
+  SocketManager({
+    required String token,
+    required String projectId,
+    void addMessage,
+  }) {
     initSocket(token: token, projectId: projectId);
   }
 
-  void initSocket({required String token, required String projectId}) {
+  void initSocket(
+      {required String token, required String projectId, void addMessage}) {
     int projectID =
         int.tryParse(projectId) ?? 0; // Đảm bảo rằng projectID là một số nguyên
 
@@ -58,7 +61,7 @@ class SocketManager {
     });
 
     socket!.on('RECEIVE_MESSAGE', (data) {
-      print(data);
+      
     });
 
     socket!.on("ERROR", (data) {
@@ -94,6 +97,8 @@ class SocketManager {
 }
 
 class ChatProvider extends ChangeNotifier {
+  List<Message>? _messages;
+  List<Message>? get messages => _messages;
   Future<List<Message>>? _cachedDataIdUser;
   List<dynamic> _chatmessage = [];
   String? prevId;
@@ -142,6 +147,7 @@ class ChatProvider extends ChangeNotifier {
         var parsedJson = jsonDecode(response.body);
         List<Message> messages = List<Message>.from(
             parsedJson['result'].map((i) => Message.fromJson(i)));
+        _messages = messages;
         return messages;
       } else {
         throw Exception('Failed to load data');
@@ -151,8 +157,30 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  SocketManager initSocket({required String token, required String projectId}) {
-    return SocketManager(token: token, projectId: projectId);
+  void addMessage(
+      {required message,
+      required DateTime createdAt,
+      required User sender,
+      required User receiver,
+      int? interview}) {
+    _messages!.add(Message(
+        id: 1,
+        createdAt: createdAt,
+        content: message,
+        sender: sender,
+        receiver: receiver,
+        interview: interview));
+    notifyListeners();
+  }
+
+  SocketManager initSocket({
+    required String token,
+    required String projectId,
+  }) {
+    return SocketManager(
+        // ignore: void_checks
+        token: token,
+        projectId: projectId);
   }
 
   void handleScheduleMeeting() async {

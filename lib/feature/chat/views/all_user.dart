@@ -8,6 +8,8 @@ import '../provider/chat_provider.dart';
 import '../utils/Image.dart';
 
 class MessageWidget extends StatelessWidget {
+  const MessageWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,7 @@ class MessageWidget extends StatelessWidget {
                   ),
                   Expanded(
                       child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(30.0), // Bo góc ở trên
                       bottom: Radius.circular(30.0), // Bo góc ở dưới
                     ),
@@ -53,13 +55,13 @@ class MessageWidget extends StatelessWidget {
                               padding: EdgeInsets.only(top: 12, bottom: 12),
                               child: ListTile(
                                 leading: Container(
-                                  width: 55, // Kích thước mặc định bạn muốn đặt
-                                  height: 55,
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 55,
-                                  ),
-                                ),
+                                    width:
+                                        55, // Kích thước mặc định bạn muốn đặt
+                                    height: 55,
+                                    child: const CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          'assets/images/avatar.png'),
+                                    )),
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
