@@ -33,13 +33,19 @@ class JobNotifier extends ChangeNotifier {
       }, Uri.parse("https://api.studenthub.dev/api/proposal/project/$studentId"));
 
       final body = json.decode(response.body);
-
+      
       List<Map<String, dynamic>> projectList = [];
       if (response.statusCode >= 400) {
         throw Exception(body['errorDetails']);
       }
 
-      projectList = List<Map<String,dynamic>>.from(body['result']).map((e) => Map<String,dynamic>.from(e['project'])).toList();
+      projectList = List<Map<String,dynamic>>.from(body['result']).map((e) {
+          final project = Map<String,dynamic>.from(e['project']);
+          project.addAll({
+            "statusFlag": e['statusFlag']
+          });
+          return project;
+        }).toList();
       
       // final proposalListOfStudent = List<Map<String, dynamic>>.from(body['result']);
 

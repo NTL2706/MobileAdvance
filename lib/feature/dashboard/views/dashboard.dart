@@ -91,100 +91,117 @@ class DashBoard extends StatelessWidget {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
 
     return FutureBuilder(
-      future: role == "company"
-          ? context.watch<JobNotifier>().getDashboardProject(
-              token:
-                  context.read<AuthenticateProvider>().authenRepository.token!,
-              companyId: context
-                  .read<AuthenticateProvider>()
-                  .authenRepository
-                  .company?['id'])
-          : context.watch<JobNotifier>().getProposalOfStudent(
-              token:
-                  context.read<AuthenticateProvider>().authenRepository.token!,
-              studentId: context
-                  .read<AuthenticateProvider>()
-                  .authenRepository
-                  .student?['id']),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting){
+        future: role == "company"
+            ? context.watch<JobNotifier>().getDashboardProject(
+                token: context
+                    .read<AuthenticateProvider>()
+                    .authenRepository
+                    .token!,
+                companyId: context
+                    .read<AuthenticateProvider>()
+                    .authenRepository
+                    .company?['id'])
+            : context.watch<JobNotifier>().getProposalOfStudent(
+                token: context
+                    .read<AuthenticateProvider>()
+                    .authenRepository
+                    .token!,
+                studentId: context
+                    .read<AuthenticateProvider>()
+                    .authenRepository
+                    .student?['id']),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          List<Map<String, dynamic>> jobList = snapshot.data?['result'];
+
           return Container(
-            child: Center(child: CircularProgressIndicator(),),
-          );
-        }
-        return Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Padding(
-          padding: const EdgeInsets.all(0),
-          child: Container(
-            child: Column(
-              children: [
-                Container(
-                  height: 50,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Colors.blue),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Your projects",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                      if (context
-                              .read<AuthenticateProvider>()
-                              .authenRepository
-                              .role ==
-                          StudentHubCategorySignUp.company.name)
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0.2,
-                              minimumSize: Size(30, 30),
-                            ),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return ProjectPost_1();
+            decoration: BoxDecoration(color: Colors.white),
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+              child: Container(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 50,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(color: Colors.blue),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Your projects",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                          if (context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .role ==
+                              StudentHubCategorySignUp.company.name)
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.2,
+                                  minimumSize: Size(30, 30),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return ProjectPost_1();
+                                    },
+                                  ));
                                 },
-                              ));
-                            },
-                            child: Text(
-                              "Post a jobs",
-                              style: TextStyle(color: Colors.black),
-                            ))
-                    ],
-                  ),
+                                child: Text(
+                                  "Post a jobs",
+                                  style: TextStyle(color: Colors.black),
+                                ))
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                        child: Container(
+                      child: CustomTabBar(
+                        lengOfTabBar: 3,
+                        tabs: [
+                          Text("All projects"),
+                          Text("Working"),
+                          Text("Archieve"),
+                        ],
+                        tab_views: [
+                          AllProjectWidget(
+                            jobList: jobList.where((element) {
+                              return element['deletedAt'] == null;
+            
+                            }).toList(),
+                            state: JobState.pending.name,
+                          ),
+                          AllProjectWidget(
+                            jobList: jobList.where((element) {
+                              return element['deletedAt'] == null &&
+                                  element['typeFlag'] == 1;
+                            }).toList(),
+                            state: JobState.working.name,
+                          ),
+                          AllProjectWidget(
+                            jobList: jobList.where((element) {
+                              return element['deletedAt'] == null &&
+                                  element['typeFlag'] == 2;
+                            }).toList(),
+                            state: JobState.archieved.name,
+                          ),
+                        ],
+                      ),
+                    ))
+                  ],
                 ),
-                Expanded(
-                    child: Container(
-                  child: CustomTabBar(
-                    lengOfTabBar: 3,
-                    tabs: [
-                      Text("All projects"),
-                      Text("Working"),
-                      Text("Archieve"),
-                    ],
-                    tab_views: [
-                      AllProjectWidget(
-                        jobList: snapshot.data?['result'] ?? [],
-                        state: JobState.pending.name,
-                      ),
-                      AllProjectWidget(
-                        jobList: snapshot.data?['result'] ?? [],
-                        state: JobState.working.name,
-                      ),
-                      AllProjectWidget(
-                        jobList: snapshot.data?['result'] ?? [],
-                        state: JobState.archieved.name,
-                      ),
-                    ],
-                  ),
-                ))
-              ],
+              ),
             ),
-          ),
-        ),
-      );}
-    );
+          );
+        });
   }
 }
 
@@ -193,19 +210,10 @@ class AllProjectWidget extends StatelessWidget {
   String? state;
   List<Map<String, dynamic>> jobList;
   @override
-  Widget build(BuildContext context) {
-    // List<JobModel> jobList = context.watch<JobNotifier>().jobList!;
-    // jobList = jobList.where((element){
-    //   return element.state == state;
-    // },).toList();
+  Widget build(BuildContext context) {;
 
     final role = context.read<AuthenticateProvider>().authenRepository.role;
-
-    jobList = jobList.where((element) {
-      return element['deletedAt'] == null;
-    }).toList();
-    
-    
+    final activeJobs = jobList.where((element) => element['statusFlag'] == 1).toList();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -213,34 +221,42 @@ class AllProjectWidget extends StatelessWidget {
         children: [
           if (role == "student")
             Text(
+              "Active(${activeJobs.length})",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          if (role == "student")
+            Text(
               "Your proposal(${jobList.length})",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
-            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: jobList.length,
               itemBuilder: (context, index) {
-            
                 JobModel job = JobModel.jsonFrom(jobList[index]);
-           
+                print(jobList[index]['statusFlag']);
                 return GestureDetector(
-                  onTap: role == "company" ? () {
-                    
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) {
-                        return ManageProject(
-                          job: job,
-                          proposals: job.proposals!,
-                        );
-                      },
-                    ));
-                  }: null,
+                  onTap: role == "company"
+                      ? () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return ManageProject(
+                                job: job,
+                                proposals: job.proposals!,
+                              );
+                            },
+                          ));
+                        }
+                      : null,
                   child: Container(
                     margin: EdgeInsets.only(top: 5),
-                    height: role == "company" ? 180 : 120,
+                    height: role == "company" ? 180 : 125,
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
@@ -294,8 +310,12 @@ class AllProjectWidget extends StatelessWidget {
                                               await context
                                                   .read<JobNotifier>()
                                                   .deleteJob(
-                                                    token: context.read<AuthenticateProvider>().authenRepository.token!,
-                                                    id: job.id!);
+                                                      token: context
+                                                          .read<
+                                                              AuthenticateProvider>()
+                                                          .authenRepository
+                                                          .token!,
+                                                      id: job.id!);
                                             },
                                             child: Text("Remove posting")),
                                         PopupMenuItem(
@@ -315,70 +335,69 @@ class AllProjectWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
-
                         if (role == "company")
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                        alignment: Alignment.center,
-                                        height: 25,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: Colors.black)),
-                                        child: Text("${job.proposalNumber}")),
-                                    Text("Proposals")
-                                  ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height: 25,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: Text("${job.proposalNumber}")),
+                                      Text("Proposals")
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                        alignment: Alignment.center,
-                                        height: 25,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: Colors.black)),
-                                        child: Text("${job.messagesNumber}")),
-                                    Text("Messages")
-                                  ],
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height: 25,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: Text("${job.messagesNumber}")),
+                                      Text("Messages")
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                        alignment: Alignment.center,
-                                        height: 25,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: Colors.black)),
-                                        child: Text("${job.hiredNumber}")),
-                                    Text("Hired")
-                                  ],
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          alignment: Alignment.center,
+                                          height: 25,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: Text("${job.hiredNumber}")),
+                                      Text("Hired")
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        )
+                            ],
+                          )
                       ],
                     ),
                   ),
