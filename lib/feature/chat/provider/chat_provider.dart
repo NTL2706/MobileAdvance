@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:final_project_advanced_mobile/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
@@ -321,5 +322,32 @@ class ChatProvider extends ChangeNotifier {
     );
 
     notifyListeners();
+  }
+
+  Future<void> updateStatusOfStudetnProposal (
+    {
+      required int proposalId,
+      required String token
+    }
+  )async{
+    try {
+      Map<String,dynamic> data= Map();
+      int statusFlag = 1;
+      data['statusFlag'] = statusFlag;
+      print("${env.apiURL}api/proposal/$proposalId");
+      final rs = await http.patch(
+        Uri.parse("${env.apiURL}api/proposal/$proposalId"),
+        headers: {
+          'Content-type': 'application/json',
+            'Accept': 'application/json',
+          HttpHeaders.authorizationHeader:"Bearer $token"
+        },
+        body: json.encode(data)
+        );
+      final body = json.decode(rs.body);
+      print(body);
+    } catch (e) {
+      print(e);
+    }
   }
 }

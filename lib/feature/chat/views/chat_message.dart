@@ -13,11 +13,14 @@ class ChatScreen extends StatefulWidget {
   final String nameReceiver;
   final int projectId;
   final int receiveId;
-
+  int? proposalId;
   ChatScreen(
-      {required this.projectId,
+    {
+      required this.projectId,
       required this.receiveId,
-      required this.nameReceiver});
+      required this.nameReceiver,
+      this.proposalId
+    });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -50,13 +53,14 @@ class _ChatScreenState extends State<ChatScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
-  
+
   @override
   void dispose() {
     // TODO: implement dispose
     socketManager.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     socketManager.socket?.on("RECEIVE_MESSAGE", (data) {
@@ -73,9 +77,11 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {
-          Navigator.of(context).pop(true);
-        }, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            icon: Icon(Icons.arrow_back)),
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         title: Text(widget.nameReceiver),
@@ -202,25 +208,34 @@ class _ChatScreenState extends State<ChatScreen> {
                                     contentPadding: EdgeInsets.all(
                                         16), // Khoảng cách giữa nội dung và mép hộp đựng
                                   ),
-                                  onSubmitted: (text) => {
-                                    text.isNotEmpty
-                                        ? {
-                                            socketManager.sendMessage(
-                                                content: text,
-                                                projectId: widget.projectId,
-                                                receiverId: widget.receiveId,
-                                                senderId: context
-                                                    .read<
-                                                        AuthenticateProvider>()
-                                                    .authenRepository
-                                                    .id!,
-                                                messageFlag: 0),
-                                            context
-                                                .read<ChatProvider>()
-                                                .textController
-                                                .clear(),
-                                          }
-                                        : null,
+                                  onSubmitted: (text) async{
+                                    if (text.isNotEmpty) {
+                                      socketManager.sendMessage(
+                                          content: text,
+                                          projectId: widget.projectId,
+                                          receiverId: widget.receiveId,
+                                          senderId: context
+                                              .read<AuthenticateProvider>()
+                                              .authenRepository
+                                              .id!,
+                                          messageFlag: 0);
+                                      
+                                      context
+                                          .read<ChatProvider>()
+                                          .textController
+                                          .clear();
+                                      
+                                      final messages = context.read<ChatProvider>().messages;
+                                      
+                                      if (messages != null &&messages.isEmpty){
+                                        print("update proposal");
+                                        await context.read<ChatProvider>().updateStatusOfStudetnProposal
+                                        (
+                                          proposalId: widget.proposalId!, 
+                                          token: context.read<AuthenticateProvider>().authenRepository.token!
+                                        );
+                                      }
+                                    }
                                   },
                                 ),
                               ),

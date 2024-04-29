@@ -78,7 +78,13 @@ class ManageProjectProposal extends StatelessWidget {
                         ),),
                         onPressed: (){
                           Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
-                          ChatScreen(projectId: proposal['projectId'], receiveId: proposal['student']['userId'], nameReceiver:proposal['student']['user']['fullname'] ),));
+                          ChatScreen(
+                            projectId: proposal['projectId'], 
+                            receiveId: proposal['student']['userId'], 
+                            nameReceiver:proposal['student']['user']['fullname'],
+                            proposalId: proposal['id'],
+                            
+                            ),));
                         },
                     )),
                     SizedBox(
