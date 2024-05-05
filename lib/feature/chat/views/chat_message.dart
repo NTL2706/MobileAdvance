@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
@@ -319,7 +319,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
                                       if (messages != null &&
                                           messages.isEmpty) {
-                                        print("update proposal");
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
@@ -345,33 +344,46 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: IconButton(
                                 icon: Icon(Icons.send_rounded),
                                 color: Colors.white, // Màu của Icon
-                                onPressed: () {
-                                  context
-                                          .watch<ChatProvider>()
-                                          .textController
-                                          .text
-                                          .isNotEmpty
-                                      ? {
-                                          socketManager.sendMessage(
-                                              content: context
-                                                  .watch<ChatProvider>()
-                                                  .textController
-                                                  .text,
-                                              projectId: widget.projectId,
-                                              receiverId: widget.receiveId,
-                                              senderId: context
+                                onPressed: () async {
+                                  if (context
+                                      .watch<ChatProvider>()
+                                      .textController
+                                      .text
+                                      .isNotEmpty) {
+                                    socketManager.sendMessage(
+                                        content: context
+                                            .watch<ChatProvider>()
+                                            .textController
+                                            .text,
+                                        projectId: widget.projectId,
+                                        receiverId: widget.receiveId,
+                                        senderId: context
+                                            .read<AuthenticateProvider>()
+                                            .authenRepository
+                                            .id!,
+                                        messageFlag: 0);
+
+                                    context
+                                        .read<ChatProvider>()
+                                        .textController
+                                        .clear();
+
+                                    final messages =
+                                        context.read<ChatProvider>().messages;
+
+                                    if (messages != null && messages.isEmpty) {
+                                      await context
+                                          .read<ChatProvider>()
+                                          .updateStatusOfStudetnProposal(
+                                              proposalId: widget.proposalId!,
+                                              token: context
                                                   .read<AuthenticateProvider>()
                                                   .authenRepository
-                                                  .id!,
-                                              messageFlag: 0),
-                                          context
-                                              .watch<ChatProvider>()
-                                              .textController
-                                              .clear()
-                                        }
-                                      : null;
+                                                  .token!);
+                                    }
+                                  }
+
                                   FocusScope.of(context).unfocus();
-                                  scrollToBottom(); // Ẩn bàn phím
                                 },
                               ),
                             ),
