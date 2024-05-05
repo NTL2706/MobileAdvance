@@ -8,6 +8,7 @@ import '../constants/chat_type.dart';
 import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
 import '../utils/calc_duration.dart';
+import '../../callvideo/callvideo.dart';
 
 class ChatScreen extends StatefulWidget {
   final String nameReceiver;
@@ -15,12 +16,10 @@ class ChatScreen extends StatefulWidget {
   final int receiveId;
   int? proposalId;
   ChatScreen(
-    {
-      required this.projectId,
+      {required this.projectId,
       required this.receiveId,
       required this.nameReceiver,
-      this.proposalId
-    });
+      this.proposalId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -41,7 +40,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     chatProvider = context.read<ChatProvider>();
     socketManager = chatProvider.initSocket(
@@ -56,7 +54,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     socketManager.dispose();
     super.dispose();
   }
@@ -65,15 +62,59 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     socketManager.socket?.on("RECEIVE_MESSAGE", (data) {
       chatProvider.addMessage(
-          message: data['content'],
+          message: data['notification']['message']['content'],
           createdAt: DateTime.now(),
-          sender: User(id: data['senderId'], fullname: widget.nameReceiver),
+          sender: User(
+              id: data['notification']['sender']['id'],
+              fullname: data['notification']['sender']['fullname']),
           receiver: User(
-              id: data['receiverId'],
-              fullname: context
-                  .read<AuthenticateProvider>()
-                  .authenRepository
-                  .username!));
+              id: data['notification']['receiver']['id'],
+              fullname: data['notification']['receiver']['fullname']),
+          interview: null);
+    });
+
+    socketManager.socket?.on("RECEIVE_INTERVIEW", (data) {
+      if (data['notification'] != null) {
+        if (data['notification']['content'] == 'Interview updated') {
+          chatProvider.updateScheduleMeeting(
+              title: data['notification']['interview']['title'],
+              startTime: DateTime.parse(
+                  data['notification']['interview']['startTime']),
+              endTime:
+                  DateTime.parse(data['notification']['interview']['endTime']),
+              interviewId: data['notification']['interview']['id']);
+        } else {
+          chatProvider.addMessage(
+              message: 'Interview created',
+              createdAt: DateTime.now(),
+              sender: User(
+                  id: data['notification']['sender']['id'],
+                  fullname: data['notification']['sender']['fullname']),
+              receiver: User(
+                  id: data['notification']['receiver']['id'],
+                  fullname: data['notification']['receiver']['fullname']),
+              interview: Interview(
+                  id: data['notification']['interview']['id'],
+                  createdAt: DateTime.parse(
+                      data['notification']['interview']['createdAt']),
+                  updatedAt: DateTime.parse(
+                      data['notification']['interview']['updatedAt']),
+                  deletedAt: null,
+                  startTime: DateTime.parse(
+                      data['notification']['interview']['startTime']),
+                  endTime: DateTime.parse(
+                      data['notification']['interview']['endTime']),
+                  title: data['notification']['interview']['title'],
+                  disableFlag: 0,
+                  meetingRoomId: 0));
+        }
+      } else {
+        chatProvider.cancelSchedule(
+            title: data['title'],
+            senderId: data['senderId'],
+            receiverId: data['receiverId'],
+            projectId: data['projectId']);
+      }
     });
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +148,15 @@ class _ChatScreenState extends State<ChatScreen> {
                     context: context,
                     isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return MeetingScheduleBottomSheet();
+                      return MeetingScheduleBottomSheet(
+                        socketManager: socketManager,
+                        sender: context
+                            .read<AuthenticateProvider>()
+                            .authenRepository
+                            .id!,
+                        receiver: widget.receiveId,
+                        projectid: widget.projectId,
+                      );
                     },
                   );
                   break;
@@ -138,44 +187,84 @@ class _ChatScreenState extends State<ChatScreen> {
                           context.watch<ChatProvider>().messages?.length ?? 0,
                       itemBuilder: (context, index) {
                         if (snapshot.data?[index].interview != null) {
-                          return null;
-                          // MeetingCard(
-                          //   index:
-                          //       context.watch<ChatProvider>().chatmessage.length -
-                          //           index -
-                          //           1,
-                          // );
+                          return MeetingCard(
+                            socketManager: socketManager,
+                            projectid: widget.projectId,
+                            sender: snapshot.data![index].sender,
+                            receiver: snapshot.data![index].receiver,
+                            interview: snapshot.data![index].interview!,
+                          );
                         } else {
-                          final int curIndex = index;
+                          Widget dateWidget = Container();
+                          bool isMe = snapshot.data?[index].sender.id ==
+                              context
+                                  .watch<AuthenticateProvider>()
+                                  .authenRepository
+                                  .id;
+
                           final message = snapshot.data?[index].content;
 
-                          final int nextIndex = curIndex + 1;
+                          final int nextIndex = index + 1;
                           final nextmessage = nextIndex >= snapshot.data!.length
                               ? null
                               : snapshot.data?[index].content;
 
-                          final int prevIndex = curIndex - 1;
+                          final int prevIndex = index - 1;
                           final prevmessage = prevIndex <= 0
                               ? null
                               : snapshot.data?[index].content;
 
-                          return ChatBubble(
-                            time: snapshot.data![index].createdAt,
-                            message: message!,
-                            isMe: snapshot.data?[index].sender.id ==
-                                context
-                                    .watch<AuthenticateProvider>()
-                                    .authenRepository
-                                    .id, // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
-                            isFirst: prevmessage == null ||
-                                snapshot.data?[index].sender.id !=
-                                    snapshot.data?[index - 1].sender
-                                        .id, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
-                            isLast: nextmessage == null ||
-                                snapshot.data?[index].sender.id !=
-                                    snapshot.data?[index + 1].sender
-                                        .id, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
-                          );
+                          bool shouldDisplayDateWidget(int index) {
+                            if (snapshot.data!.length == 1) {
+                              return true; // Luôn hiển thị nếu chỉ có một mục
+                            }
+                            if (index > 0 &&
+                                snapshot.data![index].createdAt.day !=
+                                    snapshot.data![index - 1].createdAt.day) {
+                              return true; // Hiển thị nếu ngày khác với ngày của mục trước
+                            }
+                            if (index < snapshot.data!.length - 1 &&
+                                snapshot.data![index].createdAt.day !=
+                                    snapshot.data![index + 1].createdAt.day) {
+                              return true; // Hiển thị nếu ngày khác với ngày của mục sau
+                            }
+                            return false; // Mặc định không hiển thị
+                          }
+
+                          if (shouldDisplayDateWidget(index)) {
+                            dateWidget = Center(
+                                child: Text(
+                                    '${snapshot.data![index].createdAt.day} - '
+                                    '${snapshot.data![index].createdAt.month} - '
+                                    '${snapshot.data![index].createdAt.year}'));
+                          }
+
+                          return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: isMe
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                              children: [
+                                dateWidget,
+                                ChatBubble(
+                                  time: snapshot.data![index].createdAt,
+                                  message: message!,
+                                  isMe:
+                                      isMe, // Kiểm tra message không phải null trước khi truy cập thuộc tính sender
+                                  isFirst: prevmessage == null ||
+                                      snapshot.data?[index].sender.id !=
+                                          snapshot.data?[index - 1].sender.id ||
+                                      snapshot.data?[index].createdAt.day !=
+                                          snapshot.data?[index - 1].createdAt
+                                              .day, // Kiểm tra prevmessage không phải null trước khi truy cập thuộc tính sender
+                                  isLast: nextmessage == null ||
+                                      snapshot.data?[index].sender.id !=
+                                          snapshot.data?[index + 1].sender.id ||
+                                      snapshot.data?[index].createdAt.day !=
+                                          snapshot.data?[index + 1].createdAt
+                                              .day, // Kiểm tra nextmessage không phải null trước khi truy cập thuộc tính sender
+                                )
+                              ]);
                         }
                       },
                     ),
@@ -208,7 +297,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     contentPadding: EdgeInsets.all(
                                         16), // Khoảng cách giữa nội dung và mép hộp đựng
                                   ),
-                                  onSubmitted: (text) async{
+                                  onSubmitted: (text) async {
                                     if (text.isNotEmpty) {
                                       socketManager.sendMessage(
                                           content: text,
@@ -219,21 +308,27 @@ class _ChatScreenState extends State<ChatScreen> {
                                               .authenRepository
                                               .id!,
                                           messageFlag: 0);
-                                      
+
                                       context
                                           .read<ChatProvider>()
                                           .textController
                                           .clear();
-                                      
-                                      final messages = context.read<ChatProvider>().messages;
-                                      
-                                      if (messages != null &&messages.isEmpty){
+
+                                      final messages =
+                                          context.read<ChatProvider>().messages;
+
+                                      if (messages != null &&
+                                          messages.isEmpty) {
                                         print("update proposal");
-                                        await context.read<ChatProvider>().updateStatusOfStudetnProposal
-                                        (
-                                          proposalId: widget.proposalId!, 
-                                          token: context.read<AuthenticateProvider>().authenRepository.token!
-                                        );
+                                        await context
+                                            .read<ChatProvider>()
+                                            .updateStatusOfStudetnProposal(
+                                                proposalId: widget.proposalId!,
+                                                token: context
+                                                    .read<
+                                                        AuthenticateProvider>()
+                                                    .authenRepository
+                                                    .token!);
                                       }
                                     }
                                   },
@@ -316,23 +411,23 @@ class ChatBubble extends StatelessWidget {
         Container(
           margin: EdgeInsets.only(
               top: isLast ? 20.0 : 4.0,
-              right: isMe ? 8 : 48,
-              left: isMe ? 48 : 8),
+              right: isMe ? 12 : 48,
+              left: isMe ? 48 : 12),
           padding: EdgeInsets.all(12.0),
           decoration: BoxDecoration(
             color: isMe ? Colors.blue : Colors.grey[300],
             borderRadius: isMe
                 ? BorderRadius.only(
                     topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(isLast ? 16.0 : 0),
+                    topRight: Radius.circular(isLast ? 16 : 8),
                     bottomLeft: Radius.circular(16.0),
-                    bottomRight: Radius.circular(isFirst ? 16.0 : 0.0),
+                    bottomRight: Radius.circular(isFirst ? 16 : 8),
                   )
                 : BorderRadius.only(
-                    topRight: Radius.circular(16.0),
-                    topLeft: Radius.circular(isLast ? 16.0 : 0),
-                    bottomRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(isFirst ? 16.0 : 0.0),
+                    topRight: Radius.circular(16),
+                    topLeft: Radius.circular(isLast ? 16 : 8),
+                    bottomRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(isFirst ? 16 : 8),
                   ),
           ),
           child: Column(
@@ -359,28 +454,35 @@ class ChatBubble extends StatelessWidget {
 }
 
 class MeetingCard extends StatelessWidget {
-  final int index;
+  int projectid;
+  Interview interview;
+  User sender;
+  User receiver;
+  SocketManager socketManager;
 
   MeetingCard({
-    required this.index, // Default duration is 60 minutes
+    required this.projectid,
+    required this.interview,
+    required this.sender,
+    required this.receiver,
+    required this.socketManager,
   });
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ChatProvider>(context);
-    final int duration = calculateTimeDifference(
-        provider.chatmessage[index].timeStart,
-        provider.chatmessage[index].timeEnd);
+    final int duration =
+        calculateTimeDifference(interview.startTime, interview.endTime);
 
     return Container(
-      margin: EdgeInsets.only(top: 4, right: 8, left: 8),
+      margin: EdgeInsets.only(top: 4, right: 12, left: 12),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Created by: ${provider.chatmessage[index].author}',
+              'Created by: ${sender.fullname}',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -392,7 +494,7 @@ class MeetingCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    provider.chatmessage[index].title,
+                    interview.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -408,14 +510,14 @@ class MeetingCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Start Time: ${getDateTime(provider.chatmessage[index].timeStart)}',
+              'Start Time: ${getDateTime(interview.startTime)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              'End Time: ${getDateTime(provider.chatmessage[index].timeEnd)}',
+              'End Time: ${getDateTime(interview.endTime)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -424,9 +526,26 @@ class MeetingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                provider.chatmessage[index].isMeeting == 1
+                interview.deletedAt == null
                     ? ElevatedButton(
                         onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CallPage(
+                                userName: context
+                                    .watch<AuthenticateProvider>()
+                                    .authenRepository
+                                    .username!,
+                                userId: context
+                                    .watch<AuthenticateProvider>()
+                                    .authenRepository
+                                    .id!
+                                    .toString(),
+                                callID: interview.meetingRoomId.toString(),
+                              ),
+                            ),
+                          );
                           // Handle join meeting
                         },
                         child: Text('Join'),
@@ -436,8 +555,12 @@ class MeetingCard extends StatelessWidget {
                         style: TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
-                provider.chatmessage[index].author == 'Me' &&
-                        provider.chatmessage[index].isMeeting == 1
+                sender.id ==
+                            context
+                                .watch<AuthenticateProvider>()
+                                .authenRepository
+                                .id &&
+                        interview.deletedAt == null
                     ? PopupMenuButton(
                         elevation: 50,
                         shape: RoundedRectangleBorder(
@@ -465,13 +588,22 @@ class MeetingCard extends StatelessWidget {
                                 isScrollControlled: true,
                                 builder: (BuildContext context) {
                                   return MeetingScheduleBottomSheet(
-                                      id: provider.chatmessage[index].id);
+                                    socketManager: socketManager,
+                                    interview: interview,
+                                    sender: sender.id,
+                                    receiver: receiver.id,
+                                    projectid: projectid,
+                                  );
                                 },
                               );
                               break;
                             case 2:
-                              provider.handleCancelScheduleMeeting(
-                                  provider.chatmessage[index].id);
+                              socketManager.deleteSchedule(
+                                  interviewId: interview.id,
+                                  projectId: projectid,
+                                  senderId: sender.id,
+                                  receiverId: receiver.id,
+                                  deleteAction: true);
                               break;
                           }
                         },

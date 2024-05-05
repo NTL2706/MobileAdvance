@@ -9,7 +9,7 @@ class ChatMessage {
 }
 
 class ShecduleMeeting {
-  final String id;
+  final int id;
   final String author;
   final String title;
   final DateTime timeEnd;
@@ -88,13 +88,52 @@ class Project {
   }
 }
 
+class Interview {
+  final int id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  late DateTime? deletedAt;
+  late final String title;
+  late final DateTime startTime;
+  late final DateTime endTime;
+  final int disableFlag;
+  final int meetingRoomId;
+
+  Interview({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.deletedAt,
+    required this.title,
+    required this.startTime,
+    required this.endTime,
+    required this.disableFlag,
+    required this.meetingRoomId,
+  });
+
+  factory Interview.fromJson(Map<String, dynamic> json) {
+    return Interview(
+      id: json['id'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      deletedAt:
+          json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
+      title: json['title'],
+      startTime: DateTime.parse(json['startTime']),
+      endTime: DateTime.parse(json['endTime']),
+      disableFlag: json['disableFlag'],
+      meetingRoomId: json['meetingRoomId'],
+    );
+  }
+}
+
 class Message {
   final int id;
   final DateTime createdAt;
   final String content;
-  final int? interview;
   final User sender;
   final User receiver;
+  final Interview? interview;
 
   Message(
       {required this.id,
@@ -111,7 +150,9 @@ class Message {
       content: json['content'],
       sender: User.fromJson(json['sender']),
       receiver: User.fromJson(json['receiver']),
-      interview: json['interview'],
+      interview: json['interview'] != null
+          ? Interview.fromJson(json['interview'])
+          : null,
     );
   }
 }

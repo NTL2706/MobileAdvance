@@ -1,15 +1,14 @@
-// ignore_for_file: prefer_final_fields, non_constant_identifier_names
+// ignore_for_file: prefer_final_fields, non_constant_identifier_names, avoid_print, unrelated_type_equality_checks
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // for Testing data
 
 class SocketManager {
   IO.Socket? socket;
@@ -85,6 +84,80 @@ class SocketManager {
     }
   }
 
+  void startSchedule({
+    required String title,
+    required String startTime,
+    required String endTime,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    required String meeting_room_code,
+    required String meeting_room_id,
+  }) {
+    print(
+        '$title $startTime $endTime $projectId $senderId $receiverId $meeting_room_code $meeting_room_id');
+    if (socket != null) {
+      socket!.emit("SCHEDULE_INTERVIEW", {
+        "title": title,
+        "content": "created",
+        "startTime": startTime,
+        "endTime": endTime,
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "meeting_room_code": meeting_room_code,
+        "meeting_room_id": meeting_room_id
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void updateSchedule({
+    required int interviewId,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    String? title,
+    String? startTime,
+    String? endTime,
+  }) {
+    if (socket != null) {
+      socket!.emit("UPDATE_INTERVIEW", {
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "interviewId": interviewId,
+        "updateAction": true,
+        "title": title,
+        "startTime": startTime,
+        "endTime": endTime,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void deleteSchedule({
+    required int interviewId,
+    required int senderId,
+    required int receiverId,
+    required int projectId,
+    required bool deleteAction,
+  }) {
+    if (socket != null) {
+      socket!.emit("UPDATE_INTERVIEW", {
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "interviewId": interviewId,
+        "deleteAction": deleteAction,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
   void dispose() {
     if (socket != null && socket!.connected) {
       socket!.disconnect();
@@ -95,9 +168,8 @@ class SocketManager {
 class ChatProvider extends ChangeNotifier {
   List<Message>? _messages;
   List<Message>? get messages => _messages;
-  Future<List<Message>>? _cachedDataIdUser;
   List<dynamic> _chatmessage = [];
-  String? prevId;
+  Interview? prevInterview;
 
   final TextEditingController _textController =
       TextEditingController(); // Thêm controller này
@@ -141,6 +213,7 @@ class ChatProvider extends ChangeNotifier {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
+
         List<Message> messages = List<Message>.from(
             parsedJson['result'].map((i) => Message.fromJson(i)));
         messages.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -159,7 +232,7 @@ class ChatProvider extends ChangeNotifier {
       required DateTime createdAt,
       required User sender,
       required User receiver,
-      int? interview}) {
+      Interview? interview}) {
     _messages!.insert(
         0,
         Message(
@@ -187,19 +260,7 @@ class ChatProvider extends ChangeNotifier {
     final startTime = _startTimeController.text;
     final endTime = _endTimeController.text;
 
-    if (title.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {
-      _chatmessage.insert(
-        0,
-        ShecduleMeeting(
-          id: Random().nextInt(1000).toString(),
-          author: 'Me',
-          title: title,
-          timeStart: DateTime.parse(startTime),
-          timeEnd: DateTime.parse(endTime),
-          isMeeting: 1,
-        ),
-      );
-    }
+    if (title.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {}
 
     _titleController.clear();
     _startTimeController.clear();
@@ -270,80 +331,73 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleLoadScheduleMeeting(String? id) {
-    if (prevId != id) {
-      if (id == null) {
+  void handleLoadScheduleMeeting(Interview? interview) {
+    if (prevInterview?.id != interview?.id) {
+      if (interview?.id == null) {
         _titleController.clear();
         _startTimeController.clear();
         _endTimeController.clear();
       } else {
-        int index = chatmessage.indexWhere((element) =>
-            element.runtimeType == ShecduleMeeting && element.id == id);
-        if (index != -1) {
-          _titleController.text = chatmessage[index].title;
-          _startTimeController.text = chatmessage[index].timeStart.toString();
-          _endTimeController.text = chatmessage[index].timeEnd.toString();
+        _titleController.text = interview!.title;
+        _startTimeController.text = interview.startTime.toString();
+        _endTimeController.text = interview.endTime.toString();
+      }
+      prevInterview = interview;
+    }
+  }
+
+  void updateScheduleMeeting({
+    required String title,
+    required DateTime startTime,
+    required DateTime endTime,
+    required String interviewId,
+  }) {
+    for (Message msg in _messages!) {
+      if (msg.interview != null) {
+        if (msg.interview?.id == interviewId) {
+          msg.interview?.title = title;
+          msg.interview?.startTime = startTime;
+          msg.interview?.endTime = endTime;
+          break;
         }
       }
-      prevId = id;
     }
-  }
-
-  void updateScheduleMeeting(String id) {
-    final title = _titleController.text;
-    final startTime = _startTimeController.text;
-    final endTime = _endTimeController.text;
-
-    int index = chatmessage.indexWhere((element) =>
-        element.runtimeType == ShecduleMeeting && element.id == id);
-    chatmessage[index] = ShecduleMeeting(
-      id: id,
-      title: title,
-      timeStart: DateTime.parse(startTime),
-      timeEnd: DateTime.parse(endTime),
-      author: chatmessage[index].author,
-      isMeeting: chatmessage[index].isMeeting,
-    );
-
     notifyListeners();
   }
 
-  void handleCancelScheduleMeeting(String id) {
-    int index = chatmessage.indexWhere((element) =>
-        element.runtimeType == ShecduleMeeting && element.id == id);
-
-    chatmessage[index] = ShecduleMeeting(
-      id: id,
-      title: chatmessage[index].title,
-      timeStart: chatmessage[index].timeStart,
-      timeEnd: chatmessage[index].timeEnd,
-      author: chatmessage[index].author,
-      isMeeting: 2,
-    );
-
+  void cancelSchedule(
+      {required String title,
+      required int projectId,
+      required int senderId,
+      required int receiverId}) {
+    for (Message msg in _messages!) {
+      if (msg.interview != null) {
+        if (msg.content == 'Interview created' &&
+            msg.sender.id == senderId &&
+            msg.receiver.id == receiverId) {
+          msg.interview?.deletedAt = DateTime.now();
+          break;
+        }
+      }
+    }
     notifyListeners();
   }
 
-  Future<void> updateStatusOfStudetnProposal (
-    {
-      required int proposalId,
-      required String token
-    }
-  )async{
+  Future<void> updateStatusOfStudetnProposal(
+      {required int proposalId, required String token}) async {
     try {
-      Map<String,dynamic> data= Map();
+      Map<String, dynamic> data = Map();
       int statusFlag = 1;
       data['statusFlag'] = statusFlag;
       print("${env.apiURL}api/proposal/$proposalId");
-      final rs = await http.patch(
-        Uri.parse("${env.apiURL}api/proposal/$proposalId"),
-        headers: {
-          'Content-type': 'application/json',
-            'Accept': 'application/json',
-          HttpHeaders.authorizationHeader:"Bearer $token"
-        },
-        body: json.encode(data)
-        );
+      final rs =
+          await http.patch(Uri.parse("${env.apiURL}api/proposal/$proposalId"),
+              headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+                HttpHeaders.authorizationHeader: "Bearer $token"
+              },
+              body: json.encode(data));
       final body = json.decode(rs.body);
       print(body);
     } catch (e) {

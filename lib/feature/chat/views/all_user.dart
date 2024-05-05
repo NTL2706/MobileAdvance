@@ -91,10 +91,12 @@ class _MessageWidgetState extends State<MessageWidget> {
                                     Text(
                                       snapshot.data![index].content,
                                       style: TextStyle(color: Colors.black38),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
-                                onTap: () async{
+                                onTap: () async {
                                   final rs = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -127,10 +129,8 @@ class _MessageWidgetState extends State<MessageWidget> {
                                                       .data![index].sender.id,
                                             )), // Điều hướng đến màn hình chat
                                   );
-                                  if (rs){
-                                    setState(() {
-                                      
-                                    });
+                                  if (rs) {
+                                    setState(() {});
                                   }
                                   // Handle tapping on the message
                                 },
