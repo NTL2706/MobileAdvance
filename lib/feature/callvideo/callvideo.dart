@@ -18,7 +18,7 @@ class CallPage extends StatelessWidget {
       appID:
           560044437, // Fill in the appID that you get from ZEGOCLOUD Admin Console.
       appSign:
-          '26d09304d600e54bac18797654611bf1ef0a00daac4dabf37eabefc7d238cbcd', // Fill in the appSign that you get from ZEGOCLOUD Admin Console.
+          "26d09304d600e54bac18797654611bf1ef0a00daac4dabf37eabefc7d238cbcd", // Fill in the appSign that you get from ZEGOCLOUD Admin Console.
       userID: userId,
       userName: userName,
       callID: callID,
