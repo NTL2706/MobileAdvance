@@ -79,7 +79,9 @@ class _UpdateCompanyProfileScreenState
             padding: EdgeInsets.all(8),
             child: IconButton(
                 onPressed: () async {
-                  await context.read<AuthenticateProvider>().signOut();
+                  await context.read<AuthenticateProvider>().signOut(
+                    token: context.read<AuthenticateProvider>().authenRepository.token!
+                  );
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) {

@@ -78,14 +78,14 @@ class JobModel{
       deletedAt: json['deletedAt'],
       companyId: json['companyId'],
       projectScopeFlag: json['projectScopeFlag'],
-      title: json['title'],
+      title: json['title'] ,
       description: json['description'],
       numberOfStudents: json['numberOfStudents'],
       typeFlag: json['typeFlag'],
-      proposalNumber: json['countProposals'],
-      hiredNumber: json['countHired'],
-      messagesNumber: json['countMessages'],
-      proposals:List<Map<String,dynamic>>.from(json['proposals'])
+      proposalNumber: json['countProposals'] ?? 0,
+      hiredNumber: json['countHired'] ?? 0,
+      messagesNumber: json['countMessages'] ?? 0,
+      proposals: json['proposals'] == null ?  List<Map<String,dynamic>>.from([]):List<Map<String,dynamic>>.from(json['proposals'])
     );
   }
 }

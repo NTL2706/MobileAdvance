@@ -1,17 +1,28 @@
+import 'package:final_project_advanced_mobile/feature/chat/constants/chat_type.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/chat_provider.dart';
 import '../utils/convert_time.dart';
+import '../utils/generate_random_string.dart';
 
 class MeetingScheduleBottomSheet extends StatelessWidget {
-  final String? id;
+  final Interview? interview;
+  final int sender;
+  final int receiver;
+  final int projectid;
+  final SocketManager socketManager;
 
-  const MeetingScheduleBottomSheet({this.id});
+  const MeetingScheduleBottomSheet(
+      {this.interview,
+      required this.sender,
+      required this.receiver,
+      required this.projectid,
+      required this.socketManager});
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ChatProvider>(context);
-    provider.handleLoadScheduleMeeting(id);
+    context.read<ChatProvider>().handleLoadScheduleMeeting(interview);
 
     return SingleChildScrollView(
         child: Padding(
@@ -125,7 +136,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
-            id == null
+            interview == null
                 ? ElevatedButton(
                     onPressed: provider.titleController.text.isNotEmpty &&
                             provider.startTimeController.text.isNotEmpty &&
@@ -134,8 +145,25 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                                 .isAfter(DateTime.parse(
                                     provider.startTimeController.text))
                         ? () {
+                            socketManager.startSchedule(
+                                title: context
+                                    .read<ChatProvider>()
+                                    .titleController
+                                    .text,
+                                startTime: context
+                                    .read<ChatProvider>()
+                                    .startTimeController
+                                    .text,
+                                endTime: context
+                                    .read<ChatProvider>()
+                                    .endTimeController
+                                    .text,
+                                projectId: projectid,
+                                senderId: sender,
+                                receiverId: receiver,
+                                meeting_room_code: randomString(),
+                                meeting_room_id: randomString());
                             Navigator.pop(context);
-                            provider.handleScheduleMeeting();
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
@@ -168,8 +196,25 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                                 .isAfter(DateTime.parse(
                                     provider.startTimeController.text))
                         ? () {
+                            socketManager.updateSchedule(
+                              title: context
+                                  .read<ChatProvider>()
+                                  .titleController
+                                  .text,
+                              startTime: context
+                                  .read<ChatProvider>()
+                                  .startTimeController
+                                  .text,
+                              endTime: context
+                                  .read<ChatProvider>()
+                                  .endTimeController
+                                  .text,
+                              projectId: projectid,
+                              senderId: sender,
+                              receiverId: receiver,
+                              interviewId: interview!.id,
+                            );
                             Navigator.pop(context);
-                            provider.updateScheduleMeeting(id!);
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

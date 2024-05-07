@@ -39,11 +39,15 @@ class AuthenticateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signOut() async {
-    authenRepository.logOut();
+  Future<void> signOut({
+    required String token
+  }) async {
+    await authenRepository.SignOut(
+      token: token
+    );
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', "");
-    prefs.setString('role', "");
+    prefs.remove('token');
+    prefs.remove('role');
     authenRepository = AuthenRepository.unknown();
   }
 
@@ -104,4 +108,6 @@ class AuthenticateProvider extends ChangeNotifier {
         message: response['message']);
     notifyListeners();
   }
+
+
 }

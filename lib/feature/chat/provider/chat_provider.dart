@@ -1,50 +1,175 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, non_constant_identifier_names, avoid_print, unrelated_type_equality_checks
 
+import 'dart:convert';
+import 'dart:io';
+import 'package:final_project_advanced_mobile/main.dart';
+import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-import 'dart:math';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // for Testing data
+
+class SocketManager {
+  IO.Socket? socket;
+
+  SocketManager({
+    required String token,
+    required String projectId,
+  }) {
+    initSocket(token: token, projectId: projectId);
+  }
+
+  void initSocket(
+      {required String token, required String projectId, void addMessage}) {
+    int projectID =
+        int.tryParse(projectId) ?? 0; // Đảm bảo rằng projectID là một số nguyên
+
+    socket = IO.io(
+      dotenv.env['API_URL'], // Server url
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    );
+
+    socket!.io.options?['extraHeaders'] = {
+      'Authorization': 'Bearer $token',
+    };
+
+    socket!.io.options?['query'] = {
+      'project_id': projectId,
+    };
+
+    socket!.connect();
+
+    socket!.onConnect((_) {
+      print('Connected');
+    });
+
+    socket!.onDisconnect((_) {
+      print('Disconnected');
+    });
+
+    socket!.onConnectError((data) {
+      print('Connect error: $data');
+    });
+
+    socket!.onError((data) {
+      print('Error: $data');
+    });
+
+    socket!.on("ERROR", (data) {
+      print('Socket error: $data');
+    });
+  }
+
+  void sendMessage({
+    required String content,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    int messageFlag = 0,
+  }) {
+    if (socket != null) {
+      socket!.emit("SEND_MESSAGE", {
+        "content": content,
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "messageFlag": messageFlag,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void startSchedule({
+    required String title,
+    required String startTime,
+    required String endTime,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    required String meeting_room_code,
+    required String meeting_room_id,
+  }) {
+    print(
+        '$title $startTime $endTime $projectId $senderId $receiverId $meeting_room_code $meeting_room_id');
+    if (socket != null) {
+      socket!.emit("SCHEDULE_INTERVIEW", {
+        "title": title,
+        "content": "created",
+        "startTime": startTime,
+        "endTime": endTime,
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "meeting_room_code": meeting_room_code,
+        "meeting_room_id": meeting_room_id
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void updateSchedule({
+    required int interviewId,
+    required int projectId,
+    required int senderId,
+    required int receiverId,
+    String? title,
+    String? startTime,
+    String? endTime,
+  }) {
+    if (socket != null) {
+      socket!.emit("UPDATE_INTERVIEW", {
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "interviewId": interviewId,
+        "updateAction": true,
+        "title": title,
+        "startTime": startTime,
+        "endTime": endTime,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void deleteSchedule({
+    required int interviewId,
+    required int senderId,
+    required int receiverId,
+    required int projectId,
+    required bool deleteAction,
+  }) {
+    if (socket != null) {
+      socket!.emit("UPDATE_INTERVIEW", {
+        "projectId": projectId,
+        "senderId": senderId,
+        "receiverId": receiverId,
+        "interviewId": interviewId,
+        "deleteAction": deleteAction,
+      });
+    } else {
+      print('Socket is not initialized, cannot send message');
+    }
+  }
+
+  void dispose() {
+    if (socket != null && socket!.connected) {
+      socket!.disconnect();
+    }
+  }
+}
 
 class ChatProvider extends ChangeNotifier {
-  List<ChatUser> _chatusers = [
-    ChatUser('1', 'Khân Đồi', 'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser('2', 'Quang Tú', 'Junior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], true, null),
-    ChatUser('3', '17 lúi', 'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser('4', 'Ngài Morgan', 'Junior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'], false, null),
-    ChatUser(
-        '5',
-        'Hần Đoài',
-        'Senior Data Analyist',
-        ['Hello', 'Hi', 'How are you?'],
-        true,
-        'https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/232991495_2936758473209297_7122906719741291747_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEeu1ofd2v9zW2nx1f98eKiL8qzVUaE10kvyrNVRoTXSbCwEp0wYXqt6P04MD5agItuDWdM2WLXg5szjm9Zq7nI&_nc_ohc=KZ2qS9CwwDsAb6eGqq1&_nc_ht=scontent.fsgn5-10.fna&oh=00_AfDNvuudIFStmUW0p_-AKybJDyheWNVWyjvqg772wMbXPw&oe=66174FF1'),
-    ChatUser('6', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null),
-    ChatUser('7', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null),
-    ChatUser('8', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        true, null),
-    ChatUser('9', 'Natulo', 'Nô Lệ Da Đen', ['Hello', 'Hi', 'How are you?'],
-        false, null)
-  ];
-  List<dynamic> _chatmessage = [
-    ShecduleMeeting(
-        id: 'test',
-        author: 'Me',
-        title: 'Meeting',
-        timeStart: DateTime.now(),
-        timeEnd: DateTime.now(),
-        isMeeting: 1),
-    ChatMessage(sender: 'Me', text: 'Hello!', time: DateTime.now()),
-    ChatMessage(sender: 'You', text: 'Hi there!', time: DateTime.now()),
-    ChatMessage(sender: 'Me', text: 'Are you oke!', time: DateTime.now()),
-    ChatMessage(sender: 'You', text: 'Haha!', time: DateTime.now()),
-  ];
-  String?
-      prevId; // dùng để tránh việc get lại default data liên tục của modalbottomsheet
+  List<Message>? _messages;
+  List<Message>? get messages => _messages;
+  List<dynamic> _chatmessage = [];
+  Interview? prevInterview;
 
   final TextEditingController _textController =
       TextEditingController(); // Thêm controller này
@@ -52,23 +177,82 @@ class ChatProvider extends ChangeNotifier {
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
 
-  List<ChatUser> get chatusers => _chatusers;
   List<dynamic> get chatmessage => _chatmessage;
   TextEditingController get textController => _textController;
   TextEditingController get titleController => _titleController;
   TextEditingController get startTimeController => _startTimeController;
   TextEditingController get endTimeController => _endTimeController;
 
-  void handleSubmitted(String text) {
-    _textController.value.text.isNotEmpty
-        ? _chatmessage.insert(
-            0,
-            ChatMessage(sender: 'Me', text: text, time: DateTime.now()),
-          )
-        : null;
+  Future<List<MessageUser>> fetchDataAllChat({required String token}) async {
+    String apiUrl = "${DotEnv.dotenv.env['API_URL']!}api/message";
+    try {
+      http.Response response = await http.get(Uri.parse(apiUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        List<MessageUser> messages = List<MessageUser>.from(
+            parsedJson['result'].map((i) => MessageUser.fromJson(i)));
+        return messages;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      throw Exception('Failed to fetch data: $error');
+    }
+  }
 
-    _textController.clear();
+  Future<List<Message>> fetchDataIdUser({
+    required String token,
+    required int projectid,
+    required int userid,
+  }) async {
+    String apiUrl =
+        "${DotEnv.dotenv.env['API_URL']!}api/message/$projectid/user/$userid";
+    try {
+      http.Response response = await http.get(Uri.parse(apiUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+
+        List<Message> messages = List<Message>.from(
+            parsedJson['result'].map((i) => Message.fromJson(i)));
+        messages.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _messages = messages;
+        return messages;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      throw Exception('Failed to fetch data: $error');
+    }
+  }
+
+  void addMessage(
+      {required message,
+      required DateTime createdAt,
+      required User sender,
+      required User receiver,
+      Interview? interview}) {
+    _messages!.insert(
+        0,
+        Message(
+            id: 1,
+            createdAt: createdAt,
+            content: message,
+            sender: sender,
+            receiver: receiver,
+            interview: interview));
     notifyListeners();
+  }
+
+  SocketManager initSocket({
+    required String token,
+    required String projectId,
+  }) {
+    return SocketManager(
+        // ignore: void_checks
+        token: token,
+        projectId: projectId);
   }
 
   void handleScheduleMeeting() async {
@@ -76,19 +260,7 @@ class ChatProvider extends ChangeNotifier {
     final startTime = _startTimeController.text;
     final endTime = _endTimeController.text;
 
-    if (title.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {
-      _chatmessage.insert(
-        0,
-        ShecduleMeeting(
-          id: Random().nextInt(1000).toString(),
-          author: 'Me',
-          title: title,
-          timeStart: DateTime.parse(startTime),
-          timeEnd: DateTime.parse(endTime),
-          isMeeting: 1,
-        ),
-      );
-    }
+    if (title.isNotEmpty && startTime.isNotEmpty && endTime.isNotEmpty) {}
 
     _titleController.clear();
     _startTimeController.clear();
@@ -159,57 +331,77 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleLoadScheduleMeeting(String? id) {
-    if (prevId != id) {
-      if (id == null) {
+  void handleLoadScheduleMeeting(Interview? interview) {
+    if (prevInterview?.id != interview?.id) {
+      if (interview?.id == null) {
         _titleController.clear();
         _startTimeController.clear();
         _endTimeController.clear();
       } else {
-        int index = chatmessage.indexWhere((element) =>
-            element.runtimeType == ShecduleMeeting && element.id == id);
-        if (index != -1) {
-          _titleController.text = chatmessage[index].title;
-          _startTimeController.text = chatmessage[index].timeStart.toString();
-          _endTimeController.text = chatmessage[index].timeEnd.toString();
-        }
+        _titleController.text = interview!.title;
+        _startTimeController.text = interview.startTime.toString();
+        _endTimeController.text = interview.endTime.toString();
       }
-      prevId = id;
+      prevInterview = interview;
     }
   }
 
-  void updateScheduleMeeting(String id) {
-    final title = _titleController.text;
-    final startTime = _startTimeController.text;
-    final endTime = _endTimeController.text;
-
-    int index = chatmessage.indexWhere((element) =>
-        element.runtimeType == ShecduleMeeting && element.id == id);
-    chatmessage[index] = ShecduleMeeting(
-      id: id,
-      title: title,
-      timeStart: DateTime.parse(startTime),
-      timeEnd: DateTime.parse(endTime),
-      author: chatmessage[index].author,
-      isMeeting: chatmessage[index].isMeeting,
-    );
-
+  void updateScheduleMeeting({
+    required String title,
+    required DateTime startTime,
+    required DateTime endTime,
+    required String interviewId,
+  }) {
+    for (Message msg in _messages!) {
+      if (msg.interview != null) {
+        if (msg.interview?.id == interviewId) {
+          msg.interview?.title = title;
+          msg.interview?.startTime = startTime;
+          msg.interview?.endTime = endTime;
+          break;
+        }
+      }
+    }
     notifyListeners();
   }
 
-  void handleCancelScheduleMeeting(String id) {
-    int index = chatmessage.indexWhere((element) =>
-        element.runtimeType == ShecduleMeeting && element.id == id);
-
-    chatmessage[index] = ShecduleMeeting(
-      id: id,
-      title: chatmessage[index].title,
-      timeStart: chatmessage[index].timeStart,
-      timeEnd: chatmessage[index].timeEnd,
-      author: chatmessage[index].author,
-      isMeeting: 2,
-    );
-
+  void cancelSchedule(
+      {required String title,
+      required int projectId,
+      required int senderId,
+      required int receiverId}) {
+    for (Message msg in _messages!) {
+      if (msg.interview != null) {
+        if (msg.content == 'Interview created' &&
+            msg.sender.id == senderId &&
+            msg.receiver.id == receiverId) {
+          msg.interview?.deletedAt = DateTime.now();
+          break;
+        }
+      }
+    }
     notifyListeners();
+  }
+
+  Future<void> updateStatusOfStudetnProposal(
+      {required int proposalId, required String token}) async {
+    try {
+      Map<String, dynamic> data = Map();
+      int statusFlag = 1;
+      data['statusFlag'] = statusFlag;
+      print("${env.apiURL}api/proposal/$proposalId");
+      final rs =
+          await http.patch(Uri.parse("${env.apiURL}api/proposal/$proposalId"),
+              headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+                HttpHeaders.authorizationHeader: "Bearer $token"
+              },
+              body: json.encode(data));
+      final body = json.decode(rs.body);
+      print(body);
+    } catch (e) {
+      print(e);
+    }
   }
 }

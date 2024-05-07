@@ -34,8 +34,8 @@ class HttpResponse<T> {
   HttpResponse.unknown():isLoading = false, message = null, status = null, result =null;
   
   void updateResponse(Map<String,dynamic> json) {
-    message = json['message'] ?? this.message;
-    status = json['status'] ?? this.status;
-    result = json['result'];
+    this.message = json['message'] ?? this.message;
+    this.status = json['status'] ?? this.status;
+    this.result = json['result'];
   }
 }

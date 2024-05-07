@@ -30,54 +30,60 @@ class JobNotifier extends ChangeNotifier {
     try {
       final response = await http.get(headers: {
         HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-      }, Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
-      final body = json.decode(response.body);
-   
-  
-      List<Map<String, dynamic>> projectList = [];
+      }, Uri.parse("https://api.studenthub.dev/api/proposal/project/$studentId"));
 
+      final body = json.decode(response.body);
+      
+      List<Map<String, dynamic>> projectList = [];
       if (response.statusCode >= 400) {
         throw Exception(body['errorDetails']);
       }
 
-      final proposalListOfStudent =
-          List<Map<String, dynamic>>.from(body['result']);
-      
-      for (int i = 0; i < proposalListOfStudent.length; i++) {
-        try {
-          final project = await http.get(
-              headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-                'Content-type': 'application/json',
-                'Accept': 'application/json',
-              },
-              Uri.parse(
-                  "${env.apiURL}api/project/${proposalListOfStudent[i]['projectId']}"));
-
-          final bodyProject = json.decode(project.body);
-       
-          Map<String, dynamic> convertToProject =
-              Map<String, dynamic>.from(bodyProject['result']);
-
-          convertToProject.addAll({
-            'countProposals': bodyProject['result']['countProposals'],
-            'countMessages': bodyProject['result']['countProposals'],
-            'countHired': bodyProject['result']['countHired'],
+      projectList = List<Map<String,dynamic>>.from(body['result']).map((e) {
+          final project = Map<String,dynamic>.from(e['project']);
+          project.addAll({
+            "statusFlag": e['statusFlag']
           });
+          return project;
+        }).toList();
+      
+      // final proposalListOfStudent = List<Map<String, dynamic>>.from(body['result']);
 
-          if (project.statusCode >= 400) {
-            throw Exception(bodyProject['errorDetails']);
-          }
+      // for (int i = 0; i < proposalListOfStudent.length; i++) {
+      //   try {
+      //     final project = await http.get(
+      //         headers: {
+      //           HttpHeaders.authorizationHeader: "Bearer $token",
+      //           'Content-type': 'application/json',
+      //           'Accept': 'application/json',
+      //         },
+      //         Uri.parse(
+      //             "${env.apiURL}api/project/${proposalListOfStudent[i]['projectId']}"));
 
-          projectList.add(convertToProject);
-        } 
-        catch (e) {
-          print(e);
-        }
-      }
-      print(projectList);
+      //     final bodyProject = json.decode(project.body);
+       
+      //     Map<String, dynamic> convertToProject =
+      //         Map<String, dynamic>.from(bodyProject['result']);
+
+      //     convertToProject.addAll({
+      //       'countProposals': bodyProject['result']['countProposals'],
+      //       'countMessages': bodyProject['result']['countProposals'],
+      //       'countHired': bodyProject['result']['countHired'],
+      //     });
+
+      //     if (project.statusCode >= 400) {
+      //       throw Exception(bodyProject['errorDetails']);
+      //     }
+
+      //     projectList.add(convertToProject);
+      //   } 
+      //   catch (e) {
+      //     // print(e);
+      //   }
+      // }
+
+
+
       return {"result": projectList, "error": null};
     } on Exception catch (e) {
       return {"error": e.toString()};
@@ -129,15 +135,12 @@ class JobNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteJob({required int id,required String token}) async {
+  Future<void> deleteJob({required int id, required String token}) async {
     try {
       print(id);
-      final response =
-          await http.delete(
-            headers: {
-              HttpHeaders.authorizationHeader:"Bearer $token"
-            },
-            Uri.parse("${env.apiURL}api/project/$id"));
+      final response = await http.delete(
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+          Uri.parse("${env.apiURL}api/project/$id"));
       final body = json.decode(response.body);
 
       notifyListeners();
@@ -168,7 +171,7 @@ class JobNotifier extends ChangeNotifier {
       //     "numberProposal":numberProposal['result']
       //   });
       // }
-
+      print(projectList);
       return {
         "result": List<Map<String, dynamic>>.from(body['result']),
         "error": null
