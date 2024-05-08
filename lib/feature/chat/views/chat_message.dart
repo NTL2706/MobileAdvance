@@ -43,6 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     chatProvider = context.read<ChatProvider>();
     socketManager = chatProvider.initSocket(
+        provider: chatProvider,
         token: context.read<AuthenticateProvider>().authenRepository.token!,
         projectId: widget.projectId.toString());
   }
@@ -62,6 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     socketManager.socket?.on("RECEIVE_MESSAGE", (data) {
       chatProvider.addMessage(
+          id: data['notification']['id'],
           message: data['notification']['message']['content'],
           createdAt: DateTime.now(),
           sender: User(
@@ -74,46 +76,40 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     socketManager.socket?.on("RECEIVE_INTERVIEW", (data) {
-      if (data['notification'] != null) {
-        if (data['notification']['content'] == 'Interview updated') {
-          chatProvider.updateScheduleMeeting(
-              title: data['notification']['interview']['title'],
-              startTime: DateTime.parse(
-                  data['notification']['interview']['startTime']),
-              endTime:
-                  DateTime.parse(data['notification']['interview']['endTime']),
-              interviewId: data['notification']['interview']['id']);
-        } else {
-          chatProvider.addMessage(
-              message: 'Interview created',
-              createdAt: DateTime.now(),
-              sender: User(
-                  id: data['notification']['sender']['id'],
-                  fullname: data['notification']['sender']['fullname']),
-              receiver: User(
-                  id: data['notification']['receiver']['id'],
-                  fullname: data['notification']['receiver']['fullname']),
-              interview: Interview(
-                  id: data['notification']['interview']['id'],
-                  createdAt: DateTime.parse(
-                      data['notification']['interview']['createdAt']),
-                  updatedAt: DateTime.parse(
-                      data['notification']['interview']['updatedAt']),
-                  deletedAt: null,
-                  startTime: DateTime.parse(
-                      data['notification']['interview']['startTime']),
-                  endTime: DateTime.parse(
-                      data['notification']['interview']['endTime']),
-                  title: data['notification']['interview']['title'],
-                  disableFlag: 0,
-                  meetingRoomId: 0));
-        }
-      } else {
-        chatProvider.cancelSchedule(
-            title: data['title'],
-            senderId: data['senderId'],
-            receiverId: data['receiverId'],
-            projectId: data['projectId']);
+      if (data['notification']['content'] == 'Interview created') {
+        chatProvider.addMessage(
+            id: data['notification']['id'],
+            message: 'Interview created',
+            createdAt: DateTime.now(),
+            sender: User(
+                id: data['notification']['sender']['id'],
+                fullname: data['notification']['sender']['fullname']),
+            receiver: User(
+                id: data['notification']['receiver']['id'],
+                fullname: data['notification']['receiver']['fullname']),
+            interview: Interview(
+                id: data['notification']['message']['interview']['id'],
+                createdAt: DateTime.parse(
+                    data['notification']['message']['interview']['createdAt']),
+                updatedAt: DateTime.parse(
+                    data['notification']['message']['interview']['updatedAt']),
+                deletedAt: null,
+                startTime: DateTime.parse(
+                    data['notification']['message']['interview']['startTime']),
+                endTime: DateTime.parse(
+                    data['notification']['message']['interview']['endTime']),
+                title: data['notification']['message']['interview']['title'],
+                disableFlag: 0,
+                meetingRoomId: data['notification']['message']['interview']
+                    ['meetingRoomId']));
+      } else if (data['notification']['content'] == 'Interview updated') {
+        chatProvider.updateScheduleMeeting(
+            title: data['notification']['message']['interview']['title'],
+            startTime: DateTime.parse(
+                data['notification']['message']['interview']['startTime']),
+            endTime: DateTime.parse(
+                data['notification']['message']['interview']['endTime']),
+            interviewId: data['notification']['message']['interview']['id']);
       }
     });
     return Scaffold(
@@ -611,11 +607,7 @@ class MeetingCard extends StatelessWidget {
                               break;
                             case 2:
                               socketManager.deleteSchedule(
-                                  interviewId: interview.id,
-                                  projectId: projectid,
-                                  senderId: sender.id,
-                                  receiverId: receiver.id,
-                                  deleteAction: true);
+                                  interviewId: interview.id);
                               break;
                           }
                         },
