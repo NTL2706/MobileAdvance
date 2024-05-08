@@ -93,9 +93,9 @@ class Interview {
   final DateTime createdAt;
   final DateTime updatedAt;
   late DateTime? deletedAt;
-  late final String title;
-  late final DateTime startTime;
-  late final DateTime endTime;
+  late String title;
+  late DateTime startTime;
+  late DateTime endTime;
   final int disableFlag;
   final int meetingRoomId;
 

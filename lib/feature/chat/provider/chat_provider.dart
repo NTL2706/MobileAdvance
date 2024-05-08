@@ -1,32 +1,35 @@
-// ignore_for_file: prefer_final_fields, non_constant_identifier_names, avoid_print, unrelated_type_equality_checks
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:final_project_advanced_mobile/main.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // for Testing data
+
 
 class SocketManager {
   IO.Socket? socket;
-
-  SocketManager({
-    required String token,
-    required String projectId,
-  }) {
-    initSocket(token: token, projectId: projectId);
+  String? token;
+  ChatProvider? provider;
+  String? projectId;
+  SocketManager(
+    {
+      required  this.token,
+      this.projectId,
+      this.provider
+    }) {
+    initSocket(token: token!, projectId: projectId,provider: provider);
   }
 
   void initSocket(
-      {required String token, required String projectId, void addMessage}) {
-    int projectID =
-        int.tryParse(projectId) ?? 0; // Đảm bảo rằng projectID là một số nguyên
-
+      {required String token, String? projectId,ChatProvider? provider }) {
+    
+    
+     // Đảm bảo rằng projectID là một số nguyên
+    
     socket = IO.io(
-      dotenv.env['API_URL'], // Server url
+      'https://api.studenthub.dev/', // Server url
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -37,14 +40,20 @@ class SocketManager {
       'Authorization': 'Bearer $token',
     };
 
-    socket!.io.options?['query'] = {
-      'project_id': projectId,
-    };
+    if (projectId != null){
+      print(projectId);
+      socket!.io.options?['query'] = {
+        'project_id': int.parse(projectId!),
+      };
+    }
+    
 
     socket!.connect();
 
-    socket!.onConnect((_) {
+    socket!.onConnect((_)async {
       print('Connected');
+
+   
     });
 
     socket!.onDisconnect((_) {
@@ -64,27 +73,45 @@ class SocketManager {
     });
   }
 
-  void sendMessage({
+  Future sendMessage({
     required String content,
     required int projectId,
     required int senderId,
     required int receiverId,
-    int messageFlag = 0,
-  }) {
-    if (socket != null) {
-      socket!.emit("SEND_MESSAGE", {
-        "content": content,
-        "projectId": projectId,
-        "senderId": senderId,
-        "receiverId": receiverId,
-        "messageFlag": messageFlag,
-      });
-    } else {
-      print('Socket is not initialized, cannot send message');
+    required int messageFlag,
+  }) async {
+    String? baseUrl = env.apiURL;
+    String endpoint = 'api/message/sendMessage';
+
+    final Map<String, dynamic> requestBody = {
+      "content": content,
+      "projectId": projectId,
+      "senderId": senderId,
+      "receiverId": receiverId,
+      "messageFlag": messageFlag,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Message sent successfully');
+      } else {
+        print('Failed to send message. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while sending message: $e');
     }
   }
 
-  void startSchedule({
+  Future startSchedule({
     required String title,
     required String startTime,
     required String endTime,
@@ -93,68 +120,100 @@ class SocketManager {
     required int receiverId,
     required String meeting_room_code,
     required String meeting_room_id,
-  }) {
-    print(
-        '$title $startTime $endTime $projectId $senderId $receiverId $meeting_room_code $meeting_room_id');
-    if (socket != null) {
-      socket!.emit("SCHEDULE_INTERVIEW", {
-        "title": title,
-        "content": "created",
-        "startTime": startTime,
-        "endTime": endTime,
-        "projectId": projectId,
-        "senderId": senderId,
-        "receiverId": receiverId,
-        "meeting_room_code": meeting_room_code,
-        "meeting_room_id": meeting_room_id
-      });
-    } else {
-      print('Socket is not initialized, cannot send message');
+  }) async {
+    String? baseUrl = env.apiURL;
+    String endpoint = 'api/interview';
+
+    final Map<String, dynamic> requestBody = {
+      "title": title,
+      "content": "Interview created",
+      "startTime": startTime,
+      "endTime": endTime,
+      "projectId": projectId,
+      "senderId": senderId,
+      "receiverId": receiverId,
+      "meeting_room_code": meeting_room_code,
+      "meeting_room_id": meeting_room_id
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Message sent successfully');
+      } else {
+        print('Failed to send message. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while sending message: $e');
     }
   }
 
-  void updateSchedule({
+  Future updateSchedule({
     required int interviewId,
-    required int projectId,
-    required int senderId,
-    required int receiverId,
-    String? title,
-    String? startTime,
-    String? endTime,
-  }) {
-    if (socket != null) {
-      socket!.emit("UPDATE_INTERVIEW", {
-        "projectId": projectId,
-        "senderId": senderId,
-        "receiverId": receiverId,
-        "interviewId": interviewId,
-        "updateAction": true,
-        "title": title,
-        "startTime": startTime,
-        "endTime": endTime,
-      });
-    } else {
-      print('Socket is not initialized, cannot send message');
+    required String title,
+    required String startTime,
+    required String endTime,
+  }) async {
+    String? baseUrl = env.apiURL;
+    String endpoint = 'api/interview/$interviewId';
+
+    final Map<String, dynamic> requestBody = {
+      "title": title,
+      "startTime": startTime,
+      "endTime": endTime,
+    };
+
+    try {
+      final response = await http.patch(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Message sent successfully');
+      } else {
+        print('Failed to send message. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while sending message: $e');
     }
   }
 
-  void deleteSchedule({
+  Future deleteSchedule({
     required int interviewId,
-    required int senderId,
-    required int receiverId,
-    required int projectId,
-    required bool deleteAction,
-  }) {
-    if (socket != null) {
-      socket!.emit("UPDATE_INTERVIEW", {
-        "projectId": projectId,
-        "senderId": senderId,
-        "receiverId": receiverId,
-        "interviewId": interviewId,
-        "deleteAction": deleteAction,
-      });
-    } else {
-      print('Socket is not initialized, cannot send message');
+  }) async {
+    String? baseUrl = env.apiURL;
+    String endpoint = 'api/interview/$interviewId';
+
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        provider?.cancelSchedule(interviewId: interviewId);
+        print('Message sent successfully');
+      } else {
+        print('Failed to send message. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while sending message: $e');
     }
   }
 
@@ -184,7 +243,7 @@ class ChatProvider extends ChangeNotifier {
   TextEditingController get endTimeController => _endTimeController;
 
   Future<List<MessageUser>> fetchDataAllChat({required String token}) async {
-    String apiUrl = "${DotEnv.dotenv.env['API_URL']!}api/message";
+    String apiUrl = "${env.apiURL}api/message";
     try {
       http.Response response = await http.get(Uri.parse(apiUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
@@ -207,7 +266,7 @@ class ChatProvider extends ChangeNotifier {
     required int userid,
   }) async {
     String apiUrl =
-        "${DotEnv.dotenv.env['API_URL']!}api/message/$projectid/user/$userid";
+        "${env.apiURL}api/message/$projectid/user/$userid";
     try {
       http.Response response = await http.get(Uri.parse(apiUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
@@ -228,7 +287,8 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void addMessage(
-      {required message,
+      {required int id,
+      required message,
       required DateTime createdAt,
       required User sender,
       required User receiver,
@@ -236,7 +296,7 @@ class ChatProvider extends ChangeNotifier {
     _messages!.insert(
         0,
         Message(
-            id: 1,
+            id: id,
             createdAt: createdAt,
             content: message,
             sender: sender,
@@ -245,14 +305,12 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  SocketManager initSocket({
-    required String token,
-    required String projectId,
-  }) {
+  SocketManager initSocket(
+      {required String token,
+      required String projectId,
+      required ChatProvider provider}) {
     return SocketManager(
-        // ignore: void_checks
-        token: token,
-        projectId: projectId);
+         token: token, projectId: projectId, provider: provider);
   }
 
   void handleScheduleMeeting() async {
@@ -350,7 +408,7 @@ class ChatProvider extends ChangeNotifier {
     required String title,
     required DateTime startTime,
     required DateTime endTime,
-    required String interviewId,
+    required int interviewId,
   }) {
     for (Message msg in _messages!) {
       if (msg.interview != null) {
@@ -365,16 +423,14 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void cancelSchedule(
-      {required String title,
-      required int projectId,
-      required int senderId,
-      required int receiverId}) {
+  void cancelSchedule({
+    required int interviewId,
+  }) {
     for (Message msg in _messages!) {
       if (msg.interview != null) {
-        if (msg.content == 'Interview created' &&
-            msg.sender.id == senderId &&
-            msg.receiver.id == receiverId) {
+        if (msg.interview?.id == interviewId) {
+          print(interviewId);
+          print(msg.interview?.id);
           msg.interview?.deletedAt = DateTime.now();
           break;
         }

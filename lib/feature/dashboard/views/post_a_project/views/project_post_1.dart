@@ -1,8 +1,11 @@
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 
 class ProjectPost_1 extends StatefulWidget {
   const ProjectPost_1({super.key});
@@ -70,7 +73,10 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            elevation: 1, backgroundColor: Colors.white),
+                            elevation: 1,
+                            backgroundColor: Get.isDarkMode
+                                ? Themes.backgroundDark
+                                : Themes.backgroundLight),
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) {
