@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     chatProvider = context.read<ChatProvider>();
     socketManager = chatProvider.initSocket(
+        provider: chatProvider,
         token: context.read<AuthenticateProvider>().authenRepository.token!,
         projectId: widget.projectId.toString());
   }
@@ -62,6 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     socketManager.socket?.on("RECEIVE_MESSAGE", (data) {
       chatProvider.addMessage(
+          id: data['notification']['id'],
           message: data['notification']['message']['content'],
           createdAt: DateTime.now(),
           sender: User(
@@ -74,46 +76,40 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     socketManager.socket?.on("RECEIVE_INTERVIEW", (data) {
-      if (data['notification'] != null) {
-        if (data['notification']['content'] == 'Interview updated') {
-          chatProvider.updateScheduleMeeting(
-              title: data['notification']['interview']['title'],
-              startTime: DateTime.parse(
-                  data['notification']['interview']['startTime']),
-              endTime:
-                  DateTime.parse(data['notification']['interview']['endTime']),
-              interviewId: data['notification']['interview']['id']);
-        } else {
-          chatProvider.addMessage(
-              message: 'Interview created',
-              createdAt: DateTime.now(),
-              sender: User(
-                  id: data['notification']['sender']['id'],
-                  fullname: data['notification']['sender']['fullname']),
-              receiver: User(
-                  id: data['notification']['receiver']['id'],
-                  fullname: data['notification']['receiver']['fullname']),
-              interview: Interview(
-                  id: data['notification']['interview']['id'],
-                  createdAt: DateTime.parse(
-                      data['notification']['interview']['createdAt']),
-                  updatedAt: DateTime.parse(
-                      data['notification']['interview']['updatedAt']),
-                  deletedAt: null,
-                  startTime: DateTime.parse(
-                      data['notification']['interview']['startTime']),
-                  endTime: DateTime.parse(
-                      data['notification']['interview']['endTime']),
-                  title: data['notification']['interview']['title'],
-                  disableFlag: 0,
-                  meetingRoomId: 0));
-        }
-      } else {
-        chatProvider.cancelSchedule(
-            title: data['title'],
-            senderId: data['senderId'],
-            receiverId: data['receiverId'],
-            projectId: data['projectId']);
+      if (data['notification']['content'] == 'Interview created') {
+        chatProvider.addMessage(
+            id: data['notification']['id'],
+            message: 'Interview created',
+            createdAt: DateTime.now(),
+            sender: User(
+                id: data['notification']['sender']['id'],
+                fullname: data['notification']['sender']['fullname']),
+            receiver: User(
+                id: data['notification']['receiver']['id'],
+                fullname: data['notification']['receiver']['fullname']),
+            interview: Interview(
+                id: data['notification']['message']['interview']['id'],
+                createdAt: DateTime.parse(
+                    data['notification']['message']['interview']['createdAt']),
+                updatedAt: DateTime.parse(
+                    data['notification']['message']['interview']['updatedAt']),
+                deletedAt: null,
+                startTime: DateTime.parse(
+                    data['notification']['message']['interview']['startTime']),
+                endTime: DateTime.parse(
+                    data['notification']['message']['interview']['endTime']),
+                title: data['notification']['message']['interview']['title'],
+                disableFlag: 0,
+                meetingRoomId: data['notification']['message']['interview']
+                    ['meetingRoomId']));
+      } else if (data['notification']['content'] == 'Interview updated') {
+        chatProvider.updateScheduleMeeting(
+            title: data['notification']['message']['interview']['title'],
+            startTime: DateTime.parse(
+                data['notification']['message']['interview']['startTime']),
+            endTime: DateTime.parse(
+                data['notification']['message']['interview']['endTime']),
+            interviewId: data['notification']['message']['interview']['id']);
       }
     });
     return Scaffold(
@@ -319,7 +315,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
                                       if (messages != null &&
                                           messages.isEmpty) {
-                                        print("update proposal");
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
@@ -345,33 +340,46 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: IconButton(
                                 icon: Icon(Icons.send_rounded),
                                 color: Colors.white, // Màu của Icon
-                                onPressed: () {
-                                  context
-                                          .watch<ChatProvider>()
-                                          .textController
-                                          .text
-                                          .isNotEmpty
-                                      ? {
-                                          socketManager.sendMessage(
-                                              content: context
-                                                  .watch<ChatProvider>()
-                                                  .textController
-                                                  .text,
-                                              projectId: widget.projectId,
-                                              receiverId: widget.receiveId,
-                                              senderId: context
+                                onPressed: () async {
+                                  if (context
+                                      .watch<ChatProvider>()
+                                      .textController
+                                      .text
+                                      .isNotEmpty) {
+                                    socketManager.sendMessage(
+                                        content: context
+                                            .watch<ChatProvider>()
+                                            .textController
+                                            .text,
+                                        projectId: widget.projectId,
+                                        receiverId: widget.receiveId,
+                                        senderId: context
+                                            .read<AuthenticateProvider>()
+                                            .authenRepository
+                                            .id!,
+                                        messageFlag: 0);
+
+                                    context
+                                        .read<ChatProvider>()
+                                        .textController
+                                        .clear();
+
+                                    final messages =
+                                        context.read<ChatProvider>().messages;
+
+                                    if (messages != null && messages.isEmpty) {
+                                      await context
+                                          .read<ChatProvider>()
+                                          .updateStatusOfStudetnProposal(
+                                              proposalId: widget.proposalId!,
+                                              token: context
                                                   .read<AuthenticateProvider>()
                                                   .authenRepository
-                                                  .id!,
-                                              messageFlag: 0),
-                                          context
-                                              .watch<ChatProvider>()
-                                              .textController
-                                              .clear()
-                                        }
-                                      : null;
+                                                  .token!);
+                                    }
+                                  }
+
                                   FocusScope.of(context).unfocus();
-                                  scrollToBottom(); // Ẩn bàn phím
                                 },
                               ),
                             ),
@@ -599,11 +607,7 @@ class MeetingCard extends StatelessWidget {
                               break;
                             case 2:
                               socketManager.deleteSchedule(
-                                  interviewId: interview.id,
-                                  projectId: projectid,
-                                  senderId: sender.id,
-                                  receiverId: receiver.id,
-                                  deleteAction: true);
+                                  interviewId: interview.id);
                               break;
                           }
                         },
