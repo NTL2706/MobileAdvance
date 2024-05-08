@@ -53,6 +53,8 @@ dependencies:
   zego_uikit_prebuilt_call: ^4.9.0
   flutter_local_notifications: ^17.1.2
   zego_uikit_signaling_plugin: ^2.7.6
+  flutter_background_service: ^5.0.5
+  flutter_background_service_android: ^6.2.2
 
 dev_dependencies:
   flutter_test:

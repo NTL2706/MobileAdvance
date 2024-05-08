@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/configEnv.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
@@ -6,6 +7,7 @@ import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart'
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './feature/projects/provider/project_provider.dart';
@@ -18,6 +20,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
   sharedPreferences = await SharedPreferences.getInstance();
   env = configEnv();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+    AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+  //  await initializeService();
   runApp(const MyApp());
 }
 
