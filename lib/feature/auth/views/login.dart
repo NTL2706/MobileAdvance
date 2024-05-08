@@ -1,16 +1,18 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, sized_box_for_whitespace
 
+
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
 class LoginPage extends StatelessWidget {
-
   LoginPage({super.key, required this.apiForLogin, required this.title});
 
   final String apiForLogin;
@@ -46,9 +48,7 @@ class LoginPage extends StatelessWidget {
                   height: 10,
                 ),
                 CustomTextField(
-                  onChanged: (p0) {
-                    
-                  },
+                  onChanged: (p0) {},
                   controller: emailSignInController,
                   hintText: "Username or email",
                 ),
@@ -64,33 +64,61 @@ class LoginPage extends StatelessWidget {
                 Container(
                   width: constraints.maxWidth / 2,
                   child: ElevatedButton(
-                    onPressed: () async{
-                      print(apiForLogin);
-                      await context.read<AuthenticateProvider>().signInWithPassword(email: emailSignInController.text.trim(), password: passwordSignInController.text.trim(), role: title);
-                      AuthResult result = context.read<AuthenticateProvider>().state.result!;
-                      if (result == AuthResult.success){                    
-                        Navigator.of(context).pushNamedAndRemoveUntil('/home',(route) => false,);
-                      }
-                      else{
-                        await QuickAlert.show(
-                          text: context.read<AuthenticateProvider>().state.message,
-                                          confirmBtnText: "OK",
-                                          cancelBtnText: "CANCEL",
-                                          onConfirmBtnTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                          onCancelBtnTap: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          context: context,
-                                          showCancelBtn: true,
-                                          type: QuickAlertType.error);
-                                    
-                      }
-                      
-                    }, 
-                    child: context.watch<AuthenticateProvider>().state.isLoading ? CircularProgressIndicator():Text("LOGIN AS ${title.toUpperCase()}")
-                  ),
+                      onPressed: () async {
+                        print(apiForLogin);
+                        await context
+                            .read<AuthenticateProvider>()
+                            .signInWithPassword(
+                                email: emailSignInController.text.trim(),
+                                password: passwordSignInController.text.trim(),
+                                role: title);
+                        AuthResult result =
+                            context.read<AuthenticateProvider>().state.result!;
+                        if (result == AuthResult.success) {
+                          await initializeService();
+                          final service = FlutterBackgroundService();
+                          bool isRunning = await service.isRunning();
+                          if (isRunning) {
+                            print("stop");
+                            // service.invoke("stopService");
+                            service.invoke("setAsForeground", {
+                            "token": context.read<AuthenticateProvider>().authenRepository.token,
+                            "userId": context.read<AuthenticateProvider>().authenRepository.id
+                          });
+                          } else {
+                            print("start");
+                            service.startService();
+                             
+                          }
+                          // await service.startService();
+                         
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/home',
+                            (route) => false,
+                          );
+                        } else {
+                          await QuickAlert.show(
+                              text: context
+                                  .read<AuthenticateProvider>()
+                                  .state
+                                  .message,
+                              confirmBtnText: "OK",
+                              cancelBtnText: "CANCEL",
+                              onConfirmBtnTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              onCancelBtnTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              context: context,
+                              showCancelBtn: true,
+                              type: QuickAlertType.error);
+                        }
+                      },
+                      child:
+                          context.watch<AuthenticateProvider>().state.isLoading
+                              ? CircularProgressIndicator()
+                              : Text("LOGIN AS ${title.toUpperCase()}")),
                 ),
                 Expanded(
                     child: Container(
@@ -104,16 +132,17 @@ class LoginPage extends StatelessWidget {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return SignUpByCategory();
-                            },));
-                          },
-                          child: Text("Sign up", style: TextStyle(
-                            fontWeight: FontWeight.bold
-                          ),),
-                        )
-                      ],
-                    ),
-                  )
-                ),
+                            },
+                          ));
+                        },
+                        child: Text(
+                          "Sign up",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

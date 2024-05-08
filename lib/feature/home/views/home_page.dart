@@ -1,4 +1,6 @@
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
 import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
@@ -7,6 +9,7 @@ import 'package:final_project_advanced_mobile/feature/profie/views/profile_scree
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,10 +19,44 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  late AuthenticateProvider authenticateProvider;
+  late ChatProvider chatProvider;
+
   @override
   void initState() {
+    authenticateProvider = context.read<AuthenticateProvider>();
+    chatProvider = context.read<ChatProvider>();
+    print(authenticateProvider.authenRepository.id);
+    print(authenticateProvider.authenRepository.username);
+
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      print(state);
+      // FlutterBackgroundService().invoke("setAsBackground", {
+      //   "token": authenticateProvider.authenRepository.token,
+      //   "userId": authenticateProvider.authenRepository.id
+      // });
+    }
+    if (state == AppLifecycleState.resumed) {
+      print(state);
+      // FlutterBackgroundService().invoke("setAsForeground", {
+      //   "token": authenticateProvider.authenRepository.token,
+      //   "userId": authenticateProvider.authenRepository.id
+      // });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -41,7 +78,8 @@ class _HomePageState extends State<HomePage> {
           Map<String, dynamic>? student = snapshot.data?['student'];
           Map<String, dynamic>? company = snapshot.data?['company'];
 
-          final role = context.read<AuthenticateProvider>().authenRepository.role;
+          final role =
+              context.read<AuthenticateProvider>().authenRepository.role;
           print(context.read<AuthenticateProvider>().authenRepository.token);
           if (role == "student" && student == null) {
             return CreateProfilePage(
