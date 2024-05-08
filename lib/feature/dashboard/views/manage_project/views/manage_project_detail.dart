@@ -4,11 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class ManageProjectDetail extends StatelessWidget{
-  ManageProjectDetail({
-    super.key,
-    required this.job
-  });
+class ManageProjectDetail extends StatelessWidget {
+  ManageProjectDetail({super.key, required this.job});
   JobModel job;
   @override
   Widget build(BuildContext context) {
@@ -21,46 +18,49 @@ class ManageProjectDetail extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Align(
-                alignment: Alignment.topLeft,
-                child: Text("Student are looking for:", style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold
-                ),)),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Student are looking for:",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  )),
               Row(
                 children: [
                   Expanded(
-                    flex: 3,
-                    child: Container(
-                      child: Icon(Icons.details_outlined),
-                    )),
+                      flex: 3,
+                      child: Container(
+                        child: Icon(Icons.details_outlined),
+                      )),
                   Expanded(
                     flex: 7,
                     child: Container(
-                    child: Text("${job.description}"),
-                              ),
+                      child: Text("${job.description}"),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-          
           Divider(),
           Container(
             child: Row(
               children: [
+                Expanded(flex: 3, child: Icon(Icons.access_time_sharp)),
                 Expanded(
-                  flex: 3,
-                  child: Icon(Icons.access_time_sharp)),
-                Expanded(
-                  flex: 7,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Project scope",style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold
-                )),
-                      Text("\t${optionsTimeForJob[job.projectScopeFlag]}")
-                    ],
-                  ))
+                    flex: 7,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Project scope",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        Text("\t${optionsTimeForJob[job.projectScopeFlag]}")
+                      ],
+                    ))
               ],
             ),
           ),
@@ -70,20 +70,20 @@ class ManageProjectDetail extends StatelessWidget{
           Container(
             child: Row(
               children: [
+                Expanded(flex: 3, child: Icon(Icons.person)),
                 Expanded(
-                  flex: 3,
-                  child: Icon(Icons.person)),
-                Expanded(
-                  flex: 7,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Student required",style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold
-                )),
-                      Text("${job.numberOfStudents}")
-                    ],
-                  ))
+                    flex: 7,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Student required",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        Text("${job.numberOfStudents}")
+                      ],
+                    ))
               ],
             ),
           ),
@@ -91,5 +91,4 @@ class ManageProjectDetail extends StatelessWidget{
       ),
     );
   }
-
 }

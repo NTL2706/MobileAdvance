@@ -8,6 +8,7 @@ import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dar
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +22,13 @@ void main() async {
   await dotenv.load(fileName: ".env");
   sharedPreferences = await SharedPreferences.getInstance();
   env = configEnv();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
+  //  await initializeService();
   runApp(const MyApp());
 }
 

@@ -1,12 +1,13 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, sized_box_for_whitespace
-
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/forgot_password.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -73,6 +74,28 @@ class LoginPage extends StatelessWidget {
                         AuthResult result =
                             context.read<AuthenticateProvider>().state.result!;
                         if (result == AuthResult.success) {
+                          await initializeService();
+                          final service = FlutterBackgroundService();
+                          bool isRunning = await service.isRunning();
+                          if (isRunning) {
+                            print("stop");
+                            // service.invoke("stopService");
+                            service.invoke("setAsForeground", {
+                              "token": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .token,
+                              "userId": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .id
+                            });
+                          } else {
+                            print("start");
+                            service.startService();
+                          }
+                          // await service.startService();
+
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/home',
                             (route) => false,
@@ -100,9 +123,6 @@ class LoginPage extends StatelessWidget {
                           context.watch<AuthenticateProvider>().state.isLoading
                               ? CircularProgressIndicator()
                               : Text("LOGIN AS ${title.toUpperCase()}")),
-                ),
-                SizedBox(
-                  height: constraints.maxHeight * 0.03,
                 ),
                 Container(
                   alignment: Alignment.center,
@@ -150,7 +170,7 @@ class LoginPage extends StatelessWidget {
                       )
                     ],
                   ),
-                ),
+                )
               ],
             ),
           ),

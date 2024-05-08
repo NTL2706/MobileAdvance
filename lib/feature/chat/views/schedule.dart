@@ -209,9 +209,6 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                                   .read<ChatProvider>()
                                   .endTimeController
                                   .text,
-                              projectId: projectid,
-                              senderId: sender,
-                              receiverId: receiver,
                               interviewId: interview!.id,
                             );
                             Navigator.pop(context);

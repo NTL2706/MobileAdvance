@@ -1,4 +1,7 @@
+import 'package:final_project_advanced_mobile/back_service.dart';
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/dashboard.dart';
 import 'package:final_project_advanced_mobile/feature/notification/views/notification_page.dart';
@@ -8,6 +11,9 @@ import 'package:final_project_advanced_mobile/feature/projects/views/all_project
 import 'package:final_project_advanced_mobile/services/theme_service.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,10 +23,44 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  late AuthenticateProvider authenticateProvider;
+  late ChatProvider chatProvider;
+
   @override
   void initState() {
+    authenticateProvider = context.read<AuthenticateProvider>();
+    chatProvider = context.read<ChatProvider>();
+    print(authenticateProvider.authenRepository.id);
+    print(authenticateProvider.authenRepository.username);
+
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      print(state);
+      // FlutterBackgroundService().invoke("setAsBackground", {
+      //   "token": authenticateProvider.authenRepository.token,
+      //   "userId": authenticateProvider.authenRepository.id
+      // });
+    }
+    if (state == AppLifecycleState.resumed) {
+      print(state);
+      // FlutterBackgroundService().invoke("setAsForeground", {
+      //   "token": authenticateProvider.authenRepository.token,
+      //   "userId": authenticateProvider.authenRepository.id
+      // });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -30,7 +70,10 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Themes.backgroundDark
+                    : Themes.backgroundLight),
             child: Center(
               child: CircularProgressIndicator(
                 color: Colors.blue,
@@ -93,7 +136,8 @@ class _HomeBodyState extends State<HomeBody> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Get.isDarkMode ? Themes.backgroundDark : Themes.backgroundLight,
         title: const Text('Student Hub'),
         actions: [
           Padding(
@@ -121,7 +165,10 @@ class _HomeBodyState extends State<HomeBody> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Themes.backgroundDark
+                    : Themes.backgroundLight),
             child: Center(
               child: HomeBody.widgetOptions[_selectedIndex],
             ),
@@ -133,7 +180,9 @@ class _HomeBodyState extends State<HomeBody> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withAlpha(20),
+                color: Get.isDarkMode
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.grey.withOpacity(0.5),
                 blurRadius: 10,
                 spreadRadius: 5)
           ],
@@ -162,7 +211,7 @@ class _HomeBodyState extends State<HomeBody> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.blue,
+            selectedItemColor: Themes.selectColor,
             onTap: _onItemTapped,
           ),
         ),

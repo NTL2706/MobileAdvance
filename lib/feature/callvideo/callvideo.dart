@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 class CallPage extends StatelessWidget {
   const CallPage(
@@ -15,6 +16,12 @@ class CallPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ZegoUIKitPrebuiltCall(
+      events: ZegoUIKitPrebuiltCallEvents(
+        onCallEnd: (ZegoCallEndEvent event, VoidCallback defaultAction) {
+          print('hello');
+          defaultAction.call();
+        },
+      ),
       appID:
           560044437, // Fill in the appID that you get from ZEGOCLOUD Admin Console.
       appSign:
@@ -23,7 +30,8 @@ class CallPage extends StatelessWidget {
       userName: userName,
       callID: callID,
       // You can also use groupVideo/groupVoice/oneOnOneVoice to make more types of calls.
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
+      config: ZegoUIKitPrebuiltCallConfig
+          .oneOnOneVideoCall(), // Fill in the call type you want to make.
     );
   }
 }
