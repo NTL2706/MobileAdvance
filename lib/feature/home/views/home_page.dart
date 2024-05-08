@@ -5,6 +5,7 @@ import 'package:final_project_advanced_mobile/feature/notification/views/notific
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
+import 'package:final_project_advanced_mobile/services/theme_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,8 @@ class _HomePageState extends State<HomePage> {
           Map<String, dynamic>? student = snapshot.data?['student'];
           Map<String, dynamic>? company = snapshot.data?['company'];
 
-          final role = context.read<AuthenticateProvider>().authenRepository.role;
+          final role =
+              context.read<AuthenticateProvider>().authenRepository.role;
           print(context.read<AuthenticateProvider>().authenRepository.token);
           if (role == "student" && student == null) {
             return CreateProfilePage(
@@ -94,6 +96,14 @@ class _HomeBodyState extends State<HomeBody> {
         backgroundColor: Colors.white,
         title: const Text('Student Hub'),
         actions: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: IconButton(
+                onPressed: () {
+                  ThemeService().switchTheme();
+                },
+                icon: Icon(Icons.lightbulb)),
+          ),
           Padding(
             padding: EdgeInsets.all(8),
             child: IconButton(
