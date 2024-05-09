@@ -553,6 +553,11 @@ class MeetingCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => CallPage(
+                                token: context
+                                    .watch<AuthenticateProvider>()
+                                    .authenRepository
+                                    .token!,
+                                interviewId: interview.id,
                                 userName: context
                                     .watch<AuthenticateProvider>()
                                     .authenRepository
