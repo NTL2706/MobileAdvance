@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'dart:async';
-
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 import './project_details.dart';
 import './saved_projects.dart';
@@ -152,8 +154,7 @@ class _ShowListProjectState extends State<ShowListProject> {
                 token: authenticateProvider.authenRepository.token!,
                 studentId:
                     authenticateProvider.authenRepository.student?['id']),
-            builder: (context, snapshot) {
-                
+            builder: (context, snapshot) {              
                 return ListView.builder(
                       controller: controller,
                       itemCount: context.read<ProjectProvider>().projects.length + 1,
