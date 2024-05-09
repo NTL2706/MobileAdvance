@@ -18,7 +18,8 @@ class NotiProvider extends ChangeNotifier {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
 
       var parsedJson = jsonDecode(response.body);
-      return parsedJson;
+
+      return parsedJson['result'];
     } catch (error) {
       throw Exception('Failed to fetch data: $error');
     }

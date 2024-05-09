@@ -132,7 +132,6 @@ class _MessageWidgetState extends State<MessageWidget> {
                                   if (rs) {
                                     setState(() {});
                                   }
-                                  // Handle tapping on the message
                                 },
                               ));
                         },
