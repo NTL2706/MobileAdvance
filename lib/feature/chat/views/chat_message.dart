@@ -212,28 +212,36 @@ class _ChatScreenState extends State<ChatScreen> {
                               : snapshot.data?[index].content;
 
                           bool shouldDisplayDateWidget(int index) {
+                            print(index);
+                            print(
+                                '$index ${snapshot.data![index].createdAt.day} ${snapshot.data![index].createdAt.month} ${snapshot.data![index].content}');
+
                             if (snapshot.data!.length == 1) {
-                              return true; // Luôn hiển thị nếu chỉ có một mục
+                              return true;
                             }
                             if (index > 0 &&
-                                snapshot.data![index].createdAt.day !=
-                                    snapshot.data![index - 1].createdAt.day) {
-                              return true; // Hiển thị nếu ngày khác với ngày của mục trước
-                            }
-                            if (index < snapshot.data!.length - 1 &&
-                                snapshot.data![index].createdAt.day !=
+                                index < snapshot.data!.length - 1 &&
+                                snapshot.data![index].createdAt.day >
                                     snapshot.data![index + 1].createdAt.day) {
-                              return true; // Hiển thị nếu ngày khác với ngày của mục sau
+                              return true;
+                            } else if (index == snapshot.data!.length - 1 &&
+                                snapshot.data![index].createdAt.day <
+                                    snapshot.data![index - 1].createdAt.day) {
+                              return true;
                             }
+
                             return false; // Mặc định không hiển thị
                           }
 
                           if (shouldDisplayDateWidget(index)) {
-                            dateWidget = Center(
-                                child: Text(
-                                    '${snapshot.data![index].createdAt.day} - '
-                                    '${snapshot.data![index].createdAt.month} - '
-                                    '${snapshot.data![index].createdAt.year}'));
+                            dateWidget = Padding(
+                              padding: EdgeInsets.only(top: 8, bottom: 8),
+                              child: Center(
+                                  child: Text(
+                                      '${snapshot.data![index].createdAt.day} - '
+                                      '${snapshot.data![index].createdAt.month} - '
+                                      '${snapshot.data![index].createdAt.year}')),
+                            );
                           }
 
                           return Column(

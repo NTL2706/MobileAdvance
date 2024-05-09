@@ -106,7 +106,7 @@ class HomeBody extends StatefulWidget {
     ProjectPage(),
     DashBoard(),
     MessageWidget(),
-    NoticationPage(),
+    NotificationPage(),
   ];
   int? selectedIndex = 0;
 

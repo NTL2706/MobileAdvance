@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/configEnv.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
