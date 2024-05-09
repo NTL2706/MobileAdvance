@@ -164,19 +164,19 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   Future<void> applyProposal(
+
       {required String token,
       required int projectId,
       required int studentId,
       required String coverLetter,
-      required bool disableFlag}) async {
+      }) async {
     try {
       responseHttp = HttpResponse<Map<String, dynamic>>.unknown();
       Map<String, dynamic> data = Map();
       data['projectId'] = projectId;
       data['studentId'] = studentId;
       data['coverLetter'] = coverLetter;
-      data['statusFlag'] = statusFlag;
-      data['disableFlag'] = disableFlag == false ? 0 : 1;
+
       final rs = await http.post(Uri.parse("${env.apiURL}api/proposal"),
           headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
@@ -195,6 +195,64 @@ class ProjectProvider extends ChangeNotifier {
     } on Exception catch (e) {
       print(e);
       responseHttp.updateResponse({"message": e.toString()});
+    }
+  }
+
+  Future<void> updateProject({
+    required String token,
+    required int projectId,
+    int? projectScopeFlag,
+    String? title,
+    String? description,
+    int? numberOfStudents,
+    int? typeFlag,
+    int? status,
+  })async{
+    try{
+
+
+
+    responseHttp = HttpResponse<Map<String, dynamic>>.unknown();
+      Map<String, dynamic> data = Map();
+      
+      final rs1 = await http.get(Uri.parse("${env.apiURL}api/project/$projectId"),headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },);
+
+      final body1 = json.decode(rs1.body);
+      if (rs1.statusCode >= 400){
+        throw Exception(body1);
+      }
+      final projectResult = Map<String, dynamic>.from(body1['result']);
+
+      data['projectScopeFlag'] = projectScopeFlag ?? projectResult['projectScopeFlag'];
+      data['title'] = title ?? projectResult['title'];
+      data['description'] = description ?? projectResult['description'];
+      data['numberOfStudents'] = numberOfStudents ?? projectResult['numberOfStudents'];
+      data['typeFlag'] = typeFlag ?? projectResult['typeFlag'];
+      data['status'] = status ?? projectResult['status'];
+
+      final rs2 = await http.patch(Uri.parse("${env.apiURL}api/project/$projectId"),
+          headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: json.encode(data));
+
+      final body = json.decode(rs2.body);
+      if (body["errorDetails"] != null) {
+        throw Exception(body);
+      }
+
+      final result = Map<String, dynamic>.from(body['result']);
+      responseHttp.updateResponse({"result": result, "status": rs2.statusCode});
+    } on Exception catch (e) {
+      Map<String,dynamic> error = json.decode(e.toString());
+      print(error);
+      responseHttp.updateResponse({"message": error});
     }
   }
 }

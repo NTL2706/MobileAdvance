@@ -1,10 +1,15 @@
 import 'package:final_project_advanced_mobile/constants/noti_type_flag.dart';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
+import 'package:final_project_advanced_mobile/constants/type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/callvideo/callvideo.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
 import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
+import 'package:final_project_advanced_mobile/feature/projects/provider/project_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -214,14 +219,40 @@ class NotificationPage extends StatelessWidget {
                                           ? Row(
                                               children: [
                                                 ElevatedButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+
+                                                  },
                                                   child: const Text('Decline'),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 ElevatedButton(
-                                                  onPressed: () {},
-                                                  child: const Text('Accept'),
-                                                ),
+                                                  onPressed: () async{
+                                                    await context.read<ChatProvider>().updateStatusOfStudetnProposal(
+                                                      proposalId: notification['proposalId'], 
+                                                      token: context.read<AuthenticateProvider>().authenRepository.token!, 
+                                                      statusFlag: statusFlag['Hired']!);
+                                         
+                                                    await context.read<ProjectProvider>().updateProject(
+                                                      typeFlag: typeFlag['Working'],
+                                                      token: context.read<AuthenticateProvider>().authenRepository.token!,
+                                                      projectId: notification['proposal']['projectId']);
+                                                    print(context.read<ProjectProvider>().responseHttp.result);
+                                                    await QuickAlert.show(
+                                                        text: "Let's cooperate",
+                                                        confirmBtnText: "OK",
+                                                        cancelBtnText: "CANCEL",
+                                                        onConfirmBtnTap: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        onCancelBtnTap: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        context: context,
+                                                        showCancelBtn: true,
+                                                        type: QuickAlertType.success);
+                                                      },
+                                                      child: const Text('Congratulation!'),
+                                                  ),
                                               ],
                                             )
                                           : null,
