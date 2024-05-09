@@ -15,6 +15,7 @@ import './apply_project.dart';
 import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
+import 'dart:async';
 
 class ProjectPage extends StatefulWidget {
   ProjectPage({super.key});
@@ -24,10 +25,18 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+  Timer? _debounce;
+
+  void onSearchTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      context.read<ProjectProvider>().updateSearch();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print("rebuild");
-    final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -41,7 +50,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       controller:
                           context.read<ProjectProvider>().searchController,
                       onChanged: (value) {
-                        context.read<ProjectProvider>().updateSearch();
+                        onSearchTextChanged();
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -129,7 +138,8 @@ class _ShowListProjectState extends State<ShowListProject> {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: FutureBuilder(
-        future: projectProvider.getAllProjectForStudent(
+        future: context.watch<ProjectProvider>().getAllProjectForStudent(
+            title: context.read<ProjectProvider>().searchController.text.trim(),
             page: page,
             perPage: 5,
             studentId: authenticateProvider.authenRepository.student?['id'],
