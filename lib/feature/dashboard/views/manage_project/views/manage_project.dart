@@ -1,4 +1,5 @@
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project_detail.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project_hired.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project_proposal.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
@@ -10,10 +11,12 @@ class ManageProject extends StatelessWidget{
   {
     super.key,
     required this.proposals,
-    required this.job
+    required this.job,
+    this.selectIndex
   });
   List<Map<String,dynamic>> proposals;
   JobModel job;
+  int? selectIndex;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -23,6 +26,7 @@ class ManageProject extends StatelessWidget{
           children: [
             Expanded(
               child: CustomTabBar(
+                selectIndex: selectIndex,
                 lengOfTabBar: 4,
                 tabs: [
                   Text("Proposals",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -44,7 +48,7 @@ class ManageProject extends StatelessWidget{
                   ),
                   ManageProjectDetail(job: job),
                   Container(child: Center(child: Text("Message"),)),
-                  Container(child: Center(child: Text("Hired"),)),
+                  ManageProjectHired(proposals: proposals)
                 ],
               ),
             ),

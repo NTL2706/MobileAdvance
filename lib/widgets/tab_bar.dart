@@ -9,11 +9,13 @@ class CustomTabBar extends StatefulWidget {
       Key? key,
       required this.tabs,
       required this.tab_views,
-      required this.lengOfTabBar
+      required this.lengOfTabBar,
+      this.selectIndex
     }) : super(key: key);
   final tabs;
   final tab_views;
   int lengOfTabBar;
+  int? selectIndex;
   @override
   _CustomTabBarState createState() => _CustomTabBarState();
 }
@@ -29,7 +31,7 @@ class _CustomTabBarState extends State<CustomTabBar>
 
   @override
   void initState() {
-    _tabController = TabController(length: widget.lengOfTabBar, vsync: this);
+    _tabController = TabController(length: widget.lengOfTabBar, vsync: this, initialIndex:widget.selectIndex ?? 0);
     super.initState();
   }
 
@@ -51,6 +53,7 @@ class _CustomTabBarState extends State<CustomTabBar>
               Expanded(
                 flex: 1,
                 child: TabBar(
+                  
                   controller: _tabController,
                   tabs: widget.tabs,
                   labelColor: _selectedColor,
@@ -65,6 +68,7 @@ class _CustomTabBarState extends State<CustomTabBar>
                 child: Padding(
                   padding: EdgeInsets.all(5),
                   child: TabBarView(
+
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: widget.tab_views),
