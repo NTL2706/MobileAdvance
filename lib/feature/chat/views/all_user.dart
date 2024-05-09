@@ -1,7 +1,10 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 import './chat_message.dart';
 import '../provider/chat_provider.dart';
@@ -51,7 +54,10 @@ class _MessageWidgetState extends State<MessageWidget> {
                       bottom: Radius.circular(30.0), // Bo góc ở dưới
                     ),
                     child: Container(
-                      color: Colors.grey[200],
+                      color: Get.isDarkMode
+                          ? Themes.backgroundDark.withOpacity(0.8)
+                          : Themes.backgroundLight
+                              .withOpacity(0.8), // Màu nền của màn hình chat
                       child: ListView.builder(
                         itemCount: snapshot.data?.length.toInt() ??
                             0, // Replace this with your actual data count

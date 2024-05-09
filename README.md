@@ -17,3 +17,6 @@ samples, guidance on mobile development, and a full API reference.
 
 http://34.16.137.128/api-docs#/project/ProjectController_findAll
 https://docs.google.com/spreadsheets/d/13yr2WqNmbpYaTYb47BdQ4gMNbb_XTSbNwCQLDgkogdU/edit#gid=0
+
+## Video Demo
+https://drive.google.com/drive/folders/1OuTefBcthg2n6eCVTrpmweQy80JPtD-K?usp=drive_link
