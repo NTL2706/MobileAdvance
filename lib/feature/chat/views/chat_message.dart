@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:final_project_advanced_mobile/back_service.dart';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -212,28 +213,36 @@ class _ChatScreenState extends State<ChatScreen> {
                               : snapshot.data?[index].content;
 
                           bool shouldDisplayDateWidget(int index) {
+                            print(index);
+                            print(
+                                '$index ${snapshot.data![index].createdAt.day} ${snapshot.data![index].createdAt.month} ${snapshot.data![index].content}');
+
                             if (snapshot.data!.length == 1) {
-                              return true; // Luôn hiển thị nếu chỉ có một mục
+                              return true;
                             }
                             if (index > 0 &&
-                                snapshot.data![index].createdAt.day !=
-                                    snapshot.data![index - 1].createdAt.day) {
-                              return true; // Hiển thị nếu ngày khác với ngày của mục trước
-                            }
-                            if (index < snapshot.data!.length - 1 &&
-                                snapshot.data![index].createdAt.day !=
+                                index < snapshot.data!.length - 1 &&
+                                snapshot.data![index].createdAt.day >
                                     snapshot.data![index + 1].createdAt.day) {
-                              return true; // Hiển thị nếu ngày khác với ngày của mục sau
+                              return true;
+                            } else if (index == snapshot.data!.length - 1 &&
+                                snapshot.data![index].createdAt.day <
+                                    snapshot.data![index - 1].createdAt.day) {
+                              return true;
                             }
+
                             return false; // Mặc định không hiển thị
                           }
 
                           if (shouldDisplayDateWidget(index)) {
-                            dateWidget = Center(
-                                child: Text(
-                                    '${snapshot.data![index].createdAt.day} - '
-                                    '${snapshot.data![index].createdAt.month} - '
-                                    '${snapshot.data![index].createdAt.year}'));
+                            dateWidget = Padding(
+                              padding: EdgeInsets.only(top: 8, bottom: 8),
+                              child: Center(
+                                  child: Text(
+                                      '${snapshot.data![index].createdAt.day} - '
+                                      '${snapshot.data![index].createdAt.month} - '
+                                      '${snapshot.data![index].createdAt.year}')),
+                            );
                           }
 
                           return Column(
@@ -319,6 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
+                                                statusFlag: statusFlag['active']!,
                                                 proposalId: widget.proposalId!,
                                                 token: context
                                                     .read<
@@ -372,6 +382,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       await context
                                           .read<ChatProvider>()
                                           .updateStatusOfStudetnProposal(
+                                            statusFlag: statusFlag['Actice']!,
                                               proposalId: widget.proposalId!,
                                               token: context
                                                   .read<AuthenticateProvider>()
@@ -542,6 +553,11 @@ class MeetingCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => CallPage(
+                                token: context
+                                    .watch<AuthenticateProvider>()
+                                    .authenRepository
+                                    .token!,
+                                interviewId: interview.id,
                                 userName: context
                                     .watch<AuthenticateProvider>()
                                     .authenRepository

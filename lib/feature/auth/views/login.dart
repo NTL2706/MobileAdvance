@@ -74,7 +74,7 @@ class LoginPage extends StatelessWidget {
                         AuthResult result =
                             context.read<AuthenticateProvider>().state.result!;
                         if (result == AuthResult.success) {
-                          await initializeService();
+                          // await initializeService();
                           final service = FlutterBackgroundService();
                           bool isRunning = await service.isRunning();
                           if (isRunning) {
@@ -92,10 +92,19 @@ class LoginPage extends StatelessWidget {
                             });
                           } else {
                             print("start");
-                            service.startService();
+                            await service.startService();
+                            service.invoke("setAsForeground", {
+                              "token": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .token,
+                              "userId": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .id
+                            });
                           }
                           // await service.startService();
-
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/home',
                             (route) => false,

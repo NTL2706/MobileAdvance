@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/configEnv.dart';
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
@@ -5,6 +6,7 @@ import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provide
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,7 +30,8 @@ void main() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.requestNotificationsPermission();
-  //  await initializeService();
+  await initializeService();
+
   runApp(const MyApp());
 }
 
@@ -48,7 +51,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => AuthenticateProvider(),
           ),
-          ChangeNotifierProvider(create: (context) => ProfileProvider())
+          ChangeNotifierProvider(create: (context) => ProfileProvider()),
+          ChangeNotifierProvider(create: (context) => NotiProvider()),
         ],
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,

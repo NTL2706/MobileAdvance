@@ -1,4 +1,6 @@
+
 import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
@@ -222,11 +224,9 @@ class AllProjectWidget extends StatelessWidget {
   List<Map<String, dynamic>> jobList;
   @override
   Widget build(BuildContext context) {
-    ;
 
     final role = context.read<AuthenticateProvider>().authenRepository.role;
-    final activeJobs =
-        jobList.where((element) => element['statusFlag'] == 1).toList();
+    final activeJobs = jobList.where((element) => element['statusFlag'] == statusFlag['Active']).toList();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,

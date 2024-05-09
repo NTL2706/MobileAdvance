@@ -1,10 +1,20 @@
+
 import 'package:final_project_advanced_mobile/constants/colors.dart';
+
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
+import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
+
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/models/student_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+
+import 'package:provider/provider.dart';
+
 
 class ManageProjectProposal extends StatelessWidget {
   ManageProjectProposal({super.key, required this.proposals});
@@ -123,13 +133,16 @@ class ManageProjectProposal extends StatelessWidget {
                                   ? Themes.backgroundDark
                                   : Themes.backgroundLight,
                               actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("Cancel")),
-                                ElevatedButton(
-                                    onPressed: () {}, child: Text("Send")),
+                                ElevatedButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                }, child: Text("Cancel")),
+                                ElevatedButton(onPressed: ()async{
+                                  await context.read<ChatProvider>().updateStatusOfStudetnProposal(
+                                    proposalId: proposal['id'], 
+                                    token: context.read<AuthenticateProvider>().authenRepository.token!,
+                                    statusFlag: statusFlag['Offer']!);
+                                  Navigator.of(context).pop();
+                                }, child: Text("Send")),
                               ],
                               title: Text("Hired offer"),
                               content: Container(

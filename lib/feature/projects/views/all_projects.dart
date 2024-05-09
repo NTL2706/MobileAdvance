@@ -86,58 +86,84 @@ class _ProjectPageState extends State<ProjectPage> {
                       }),
                 ],
               )),
-          Expanded(
-            child: FutureBuilder(
-                future: Future.wait([
-                  context.read<ProjectProvider>().getAllProjectForStudent(
-                      studentId: context
-                          .read<AuthenticateProvider>()
-                          .authenRepository
-                          .student?['id'],
-                      token: context
-                          .read<AuthenticateProvider>()
-                          .authenRepository
-                          .token!),
-                ]),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container();
-                  }
-                  return FutureBuilder(
-                    future: context.read<ProjectProvider>().checkApply(
-                        token: context
-                            .read<AuthenticateProvider>()
-                            .authenRepository
-                            .token!,
-                        studentId: context
-                            .read<AuthenticateProvider>()
-                            .authenRepository
-                            .student?['id']),
-                    builder: (context, snapshot1) {
-                      if (snapshot1.connectionState ==
-                          ConnectionState.waiting) {
-                        return Container(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount:
-                            context.watch<ProjectProvider>().projects.length,
-                        itemBuilder: (context, index) {
-                          // final project = projectProvider.projects[index];
-                          // final project =
-                          //     Project.fromJson(snapshot.data?.result?[index]);
+          ShowListProject()
+        ],
+      ),
+    );
+  }
+}
 
+class ShowListProject extends StatefulWidget {
+  const ShowListProject({super.key});
+
+  @override
+  State<ShowListProject> createState() => _ShowListProjectState();
+}
+
+class _ShowListProjectState extends State<ShowListProject> {
+  final controller = ScrollController();
+  late ProjectProvider projectProvider;
+  late AuthenticateProvider authenticateProvider;
+  int page = 1;
+  @override
+  void initState() {
+    super.initState();
+    projectProvider = context.read<ProjectProvider>();
+    authenticateProvider = context.read<AuthenticateProvider>();
+    controller.addListener(() async {
+      print("scroll ");
+      if (controller.position.maxScrollExtent == controller.offset) {
+        setState(() {
+          print('scroll di');
+          page++;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final role = context.read<AuthenticateProvider>().authenRepository.role;
+    return Expanded(
+      child: FutureBuilder(
+        future: projectProvider.getAllProjectForStudent(
+            page: page,
+            perPage: 5,
+            studentId:authenticateProvider
+                .authenRepository
+                .student?['id'],
+            token:
+                authenticateProvider.authenRepository.token!),
+        builder: (context, snapshot) {
+          return FutureBuilder(
+            future: projectProvider.checkApply(
+            token: authenticateProvider.authenRepository.token!,
+            studentId: authenticateProvider
+                .authenRepository
+                .student?['id']),
+            builder: (context, snapshot) {
+                
+                return ListView.builder(
+                      controller: controller,
+                      itemCount: context.read<ProjectProvider>().projects.length + 1,
+                      itemBuilder: (context, index){
+                        if (index >= context.read<ProjectProvider>().projects.length) {
+                          
+                          return Padding(
+                            padding: EdgeInsets.zero,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }else if (context.watch<ProjectProvider>().projects.length > 0 )
+                        {
                           final project =
                               context.watch<ProjectProvider>().projects[index];
-
+                    
                           bool disableFlag = true;
-                          final favouriteProjectList = context
-                              .read<ProjectProvider>()
-                              .favouriteProjectList;
-
+                          final favouriteProjectList =
+                              context.read<ProjectProvider>().favouriteProjectList;
+                    
                           favouriteProjectList?.forEach(
                             (element) {
                               if (project.id == element['project']['id']) {
@@ -145,7 +171,7 @@ class _ProjectPageState extends State<ProjectPage> {
                               }
                             },
                           );
-
+                    
                           return Container(
                               margin: EdgeInsets.only(bottom: 24.0),
                               decoration: BoxDecoration(
@@ -156,8 +182,7 @@ class _ProjectPageState extends State<ProjectPage> {
                               child: Padding(
                                   padding: EdgeInsets.all(12),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -192,10 +217,8 @@ class _ProjectPageState extends State<ProjectPage> {
                                                                   AuthenticateProvider>()
                                                               .authenRepository
                                                               .student?['id'],
-                                                          projectId:
-                                                              project.id!,
-                                                          disableFlag:
-                                                              disableFlag);
+                                                          projectId: project.id!,
+                                                          disableFlag: disableFlag);
                                                   // Gọi hàm toggleFavoriteStatus với chỉ số index
                                                 },
                                                 icon: Icon(
@@ -267,12 +290,11 @@ class _ProjectPageState extends State<ProjectPage> {
                                               );
                                             },
                                             style: ButtonStyle(
-                                              minimumSize: MaterialStateProperty
-                                                  .all(Size(140,
-                                                      45)), // Kích thước nút
+                                              minimumSize:
+                                                  MaterialStateProperty.all(Size(
+                                                      140, 45)), // Kích thước nút
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                          Color>(
+                                                  MaterialStateProperty.all<Color>(
                                                       Colors.blue), // Màu nền
                                               shape: MaterialStateProperty.all<
                                                   RoundedRectangleBorder>(
@@ -286,8 +308,8 @@ class _ProjectPageState extends State<ProjectPage> {
                                             child: Text(
                                               'Views Details',
                                               style: TextStyle(
-                                                  color: Colors
-                                                      .white), // Màu văn bản
+                                                  color:
+                                                      Colors.white), // Màu văn bản
                                             ),
                                           ),
                                           if (role == "student")
@@ -312,9 +334,8 @@ class _ProjectPageState extends State<ProjectPage> {
                                                     MaterialStateProperty.all<
                                                             Color>(
                                                         Colors.blue), // Màu nền
-                                                shape:
-                                                    MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -333,13 +354,10 @@ class _ProjectPageState extends State<ProjectPage> {
                                       )
                                     ],
                                   )));
-                        },
-                      );
-                    },
-                  );
-                }),
-          ),
-        ],
+                        }
+                      },
+                    );},
+          );},
       ),
     );
   }

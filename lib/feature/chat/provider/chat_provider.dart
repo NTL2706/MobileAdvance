@@ -1,33 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/main.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import '../constants/chat_type.dart';
-
 
 class SocketManager {
   IO.Socket? socket;
   String? token;
   ChatProvider? provider;
   String? projectId;
-  SocketManager(
-    {
-      required  this.token,
-      this.projectId,
-      this.provider
-    }) {
-    initSocket(token: token!, projectId: projectId,provider: provider);
+  SocketManager({required this.token, this.projectId, this.provider}) {
+    initSocket(token: token!, projectId: projectId, provider: provider);
   }
 
   void initSocket(
-      {required String token, String? projectId,ChatProvider? provider }) {
-    
-    
-     // Đảm bảo rằng projectID là một số nguyên
-    
+      {required String token, String? projectId, ChatProvider? provider}) {
+    // Đảm bảo rằng projectID là một số nguyên
+
     socket = IO.io(
       'https://api.studenthub.dev/', // Server url
       IO.OptionBuilder()
@@ -40,20 +32,17 @@ class SocketManager {
       'Authorization': 'Bearer $token',
     };
 
-    if (projectId != null){
+    if (projectId != null) {
       print(projectId);
       socket!.io.options?['query'] = {
         'project_id': int.parse(projectId!),
       };
     }
-    
 
     socket!.connect();
 
-    socket!.onConnect((_)async {
+    socket!.onConnect((_) async {
       print('Connected');
-
-   
     });
 
     socket!.onDisconnect((_) {
@@ -265,8 +254,7 @@ class ChatProvider extends ChangeNotifier {
     required int projectid,
     required int userid,
   }) async {
-    String apiUrl =
-        "${env.apiURL}api/message/$projectid/user/$userid";
+    String apiUrl = "${env.apiURL}api/message/$projectid/user/$userid";
     try {
       http.Response response = await http.get(Uri.parse(apiUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
@@ -310,7 +298,7 @@ class ChatProvider extends ChangeNotifier {
       required String projectId,
       required ChatProvider provider}) {
     return SocketManager(
-         token: token, projectId: projectId, provider: provider);
+        token: token, projectId: projectId, provider: provider);
   }
 
   void handleScheduleMeeting() async {
@@ -440,10 +428,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> updateStatusOfStudetnProposal(
-      {required int proposalId, required String token}) async {
+      {required int proposalId, required String token, required int statusFlag}) async {
     try {
       Map<String, dynamic> data = Map();
-      int statusFlag = 1;
       data['statusFlag'] = statusFlag;
       print("${env.apiURL}api/proposal/$proposalId");
       final rs =
