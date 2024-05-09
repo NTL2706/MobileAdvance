@@ -113,13 +113,33 @@ class ProjectProvider extends ChangeNotifier {
 
   
   Future<HttpResponse<List<Map<String, dynamic>>>> getAllProjectForStudent(
-      {required String token, required int studentId}) async {
+      {
+        required String token, 
+        required int studentId,
+        int? page,
+        int? perPage,
+        String? title,
+        int? projectScopeFlag,
+        int? numberOfStudents,
+        int? proposalsLessThan 
+      }) async {
     try {
       
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
+      
+      final uri = Uri(
+        scheme: 'https',
+        host: env.apiURL?.replaceAll("https://", "").replaceAll("/", ""),
+        path: 'api/project',
+        queryParameters: {
+          "page":page.toString(),
+          "perPage":perPage.toString()
+        }
+      );
+      print(uri);
       final rs = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
-          Uri.parse('${env.apiURL}api/project'));
+         uri);
       final favoriteProjectResponse = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
           Uri.parse("${env.apiURL}api/favoriteProject/$studentId"));
@@ -133,7 +153,7 @@ class ProjectProvider extends ChangeNotifier {
         return Project.fromJson(e);
       }).toList();
 
-      _filteredProjects = _projects;
+      _filteredProjects.addAll(_projects);
     
       final favouriteProject  =
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
@@ -150,6 +170,7 @@ class ProjectProvider extends ChangeNotifier {
       return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     }
   }
+
 
   Future<void> checkApply(
     {
