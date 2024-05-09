@@ -20,7 +20,7 @@ class NotificationPage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         body: FutureBuilder(
-          future: context.watch<NotiProvider>().fetchDataAllNoti(
+          future: context.read<NotiProvider>().fetchDataAllNoti(
                 token: context
                     .read<AuthenticateProvider>()
                     .authenRepository
@@ -32,7 +32,7 @@ class NotificationPage extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else {
-              final notificationsList = snapshot.data;
+              final notificationsList = context.watch<NotiProvider>().notiList;
               return Column(
                 children: [
                   const TabBar(
@@ -96,7 +96,7 @@ class NotificationPage extends StatelessWidget {
       child: ListView.builder(
         itemCount: filteredList.length,
         itemBuilder: (context, index) {
-          final notification = filteredList[index];
+          final notification = filteredList[filteredList.length - 1 - index];
           return Container(
             margin: const EdgeInsets.only(top: 10),
             child: Column(
@@ -133,18 +133,22 @@ class NotificationPage extends StatelessWidget {
                                             16), // Optional: Customize as needed
                                   ),
                                 ),
-                                if (notification['notifyFlag'] ==
-                                    TypeNotifyFlag['Offer'])
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red,
-                                    ),
-                                  )
-                                else
-                                  const SizedBox.shrink(),
+                                notification['notifyFlag'] == '0'
+                                    ? IconButton(
+                                        icon: const Icon(Icons.check),
+                                        onPressed: () {
+                                          context.read<NotiProvider>().readNoti(
+                                              notification['id'],
+                                              context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .token!); // Call the desired function
+                                        },
+                                        color: Colors
+                                            .green, // Adjust the color of the tick icon
+                                      )
+                                    : const SizedBox
+                                        .shrink(), // Use an empty widget if the notifyFlag is not '0'.
                               ],
                             ),
                             Text('${notification['content']}',
@@ -219,40 +223,64 @@ class NotificationPage extends StatelessWidget {
                                           ? Row(
                                               children: [
                                                 ElevatedButton(
-                                                  onPressed: () {
-
-                                                  },
+                                                  onPressed: () {},
                                                   child: const Text('Decline'),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 ElevatedButton(
-                                                  onPressed: () async{
-                                                    await context.read<ChatProvider>().updateStatusOfStudetnProposal(
-                                                      proposalId: notification['proposalId'], 
-                                                      token: context.read<AuthenticateProvider>().authenRepository.token!, 
-                                                      statusFlag: statusFlag['Hired']!);
-                                         
-                                                    await context.read<ProjectProvider>().updateProject(
-                                                      typeFlag: typeFlag['Working'],
-                                                      token: context.read<AuthenticateProvider>().authenRepository.token!,
-                                                      projectId: notification['proposal']['projectId']);
-                                                    print(context.read<ProjectProvider>().responseHttp.result);
+                                                  onPressed: () async {
+                                                    await context
+                                                        .read<ChatProvider>()
+                                                        .updateStatusOfStudetnProposal(
+                                                            proposalId:
+                                                                notification[
+                                                                    'proposalId'],
+                                                            token: context
+                                                                .read<
+                                                                    AuthenticateProvider>()
+                                                                .authenRepository
+                                                                .token!,
+                                                            statusFlag:
+                                                                statusFlag[
+                                                                    'Hired']!);
+
+                                                    await context
+                                                        .read<ProjectProvider>()
+                                                        .updateProject(
+                                                            typeFlag: typeFlag[
+                                                                'Working'],
+                                                            token: context
+                                                                .read<
+                                                                    AuthenticateProvider>()
+                                                                .authenRepository
+                                                                .token!,
+                                                            projectId: notification[
+                                                                    'proposal']
+                                                                ['projectId']);
+                                                    print(context
+                                                        .read<ProjectProvider>()
+                                                        .responseHttp
+                                                        .result);
                                                     await QuickAlert.show(
                                                         text: "Let's cooperate",
                                                         confirmBtnText: "OK",
                                                         cancelBtnText: "CANCEL",
                                                         onConfirmBtnTap: () {
-                                                          Navigator.of(context).pop();
+                                                          Navigator.of(context)
+                                                              .pop();
                                                         },
                                                         onCancelBtnTap: () {
-                                                          Navigator.of(context).pop();
+                                                          Navigator.of(context)
+                                                              .pop();
                                                         },
                                                         context: context,
                                                         showCancelBtn: true,
-                                                        type: QuickAlertType.success);
-                                                      },
-                                                      child: const Text('Congratulation!'),
-                                                  ),
+                                                        type: QuickAlertType
+                                                            .success);
+                                                  },
+                                                  child: const Text(
+                                                      'Congratulation!'),
+                                                ),
                                               ],
                                             )
                                           : null,
