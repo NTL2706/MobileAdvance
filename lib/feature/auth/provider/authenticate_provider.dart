@@ -39,12 +39,20 @@ class AuthenticateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signOut({
-    required String token
-  }) async {
-    await authenRepository.SignOut(
-      token: token
-    );
+  Future<void> forgotPassword({required String email}) async {
+    state = state.copiedWithIsLoading(true);
+    notifyListeners();
+    final response = await authenRepository.forgotPassword(email: email);
+    state = AuthState(
+        result: response['result'],
+        isLoading: false,
+        userName: authenRepository.username,
+        message: response['message']);
+    notifyListeners();
+  }
+
+  Future<void> signOut({required String token}) async {
+    await authenRepository.SignOut(token: token);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('role');
@@ -108,6 +116,4 @@ class AuthenticateProvider extends ChangeNotifier {
         message: response['message']);
     notifyListeners();
   }
-
-
 }

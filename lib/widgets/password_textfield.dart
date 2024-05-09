@@ -24,6 +24,7 @@ class _PasswordFielddWidgetState extends State<PasswordFielddWidget> {
       controller: widget.controller,
       obscureText: passwordVisible,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
         focusedBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(15)),
             borderSide:

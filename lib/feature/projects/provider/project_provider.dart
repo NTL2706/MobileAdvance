@@ -62,33 +62,7 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   void filterSearch() {
-    updateSearch();
-    if (_selectedProjectLength == 0 &&
-        _numberOfStudentsController.text.isEmpty) {
-      return;
-    }
-
-    _filteredProjects = _filteredProjects.where((project) {
-      late bool isNumberFalseFilter = true;
-      late bool isLengthFilter = true;
-
-      if (_numberOfStudentsController.text.isNotEmpty) {
-        if (project.numberOfPeople! >
-            int.parse(_numberOfStudentsController.text)) {
-          isNumberFalseFilter = false;
-        }
-      }
-
-      if (_selectedProjectLength != 0) {
-        if (project.time != _selectedProjectLength ||
-            project.time == 0 && _selectedProjectLength != 1) {
-          isLengthFilter = false;
-        }
-      }
-
-      return isNumberFalseFilter && isLengthFilter;
-    }).toList();
-
+    _filteredProjects.clear();
     notifyListeners();
   }
 
@@ -98,26 +72,19 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   void resetFilter() {
-    _selectedProjectLength = 0;
-    _numberOfStudentsController.clear();
-    updateSearch();
     notifyListeners();
   }
 
-  
   Future<HttpResponse<List<Map<String, dynamic>>>> getAllProjectForStudent(
-      {
-        required String token, 
-        required int studentId,
-        int? page,
-        int? perPage,
-        String? title,
-        int? projectScopeFlag,
-        int? numberOfStudents,
-        int? proposalsLessThan 
-      }) async {
+      {required String token,
+      required int studentId,
+      int? page,
+      int? perPage,
+      String? title,
+      int? projectScopeFlag,
+      int? numberOfStudents,
+      int? proposalsLessThan}) async {
     try {
-      
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
       hasMore = true;
       final uri = Uri(
@@ -132,8 +99,7 @@ class ProjectProvider extends ChangeNotifier {
       );
       print(uri);
       final rs = await http.get(
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
-         uri);
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, uri);
       final favoriteProjectResponse = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
           Uri.parse("${env.apiURL}api/favoriteProject/$studentId"));
@@ -152,8 +118,8 @@ class ProjectProvider extends ChangeNotifier {
       }).toList();
 
       _filteredProjects.addAll(_projects);
-    
-      final favouriteProject  =
+
+      final favouriteProject =
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
       favouriteProjectList = favouriteProject;
  
@@ -169,39 +135,34 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
-
   Future<void> checkApply(
-    {
-      required String token,
-      required int studentId
-    }
-  )async{
+      {required String token, required int studentId}) async {
     try {
      
       final rs = await http.get(
-        headers: {
-          HttpHeaders.authorizationHeader: "Bearer $token"
-        }
-        ,Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+          Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
       final body = json.decode(rs.body);
-      if (rs.statusCode >= 400){
+      if (rs.statusCode >= 400) {
         throw Exception(body);
       }
-     
-      final proposals = List<Map<String,dynamic>>.from(body['result']);
+
+      final proposals = List<Map<String, dynamic>>.from(body['result']);
       proposals.forEach((proposal) {
-        _filteredProjects.removeWhere((element){
+        _filteredProjects.removeWhere((element) {
           // print(element.id ==  proposal['projectId']);
-          if(proposal['projectId'] == element.id){
+          if (proposal['projectId'] == element.id) {
             print(element.title);
           }
-          return proposal['projectId'] == element.id;});
+          return proposal['projectId'] == element.id;
+        });
       });
 
     }on Exception catch (e) {
       print(e);
     }
   }
+
   Future<void> applyProposal(
       {required String token,
       required int projectId,

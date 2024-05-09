@@ -1,21 +1,25 @@
+
+import 'package:final_project_advanced_mobile/constants/colors.dart';
+
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/constants/type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
+
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/models/student_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+
 import 'package:provider/provider.dart';
 
 
 class ManageProjectProposal extends StatelessWidget {
-  ManageProjectProposal(
-    {
-      super.key,
-      required this.proposals
-    });
-  List<Map<String,dynamic>> proposals;
+  ManageProjectProposal({super.key, required this.proposals});
+  List<Map<String, dynamic>> proposals;
   @override
   Widget build(BuildContext context) {
     print(proposals);
@@ -30,83 +34,106 @@ class ManageProjectProposal extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.grey.shade200),
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.grey.shade200),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
                     //avatar
-                    Expanded(flex: 2, child: Image.asset('assets/images/avatar.png')),
+                    Expanded(
+                        flex: 2,
+                        child: Image.asset('assets/images/avatar.png')),
                     //name and year
                     Expanded(
                         flex: 8,
                         child: Column(
                           children: [
-                            Text('${proposal['student']['user']['fullname']}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold
-                            ),),
-                            Text('${date.day}-${date.month}-${date.year}',style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.normal
-                            ),),
+                            Text(
+                              '${proposal['student']['user']['fullname']}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '${date.day}-${date.month}-${date.year}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.normal),
+                            ),
                           ],
-
                         ))
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(proposal['student']['techStack']['name'],style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold
-                    ),),
+                    Text(
+                      proposal['student']['techStack']['name'],
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
                     // Text("excellent")
                   ],
                 ),
-
                 Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("${proposal['coverLetter']}"))
-                ,
+                    alignment: Alignment.centerLeft,
+                    child: Text("${proposal['coverLetter']}")),
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                        child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
                           elevation: 0.5,
-                          backgroundColor: Colors.white
-                        ),
-                        child:Text("Message",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                   
-                        ),),
-                        onPressed: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
-                          ChatScreen(
-                            projectId: proposal['projectId'], 
-                            receiveId: proposal['student']['userId'], 
-                            nameReceiver:proposal['student']['user']['fullname'],
+                          backgroundColor: Get.isDarkMode
+                              ? Themes.backgroundDark
+                              : Themes.backgroundLight),
+                      child: Text(
+                        "Message",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            projectId: proposal['projectId'],
+                            receiveId: proposal['student']['userId'],
+                            nameReceiver: proposal['student']['user']
+                                ['fullname'],
                             proposalId: proposal['id'],
-                            
-                            ),));
-                        },
+                          ),
+                        ));
+                      },
                     )),
                     SizedBox(
                       width: 10,
                     ),
-                    Expanded(child: ElevatedButton(
+                    Expanded(
+                        child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           elevation: 0.5,
-                          backgroundColor: Colors.white
-                        ),
-                      child:Text("Hire",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                   
-                        )),onPressed: (){
-                          showDialog(context: context, builder: (context) {
+                          backgroundColor: Get.isDarkMode
+                              ? Themes.backgroundDark
+                              : Themes.backgroundLight),
+                      child: Text("Hire",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
                             return AlertDialog(
-                              backgroundColor: Colors.white,
+                              backgroundColor: Get.isDarkMode
+                                  ? Themes.backgroundDark
+                                  : Themes.backgroundLight,
                               actions: [
                                 ElevatedButton(onPressed: (){
                                   Navigator.of(context).pop();
@@ -124,13 +151,16 @@ class ManageProjectProposal extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text("Do you really want to send hired offer for student to do this project?")
+                                    Text(
+                                        "Do you really want to send hired offer for student to do this project?")
                                   ],
                                 ),
                               ),
                             );
-                          },);
-                        },))
+                          },
+                        );
+                      },
+                    ))
                   ],
                 )
               ],

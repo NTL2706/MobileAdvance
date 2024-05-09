@@ -1,3 +1,4 @@
+import 'package:final_project_advanced_mobile/constants/noti_type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/callvideo/callvideo.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
@@ -48,19 +49,26 @@ class NotificationPage extends StatelessWidget {
                         buildNotificationList(
                           context,
                           notificationsList,
-                          (noti) => noti['typeNotifyFlag'] == '1', // Interview
-                        ),
-                        buildNotificationList(
-                          context,
-                          notificationsList,
-                          (noti) => noti['typeNotifyFlag'] == '3', // Message
+                          (noti) =>
+                              noti['typeNotifyFlag'] ==
+                              TypeNotifyFlag['Interview']
+                                  .toString(), // Interview
                         ),
                         buildNotificationList(
                           context,
                           notificationsList,
                           (noti) =>
-                              noti['typeNotifyFlag'] != '1' &&
-                              noti['typeNotifyFlag'] != '3', // Other
+                              noti['typeNotifyFlag'] ==
+                              TypeNotifyFlag['Chat'].toString(), // Message
+                        ),
+                        buildNotificationList(
+                          context,
+                          notificationsList,
+                          (noti) =>
+                              noti['typeNotifyFlag'] !=
+                                  TypeNotifyFlag['Interview'].toString() &&
+                              noti['typeNotifyFlag'] !=
+                                  TypeNotifyFlag['Chat'].toString(), // Other
                         ),
                       ],
                     ),
@@ -120,7 +128,8 @@ class NotificationPage extends StatelessWidget {
                                             16), // Optional: Customize as needed
                                   ),
                                 ),
-                                if (notification['notifyFlag'] == '0')
+                                if (notification['notifyFlag'] ==
+                                    TypeNotifyFlag['Offer'])
                                   Container(
                                     width: 10,
                                     height: 10,
@@ -142,7 +151,9 @@ class NotificationPage extends StatelessWidget {
                                 )),
                             SizedBox(
                               height: 50,
-                              child: notification['typeNotifyFlag'] == '1' &&
+                              child: notification['typeNotifyFlag'] ==
+                                          TypeNotifyFlag['Interview']
+                                              .toString() &&
                                       notification['message']['interview']
                                               ['deletedAt'] ==
                                           null
@@ -174,7 +185,8 @@ class NotificationPage extends StatelessWidget {
                                       },
                                       child: const Text('Start Interview'),
                                     )
-                                  : notification['typeNotifyFlag'] == '3'
+                                  : notification['typeNotifyFlag'] ==
+                                          TypeNotifyFlag['Chat'].toString()
                                       ? ElevatedButton(
                                           onPressed: () async {
                                             await Navigator.push(
@@ -197,8 +209,21 @@ class NotificationPage extends StatelessWidget {
                                           },
                                           child: const Text('Go Chatting'),
                                         )
-                                      : notification['typeNotifyFlag'] == '4'
-                                          ? null
+                                      : notification['typeNotifyFlag'] ==
+                                              TypeNotifyFlag['Offer'].toString()
+                                          ? Row(
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {},
+                                                  child: const Text('Decline'),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                ElevatedButton(
+                                                  onPressed: () {},
+                                                  child: const Text('Accept'),
+                                                ),
+                                              ],
+                                            )
                                           : null,
                             ),
                           ],

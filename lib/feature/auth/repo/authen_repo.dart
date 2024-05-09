@@ -127,19 +127,14 @@ class AuthenRepository {
     }
   }
 
-  Future<Map<dynamic, dynamic>> SignOut({
-    required String token
-  })async{
+  Future<Map<dynamic, dynamic>> SignOut({required String token}) async {
     try {
       final response = await http.post(
-        headers: {
-          HttpHeaders.authorizationHeader: "Bearer $token"
-        },
-        Uri.parse("${env.apiURL}api/auth/logout")
-      );
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+          Uri.parse("${env.apiURL}api/auth/logout"));
       final body = json.decode(response.body);
       print(body);
-       if (response.statusCode >= 400) {
+      if (response.statusCode >= 400) {
         throw Exception(body['errorDetails']);
       }
 
@@ -147,6 +142,24 @@ class AuthenRepository {
         "result": AuthResult.success,
       };
     } catch (e) {
+      return {"result": AuthResult.failure, "message": e.toString()};
+    }
+  }
+
+  Future<Map<dynamic, dynamic>> forgotPassword({required String email}) async {
+    try {
+      final response = await http.post(
+          Uri.parse("${env.apiURL}api/user/forgotPassword"),
+          body: {"email": email});
+      final body = json.decode(response.body);
+      if (response.statusCode >= 300) {
+        throw Exception(body['errorDetails']);
+      }
+      return {
+        "result": AuthResult.success,
+        "message": body['result']['message']
+      };
+    } on Exception catch (e) {
       return {"result": AuthResult.failure, "message": e.toString()};
     }
   }

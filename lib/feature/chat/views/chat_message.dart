@@ -288,8 +288,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
-                                  color:
-                                      Colors.grey[200], // Màu nền của hộp đựng
+                                  // color:
+                                  //     Colors.grey[200], // Màu nền của hộp đựng
                                 ),
                                 child: TextField(
                                   style: TextStyle(fontSize: 18),

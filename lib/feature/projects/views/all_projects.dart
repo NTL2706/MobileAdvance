@@ -14,6 +14,7 @@ import './apply_project.dart';
 import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
+import 'dart:async';
 
 class ProjectPage extends StatefulWidget {
   ProjectPage({super.key});
@@ -23,18 +24,9 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  Timer? _debounce;
-
-  void onSearchTextChanged() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<ProjectProvider>().updateSearch();
-    });
-  }
   @override
   Widget build(BuildContext context) {
     print("rebuild");
-    final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -137,8 +129,7 @@ class _ShowListProjectState extends State<ShowListProject> {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: FutureBuilder(
-        future: context.watch<ProjectProvider>().getAllProjectForStudent(
-           title: context.read<ProjectProvider>().searchController.text.trim(),
+        future: projectProvider.getAllProjectForStudent(
             page: page,
             perPage: 5,
             studentId:authenticateProvider
@@ -146,28 +137,27 @@ class _ShowListProjectState extends State<ShowListProject> {
                 .student?['id'],
             token:
                 authenticateProvider.authenRepository.token!),
-        builder: (context, snapshotOne) {
-         
-          
+        builder: (context, snapshot) {
           return FutureBuilder(
             future: projectProvider.checkApply(
-            token: authenticateProvider.authenRepository.token!,
-            studentId: authenticateProvider
-                .authenRepository
-                .student?['id']),
+                token: authenticateProvider.authenRepository.token!,
+                studentId:
+                    authenticateProvider.authenRepository.student?['id']),
             builder: (context, snapshot) {
+                
                 return ListView.builder(
                       controller: controller,
                       itemCount: context.read<ProjectProvider>().projects.length + 1,
                       itemBuilder: (context, index){
                         if (index >= context.read<ProjectProvider>().projects.length) {
+                          
                           return Padding(
                             padding: EdgeInsets.zero,
                             child: Center(
-                              child:context.read<ProjectProvider>().hasMore! ? CircularProgressIndicator() : Center(),
+                              child: CircularProgressIndicator(),
                             ),
                           );
-                        }else if (context.read<ProjectProvider>().projects.length > 0 )
+                        }else if (context.watch<ProjectProvider>().projects.length > 0 )
                         {
                           final project =
                               context.watch<ProjectProvider>().projects[index];
