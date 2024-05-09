@@ -68,7 +68,7 @@ class ApplyProject extends StatelessWidget {
                               .authenRepository
                               .student?['id'],
                           coverLetter: coverLetterTextController.text,
-                          disableFlag: disableFlag);
+                          );
                       final rs = context.read<ProjectProvider>().responseHttp;
 
                       if (rs.result != null) {
