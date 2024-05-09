@@ -29,6 +29,7 @@ void onStart(ServiceInstance service) {
       SocketManager socketManager = SocketManager(token: token);
 
       socketManager.socket?.on("NOTI_$userId", (data) {
+        print(data);
         LocalNotification.showSimpleNotification(
             titile: data['notification']['sender']['fullname'],
             body: data['notification']['message']['content'],
@@ -44,6 +45,7 @@ void onStart(ServiceInstance service) {
       SocketManager socketManager = SocketManager(token: token);
 
       socketManager.socket?.on("NOTI_$userId", (data) async {
+        print(data);
         await LocalNotification.showSimpleNotification(
             titile: "123", body: "123", payload: "123");
       });

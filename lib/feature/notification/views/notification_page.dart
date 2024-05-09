@@ -14,7 +14,7 @@ class NotificationPage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         body: FutureBuilder(
-          future: context.read<NotiProvider>().fetchDataAllNoti(
+          future: context.watch<NotiProvider>().fetchDataAllNoti(
                 token: context
                     .read<AuthenticateProvider>()
                     .authenRepository
@@ -87,11 +87,12 @@ class NotificationPage extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.only(top: 10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Image.asset("assets/images/logo.png"),
                     ),
                     Expanded(
@@ -104,7 +105,21 @@ class NotificationPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('${notification['title']}'),
+                                Flexible(
+                                  flex: 8, // Adjust the flex value as needed
+                                  child: Text(
+                                    '${notification['title']}',
+                                    overflow: TextOverflow
+                                        .clip, // Prevents overflow issues
+                                    maxLines:
+                                        2, // Set this to your preferred number of lines
+                                    softWrap:
+                                        true, // Allows word breaking and line wrapping
+                                    style: const TextStyle(
+                                        fontSize:
+                                            16), // Optional: Customize as needed
+                                  ),
+                                ),
                                 if (notification['notifyFlag'] == '0')
                                   Container(
                                     width: 10,
@@ -118,7 +133,15 @@ class NotificationPage extends StatelessWidget {
                                   const SizedBox.shrink(),
                               ],
                             ),
-                            Container(
+                            Text('${notification['content']}',
+                                overflow: TextOverflow.clip,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                )),
+                            SizedBox(
+                              height: 50,
                               child: notification['typeNotifyFlag'] == '1' &&
                                       notification['message']['interview']
                                               ['deletedAt'] ==
@@ -129,6 +152,13 @@ class NotificationPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => CallPage(
+                                              interviewId:
+                                                  notification['message']
+                                                      ['interview']['id'],
+                                              token: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .token!,
                                               callID: notification['message']
                                                           ['interview']
                                                       ['meetingRoom']['id']
@@ -167,7 +197,9 @@ class NotificationPage extends StatelessWidget {
                                           },
                                           child: const Text('Go Chatting'),
                                         )
-                                      : null,
+                                      : notification['typeNotifyFlag'] == '4'
+                                          ? null
+                                          : null,
                             ),
                           ],
                         ),
