@@ -1,4 +1,5 @@
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
+import 'package:final_project_advanced_mobile/constants/type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
@@ -18,11 +19,11 @@ class ManageProjectProposal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(proposals);
+    proposals = proposals.where((element) => element['statusFlag'].toString() == statusFlag['Waiting'].toString(),).toList();
     return Container(
       child: ListView.builder(
         itemCount: proposals.length,
         itemBuilder: (context, index) {
-
           final proposal = proposals[index];
           final date = DateTime.parse(proposal['createdAt'].toString());
           return Container(

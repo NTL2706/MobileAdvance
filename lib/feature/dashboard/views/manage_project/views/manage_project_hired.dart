@@ -1,3 +1,5 @@
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
+
 import 'package:flutter/material.dart';
 
 class ManageProjectHired extends StatelessWidget {
@@ -11,6 +13,7 @@ class ManageProjectHired extends StatelessWidget {
   List<Map<String,dynamic>> proposals;
   @override
   Widget build(BuildContext context) {
+    proposals = proposals.where((element) => element['statusFlag'].toString() == statusFlag['Hired'].toString(),).toList();
     return Container(
       child: ListView.builder(
         itemCount: proposals.length,
@@ -52,45 +55,6 @@ class ManageProjectHired extends StatelessWidget {
                     Text(proposal['student']['techStack']['name'],style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold
                     ),),
-                    // Text("excellent")
-                  ],
-                ),
-
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("${proposal['coverLetter']}"))
-                ,
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0.5,
-                          backgroundColor: Colors.white
-                        ),
-                        child:Text("Message",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                   
-                        ),),
-                        onPressed: (){
-                   
-                          
-                        },
-                    )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0.5,
-                          backgroundColor: Colors.white
-                        ),
-                      child:Text("Hire",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                   
-                        )),onPressed: (){
-                          
-                        },))
                   ],
                 )
               ],

@@ -24,6 +24,7 @@ class ProjectProvider extends ChangeNotifier {
   TextEditingController get numberOfStudentsController =>
       _numberOfStudentsController;
   TextEditingController get searchController => _searchController;
+  bool? hasMore = true;
 
   Future<void> toggleFavoriteStatus(
       {required int studentId,
@@ -56,16 +57,7 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   void updateSearch() {
-    if (_searchController.text.isEmpty) {
-      _filteredProjects = _projects;
-    } else {
-      _filteredProjects = _projects.where((project) {
-        return project.title!
-            .toLowerCase()
-            .contains(_searchController.text.toLowerCase());
-      }).toList();
-    }
-
+    _filteredProjects.clear();
     notifyListeners();
   }
 
@@ -127,14 +119,15 @@ class ProjectProvider extends ChangeNotifier {
     try {
       
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
-      
+      hasMore = true;
       final uri = Uri(
         scheme: 'https',
         host: env.apiURL?.replaceAll("https://", "").replaceAll("/", ""),
         path: 'api/project',
         queryParameters: {
           "page":page.toString(),
-          "perPage":perPage.toString()
+          "perPage":perPage.toString(),
+          "title": title,
         }
       );
       print(uri);
@@ -148,7 +141,11 @@ class ProjectProvider extends ChangeNotifier {
       final bodyFavourite = json.decode(favoriteProjectResponse.body);
       final body = json.decode(rs.body);
 
-      
+     if (rs.statusCode >= 400) {
+        throw Exception(body);
+      }
+
+     
       final result = List<Map<String, dynamic>>.from(body['result']);
       _projects = result.map((e) {
         return Project.fromJson(e);
@@ -160,14 +157,14 @@ class ProjectProvider extends ChangeNotifier {
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
       favouriteProjectList = favouriteProject;
  
-      if (rs.statusCode >= 400) {
-        throw Exception(body);
-      }
+      
       
       responseHttp.updateResponse({"result": result, "status": rs.statusCode});
+      
       return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     } on Exception catch (e) {
       print(e);
+      hasMore = false;
       return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     }
   }
@@ -180,7 +177,7 @@ class ProjectProvider extends ChangeNotifier {
     }
   )async{
     try {
-      responseHttp = HttpResponse<bool>.unknown();
+     
       final rs = await http.get(
         headers: {
           HttpHeaders.authorizationHeader: "Bearer $token"
@@ -200,7 +197,7 @@ class ProjectProvider extends ChangeNotifier {
           }
           return proposal['projectId'] == element.id;});
       });
-      notifyListeners();
+
     }on Exception catch (e) {
       print(e);
     }

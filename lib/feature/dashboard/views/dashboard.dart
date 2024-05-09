@@ -176,7 +176,6 @@ class DashBoard extends StatelessWidget {
                           AllProjectWidget(
                             jobList: jobList.where((element) {
                               return element['deletedAt'] == null;
-            
                             }).toList(),
                             state: JobState.pending.name,
                           ),
@@ -211,10 +210,13 @@ class AllProjectWidget extends StatelessWidget {
   String? state;
   List<Map<String, dynamic>> jobList;
   @override
-  Widget build(BuildContext context) {;
+  Widget build(BuildContext context) {
+
 
     final role = context.read<AuthenticateProvider>().authenRepository.role;
-    final activeJobs = jobList.where((element) => element['statusFlag'] == statusFlag['Active']).toList();
+    final activeJobs = jobList
+        .where((element) => element['statusFlag'] == statusFlag['Active'])
+        .toList();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -227,7 +229,7 @@ class AllProjectWidget extends StatelessWidget {
                   .textTheme
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
-          ),
+            ),
           if (role == "student")
             Text(
               "Your proposal(${jobList.length})",
@@ -235,7 +237,7 @@ class AllProjectWidget extends StatelessWidget {
                   .textTheme
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
-          ),
+            ),
           Expanded(
             child: ListView.builder(
               itemCount: jobList.length,
@@ -292,13 +294,35 @@ class AllProjectWidget extends StatelessWidget {
                                     itemBuilder: (context) {
                                       return [
                                         PopupMenuItem(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) {
+                                                  return ManageProject(
+                                                    selectIndex: 0,
+                                                    job: job,
+                                                    proposals: job.proposals!,
+                                                  );
+                                                },
+                                              ));
+                                            },
                                             child: Text("View proposals")),
                                         PopupMenuItem(
                                             onTap: () {},
                                             child: Text("View messages")),
                                         PopupMenuItem(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) {
+                                                  return ManageProject(
+                                                    selectIndex: 3,
+                                                    job: job,
+                                                    proposals: job.proposals!,
+                                                  );
+                                                },
+                                              ));
+                                            },
                                             child: Text("View hired")),
                                         PopupMenuItem(
                                             onTap: () {},

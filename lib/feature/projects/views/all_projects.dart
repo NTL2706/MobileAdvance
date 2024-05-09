@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
+import 'dart:async';
+
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
@@ -21,6 +23,14 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+  Timer? _debounce;
+
+  void onSearchTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      context.read<ProjectProvider>().updateSearch();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     print("rebuild");
@@ -38,7 +48,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       controller:
                           context.read<ProjectProvider>().searchController,
                       onChanged: (value) {
-                        context.read<ProjectProvider>().updateSearch();
+                        onSearchTextChanged();
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -104,6 +114,7 @@ class _ShowListProjectState extends State<ShowListProject> {
   final controller = ScrollController();
   late ProjectProvider projectProvider;
   late AuthenticateProvider authenticateProvider;
+  bool? hasMore = true;
   int page = 1;
   @override
   void initState() {
@@ -126,7 +137,8 @@ class _ShowListProjectState extends State<ShowListProject> {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: FutureBuilder(
-        future: projectProvider.getAllProjectForStudent(
+        future: context.watch<ProjectProvider>().getAllProjectForStudent(
+           title: context.read<ProjectProvider>().searchController.text.trim(),
             page: page,
             perPage: 5,
             studentId:authenticateProvider
@@ -134,7 +146,9 @@ class _ShowListProjectState extends State<ShowListProject> {
                 .student?['id'],
             token:
                 authenticateProvider.authenRepository.token!),
-        builder: (context, snapshot) {
+        builder: (context, snapshotOne) {
+         
+          
           return FutureBuilder(
             future: projectProvider.checkApply(
             token: authenticateProvider.authenRepository.token!,
@@ -142,20 +156,18 @@ class _ShowListProjectState extends State<ShowListProject> {
                 .authenRepository
                 .student?['id']),
             builder: (context, snapshot) {
-                
                 return ListView.builder(
                       controller: controller,
                       itemCount: context.read<ProjectProvider>().projects.length + 1,
                       itemBuilder: (context, index){
                         if (index >= context.read<ProjectProvider>().projects.length) {
-                          
                           return Padding(
                             padding: EdgeInsets.zero,
                             child: Center(
-                              child: CircularProgressIndicator(),
+                              child:context.read<ProjectProvider>().hasMore! ? CircularProgressIndicator() : Center(),
                             ),
                           );
-                        }else if (context.watch<ProjectProvider>().projects.length > 0 )
+                        }else if (context.read<ProjectProvider>().projects.length > 0 )
                         {
                           final project =
                               context.watch<ProjectProvider>().projects[index];
