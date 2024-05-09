@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
+import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import './project_details.dart';
@@ -8,8 +11,7 @@ import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
 
 class SavedProjectWidget extends StatefulWidget {
-   SavedProjectWidget(
-    {super.key});
+  SavedProjectWidget({super.key});
 
   @override
   State<SavedProjectWidget> createState() => _ProjectWidgetState();
@@ -18,7 +20,8 @@ class SavedProjectWidget extends StatefulWidget {
 class _ProjectWidgetState extends State<SavedProjectWidget> {
   @override
   Widget build(BuildContext context) {
-    final favouritedProjectList = context.read<ProjectProvider>().favouriteProjectList;
+    final favouritedProjectList =
+        context.read<ProjectProvider>().favouriteProjectList;
     return Scaffold(
         appBar: AppBar(
           scrolledUnderElevation: 0,
@@ -32,11 +35,15 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                 child: ListView.builder(
                   itemCount: favouritedProjectList?.length,
                   itemBuilder: (context, index) {
-                    final project = Project.fromJson((favouritedProjectList?[index])?['project']);
+                    final project = Project.fromJson(
+                        (favouritedProjectList?[index])?['project']);
                     return Container(
                         margin: EdgeInsets.only(bottom: 24.0),
                         decoration: BoxDecoration(
-                          color: Colors.grey[300], // Màu xám
+                          color: Get.isDarkMode
+                              ? Themes.boxDecorationDark.withOpacity(0.5)
+                              : Themes.boxDecorationLight
+                                  .withOpacity(0.5), // Màu xám
                           borderRadius:
                               BorderRadius.circular(12.0), // Góc bo tròn
                         ),
@@ -62,7 +69,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                     // Thời gian của animation
                                     // IconButton(
                                     //     onPressed: () {
-                                          
+
                                     //     },
                                     //     icon: Icon(
                                     //       project.isFavourite!
@@ -111,9 +118,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: [
-                                        Text(project.describe!)
-                                      ],
+                                      children: [Text(project.describe!)],
                                     )),
                                 Divider(
                                   height: 25,
@@ -132,7 +137,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   ProjectDetailScreen(
-                                                    disableFlag: false,
+                                                      disableFlag: false,
                                                       project: project)),
                                         );
                                       },
@@ -181,8 +186,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                   ],
                                 )
                               ],
-                            ))
-                            );
+                            )));
                   },
                 ),
               ),
