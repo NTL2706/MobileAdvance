@@ -1,3 +1,5 @@
+
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
@@ -8,6 +10,8 @@ import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_pro
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 
 // List<JobModel> jobList = [
@@ -122,7 +126,10 @@ class DashBoard extends StatelessWidget {
           List<Map<String, dynamic>> jobList = snapshot.data?['result'];
 
           return Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Themes.backgroundDark
+                    : Themes.backgroundLight),
             child: Padding(
               padding: const EdgeInsets.all(0),
               child: Container(
@@ -131,11 +138,14 @@ class DashBoard extends StatelessWidget {
                     Container(
                       height: 50,
                       padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: Colors.blue),
+                      decoration: BoxDecoration(
+                          color: Get.isDarkMode
+                              ? Themes.boxDark
+                              : Themes.boxLight),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Your projects",
+                          const Text("Your projects",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white)),
@@ -158,7 +168,10 @@ class DashBoard extends StatelessWidget {
                                 },
                                 child: Text(
                                   "Post a jobs",
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(
+                                      color: Get.isDarkMode
+                                          ? Themes.backgroundLight
+                                          : Themes.backgroundDark),
                                 ))
                         ],
                       ),
@@ -176,7 +189,6 @@ class DashBoard extends StatelessWidget {
                           AllProjectWidget(
                             jobList: jobList.where((element) {
                               return element['deletedAt'] == null;
-            
                             }).toList(),
                             state: JobState.pending.name,
                           ),
@@ -211,7 +223,7 @@ class AllProjectWidget extends StatelessWidget {
   String? state;
   List<Map<String, dynamic>> jobList;
   @override
-  Widget build(BuildContext context) {;
+  Widget build(BuildContext context) {
 
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     final activeJobs = jobList.where((element) => element['statusFlag'] == statusFlag['Active']).toList();
@@ -227,7 +239,7 @@ class AllProjectWidget extends StatelessWidget {
                   .textTheme
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
-          ),
+            ),
           if (role == "student")
             Text(
               "Your proposal(${jobList.length})",
@@ -235,7 +247,7 @@ class AllProjectWidget extends StatelessWidget {
                   .textTheme
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
-          ),
+            ),
           Expanded(
             child: ListView.builder(
               itemCount: jobList.length,
@@ -261,7 +273,9 @@ class AllProjectWidget extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Colors.grey.shade200,
+                      color: Get.isDarkMode
+                          ? Themes.boxDecorationDark
+                          : Themes.boxDecorationLight,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,7 +302,9 @@ class AllProjectWidget extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(30)),
-                                    color: Colors.white,
+                                    color: Get.isDarkMode
+                                        ? Themes.backgroundDark
+                                        : Themes.backgroundLight,
                                     itemBuilder: (context) {
                                       return [
                                         PopupMenuItem(
@@ -352,7 +368,9 @@ class AllProjectWidget extends StatelessWidget {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.black)),
+                                                  color: Get.isDarkMode
+                                                      ? Themes.backgroundLight
+                                                      : Themes.backgroundDark)),
                                           child: Text("${job.proposalNumber}")),
                                       Text("Proposals")
                                     ],
@@ -371,7 +389,9 @@ class AllProjectWidget extends StatelessWidget {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.black)),
+                                                  color: Get.isDarkMode
+                                                      ? Themes.backgroundLight
+                                                      : Themes.backgroundDark)),
                                           child: Text("${job.messagesNumber}")),
                                       Text("Messages")
                                     ],
@@ -390,7 +410,9 @@ class AllProjectWidget extends StatelessWidget {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.black)),
+                                                  color: Get.isDarkMode
+                                                      ? Themes.backgroundLight
+                                                      : Themes.backgroundDark)),
                                           child: Text("${job.hiredNumber}")),
                                       Text("Hired")
                                     ],

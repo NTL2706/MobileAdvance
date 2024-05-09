@@ -1,6 +1,7 @@
 import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/auth/views/forgot_password.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
@@ -132,8 +133,32 @@ class LoginPage extends StatelessWidget {
                               ? CircularProgressIndicator()
                               : Text("LOGIN AS ${title.toUpperCase()}")),
                 ),
-                Expanded(
-                    child: Container(
+                Container(
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Forgot your password? "),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return ForgotPasswordPage();
+                            },
+                          ));
+                        },
+                        child: Text(
+                          "Reset it",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: constraints.maxHeight * 0.03,
+                ),
+                Container(
                   alignment: Alignment.center,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -154,7 +179,7 @@ class LoginPage extends StatelessWidget {
                       )
                     ],
                   ),
-                )),
+                )
               ],
             ),
           ),

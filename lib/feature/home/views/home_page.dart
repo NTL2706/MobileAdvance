@@ -1,4 +1,5 @@
 import 'package:final_project_advanced_mobile/back_service.dart';
+import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/all_user.dart';
@@ -7,9 +8,12 @@ import 'package:final_project_advanced_mobile/feature/notification/views/notific
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
+import 'package:final_project_advanced_mobile/services/theme_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -66,7 +70,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Themes.backgroundDark
+                    : Themes.backgroundLight),
             child: Center(
               child: CircularProgressIndicator(
                 color: Colors.blue,
@@ -129,9 +136,18 @@ class _HomeBodyState extends State<HomeBody> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Get.isDarkMode ? Themes.backgroundDark : Themes.backgroundLight,
         title: const Text('Student Hub'),
         actions: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: IconButton(
+                onPressed: () {
+                  ThemeService().switchTheme();
+                },
+                icon: Icon(Icons.lightbulb)),
+          ),
           Padding(
             padding: EdgeInsets.all(8),
             child: IconButton(
@@ -149,7 +165,10 @@ class _HomeBodyState extends State<HomeBody> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Themes.backgroundDark
+                    : Themes.backgroundLight),
             child: Center(
               child: HomeBody.widgetOptions[_selectedIndex],
             ),
@@ -161,7 +180,9 @@ class _HomeBodyState extends State<HomeBody> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withAlpha(20),
+                color: Get.isDarkMode
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.grey.withOpacity(0.5),
                 blurRadius: 10,
                 spreadRadius: 5)
           ],
@@ -190,7 +211,7 @@ class _HomeBodyState extends State<HomeBody> {
               ),
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.blue,
+            selectedItemColor: Themes.selectColor,
             onTap: _onItemTapped,
           ),
         ),

@@ -12,6 +12,7 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged!,
       controller: controller,
       decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
               borderSide:
