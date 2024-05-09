@@ -24,6 +24,14 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+  Timer? _debounce;
+
+  void onSearchTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      context.read<ProjectProvider>().updateSearch();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     print("rebuild");
@@ -129,7 +137,8 @@ class _ShowListProjectState extends State<ShowListProject> {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     return Expanded(
       child: FutureBuilder(
-        future: projectProvider.getAllProjectForStudent(
+        future: context.watch<ProjectProvider>().getAllProjectForStudent(
+            title: context.read<ProjectProvider>().searchController.text.trim(),
             page: page,
             perPage: 5,
             studentId:authenticateProvider
@@ -154,7 +163,7 @@ class _ShowListProjectState extends State<ShowListProject> {
                           return Padding(
                             padding: EdgeInsets.zero,
                             child: Center(
-                              child: CircularProgressIndicator(),
+                              child:context.read<ProjectProvider>().hasMore! ? CircularProgressIndicator() : Center(),
                             ),
                           );
                         }else if (context.watch<ProjectProvider>().projects.length > 0 )
