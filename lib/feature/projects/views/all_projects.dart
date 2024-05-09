@@ -203,7 +203,10 @@ class _ShowListProjectState extends State<ShowListProject> {
                     return Container(
                         margin: EdgeInsets.only(bottom: 24.0),
                         decoration: BoxDecoration(
-                          color: Colors.grey[300], // Màu xám
+                          color: Get.isDarkMode
+                              ? Themes.boxDecorationDark.withOpacity(0.5)
+                              : Themes.boxDecorationLight
+                                  .withOpacity(0.5), // Màu xám
                           borderRadius:
                               BorderRadius.circular(12.0), // Góc bo tròn
                         ),
