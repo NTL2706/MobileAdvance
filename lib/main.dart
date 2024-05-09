@@ -5,6 +5,7 @@ import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provide
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
+import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -21,10 +22,12 @@ void main() async {
   sharedPreferences = await SharedPreferences.getInstance();
   env = configEnv();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-    AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
-  //  await initializeService();
+      FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
+  await initializeService();
   runApp(const MyApp());
 }
 
@@ -44,7 +47,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => AuthenticateProvider(),
           ),
-          ChangeNotifierProvider(create: (context) => ProfileProvider())
+          ChangeNotifierProvider(create: (context) => ProfileProvider()),
+          ChangeNotifierProvider(create: (context) => NotiProvider()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
