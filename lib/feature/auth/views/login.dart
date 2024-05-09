@@ -1,5 +1,3 @@
-
-
 import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
@@ -82,16 +80,31 @@ class LoginPage extends StatelessWidget {
                             print("stop");
                             // service.invoke("stopService");
                             service.invoke("setAsForeground", {
-                            "token": context.read<AuthenticateProvider>().authenRepository.token,
-                            "userId": context.read<AuthenticateProvider>().authenRepository.id
-                          });
+                              "token": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .token,
+                              "userId": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .id
+                            });
                           } else {
                             print("start");
+                            service.invoke("setAsForeground", {
+                              "token": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .token,
+                              "userId": context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .id
+                            });
                             service.startService();
-                             
                           }
                           // await service.startService();
-                         
+
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/home',
                             (route) => false,
