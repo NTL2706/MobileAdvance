@@ -16,7 +16,6 @@ import './apply_project.dart';
 import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
-import 'dart:async';
 
 class ProjectPage extends StatefulWidget {
   ProjectPage({super.key});
@@ -141,6 +140,20 @@ class _ShowListProjectState extends State<ShowListProject> {
     return Expanded(
       child: FutureBuilder(
         future: context.watch<ProjectProvider>().getAllProjectForStudent(
+            proposalsLessThan: context
+                .read<ProjectProvider>()
+                .numberOfProposalsController
+                .text
+                .trim(),
+            projectScopeFlag: context
+                .read<ProjectProvider>()
+                .selectedProjectLength
+                .toString(),
+            numberOfStudents: context
+                .read<ProjectProvider>()
+                .numberOfStudentsController
+                .text
+                .trim(),
             title: context.read<ProjectProvider>().searchController.text.trim(),
             page: page,
             perPage: 5,
@@ -167,8 +180,10 @@ class _ShowListProjectState extends State<ShowListProject> {
                             : Center(),
                       ),
                     );
-                  } else if (context.watch<ProjectProvider>().projects.length >
-                      0) {
+                  } else if (context
+                      .watch<ProjectProvider>()
+                      .projects
+                      .isNotEmpty) {
                     final project =
                         context.watch<ProjectProvider>().projects[index];
 
@@ -286,6 +301,8 @@ class _ShowListProjectState extends State<ShowListProject> {
                                   color: Colors.green,
                                   thickness: 1,
                                 ),
+                                SizedBox(height: 12),
+                                Text('${project.countProposals} proposals'),
                                 SizedBox(height: 12),
                                 Row(
                                   mainAxisAlignment:
