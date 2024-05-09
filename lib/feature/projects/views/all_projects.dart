@@ -16,7 +16,6 @@ import './apply_project.dart';
 import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
-import 'dart:async';
 
 class ProjectPage extends StatefulWidget {
   ProjectPage({super.key});
