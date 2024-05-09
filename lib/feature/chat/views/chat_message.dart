@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:final_project_advanced_mobile/back_service.dart';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -327,6 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
+                                                statusFlag: statusFlag['active']!,
                                                 proposalId: widget.proposalId!,
                                                 token: context
                                                     .read<
@@ -380,6 +382,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       await context
                                           .read<ChatProvider>()
                                           .updateStatusOfStudetnProposal(
+                                            statusFlag: statusFlag['Actice']!,
                                               proposalId: widget.proposalId!,
                                               token: context
                                                   .read<AuthenticateProvider>()

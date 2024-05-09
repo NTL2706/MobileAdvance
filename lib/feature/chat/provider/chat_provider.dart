@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -440,10 +441,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> updateStatusOfStudetnProposal(
-      {required int proposalId, required String token}) async {
+      {required int proposalId, required String token, required int statusFlag}) async {
     try {
       Map<String, dynamic> data = Map();
-      int statusFlag = 1;
       data['statusFlag'] = statusFlag;
       print("${env.apiURL}api/proposal/$proposalId");
       final rs =

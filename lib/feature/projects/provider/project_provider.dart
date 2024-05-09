@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:final_project_advanced_mobile/utils/http_response.dart';
 import 'package:flutter/material.dart';
@@ -216,7 +217,7 @@ class ProjectProvider extends ChangeNotifier {
       data['projectId'] = projectId;
       data['studentId'] = studentId;
       data['coverLetter'] = coverLetter;
-      data['statusFlag'] = 0;
+      data['statusFlag'] = statusFlag;
       data['disableFlag'] = disableFlag == false ? 0 : 1;
       final rs = await http.post(Uri.parse("${env.apiURL}api/proposal"),
           headers: {

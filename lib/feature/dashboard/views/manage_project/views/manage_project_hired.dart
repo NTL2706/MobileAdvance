@@ -1,28 +1,20 @@
-import 'package:final_project_advanced_mobile/constants/status_flag.dart';
-import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
-import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
-import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
-import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/models/student_models.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-
-class ManageProjectProposal extends StatelessWidget {
-  ManageProjectProposal(
-    {
-      super.key,
-      required this.proposals
+class ManageProjectHired extends StatelessWidget {
+  
+  ManageProjectHired({
+    super.key,
+    required this.proposals
+    
     });
+
   List<Map<String,dynamic>> proposals;
   @override
   Widget build(BuildContext context) {
-    print(proposals);
     return Container(
       child: ListView.builder(
         itemCount: proposals.length,
         itemBuilder: (context, index) {
-
           final proposal = proposals[index];
           final date = DateTime.parse(proposal['createdAt'].toString());
           return Container(
@@ -81,14 +73,8 @@ class ManageProjectProposal extends StatelessWidget {
                    
                         ),),
                         onPressed: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
-                          ChatScreen(
-                            projectId: proposal['projectId'], 
-                            receiveId: proposal['student']['userId'], 
-                            nameReceiver:proposal['student']['user']['fullname'],
-                            proposalId: proposal['id'],
-                            
-                            ),));
+                   
+                          
                         },
                     )),
                     SizedBox(
@@ -103,32 +89,7 @@ class ManageProjectProposal extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                    
                         )),onPressed: (){
-                          showDialog(context: context, builder: (context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              actions: [
-                                ElevatedButton(onPressed: (){
-                                  Navigator.of(context).pop();
-                                }, child: Text("Cancel")),
-                                ElevatedButton(onPressed: ()async{
-                                  await context.read<ChatProvider>().updateStatusOfStudetnProposal(
-                                    proposalId: proposal['id'], 
-                                    token: context.read<AuthenticateProvider>().authenRepository.token!,
-                                    statusFlag: statusFlag['Offer']!);
-                                  Navigator.of(context).pop();
-                                }, child: Text("Send")),
-                              ],
-                              title: Text("Hired offer"),
-                              content: Container(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text("Do you really want to send hired offer for student to do this project?")
-                                  ],
-                                ),
-                              ),
-                            );
-                          },);
+                          
                         },))
                   ],
                 )
