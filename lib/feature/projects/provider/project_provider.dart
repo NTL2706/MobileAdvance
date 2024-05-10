@@ -13,17 +13,25 @@ class ProjectProvider extends ChangeNotifier {
       HttpResponse<List<Map<String, dynamic>>>.unknown();
   List<Map<String, dynamic>>? favouriteProjectList;
   List<Project> _projects = [];
-  List<Project> _filteredProjects = [];
-  int _selectedProjectLength = 0;
+  final List<Project> _filteredProjects = [];
+
+  int _selectedProjectLength = 4;
   final TextEditingController _numberOfStudentsController =
+      TextEditingController();
+  final TextEditingController _numberOfProposalsController =
       TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   List<Project> get projects => _filteredProjects;
+
   int get selectedProjectLength => _selectedProjectLength;
   TextEditingController get numberOfStudentsController =>
       _numberOfStudentsController;
+  TextEditingController get numberOfProposalsController =>
+      _numberOfProposalsController;
   TextEditingController get searchController => _searchController;
+
+  bool? hasMore = true;
 
   Future<void> toggleFavoriteStatus(
       {required int studentId,
@@ -57,10 +65,12 @@ class ProjectProvider extends ChangeNotifier {
 
   void updateSearch() {
     _filteredProjects.clear();
+    hasMore = true;
     notifyListeners();
   }
 
   void filterSearch() {
+    hasMore = true;
     _filteredProjects.clear();
     notifyListeners();
   }
@@ -71,30 +81,56 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   void resetFilter() {
+    hasMore = true;
+    _selectedProjectLength = 4;
+    _numberOfStudentsController.clear();
+    _numberOfProposalsController.clear();
     notifyListeners();
   }
 
-  Future<bool> getAllProjectForStudent(
+  Future<HttpResponse<List<Map<String, dynamic>>>?> getAllProjectForStudent(
       {required String token,
       required int studentId,
       int? page,
       int? perPage,
       String? title,
-      int? projectScopeFlag,
-      int? numberOfStudents,
-      int? proposalsLessThan}) async {
+      String? projectScopeFlag,
+      String? numberOfStudents,
+      String? proposalsLessThan}) async {
+    if (hasMore == false) {
+      return null;
+    }
     try {
       responseHttp = HttpResponse<List<Map<String, dynamic>>>.unknown();
 
+      final Map<String, String> queryParameters = {};
+
+      if (title != '') {
+        queryParameters['title'] = title!;
+      }
+      if (numberOfStudents != '') {
+        queryParameters['numberOfStudents'] = numberOfStudents!;
+      }
+      if (projectScopeFlag != '4') {
+        queryParameters['projectScopeFlag'] = projectScopeFlag!;
+      }
+      if (proposalsLessThan != '') {
+        queryParameters['proposalsLessThan'] = proposalsLessThan!;
+      }
+      if (title == '' &&
+          numberOfStudents == '' &&
+          projectScopeFlag == '4' &&
+          proposalsLessThan == '') {
+        queryParameters['page'] = page.toString();
+        queryParameters['perPage'] = perPage.toString();
+      }
+
       final uri = Uri(
-          scheme: 'https',
-          host: env.apiURL?.replaceAll("https://", "").replaceAll("/", ""),
-          path: 'api/project',
-          queryParameters: {
-            "page": page.toString(),
-            "perPage": perPage.toString(),
-            "title": title,
-          });
+        scheme: 'https',
+        host: env.apiURL?.replaceAll("https://", "").replaceAll("/", ""),
+        path: 'api/project',
+        queryParameters: queryParameters,
+      );
 
       final rs = await http.get(
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, uri);
@@ -106,7 +142,7 @@ class ProjectProvider extends ChangeNotifier {
       final body = json.decode(rs.body);
 
       if (rs.statusCode >= 400) {
-        return false;
+        throw Exception(body['errorDetails']);
       }
 
       final result = List<Map<String, dynamic>>.from(body['result']);
@@ -114,27 +150,29 @@ class ProjectProvider extends ChangeNotifier {
         return Project.fromJson(e);
       }).toList();
 
+      if (_projects.length < perPage!) {
+        hasMore = false;
+      }
+
       _filteredProjects.addAll(_projects);
 
       final favouriteProject =
           List<Map<String, dynamic>>.from(bodyFavourite['result']);
       favouriteProjectList = favouriteProject;
 
-      if (rs.statusCode >= 400) {
-        throw Exception(body);
-      }
-
       responseHttp.updateResponse({"result": result, "status": rs.statusCode});
-      return true;
+
+      return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     } on Exception catch (e) {
-      return false;
+      print(e);
+      hasMore = false;
+      return responseHttp as HttpResponse<List<Map<String, dynamic>>>;
     }
   }
 
   Future<void> checkApply(
       {required String token, required int studentId}) async {
     try {
-      responseHttp = HttpResponse<bool>.unknown();
       final rs = await http.get(
           headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
           Uri.parse("${env.apiURL}api/proposal/student/$studentId"));
@@ -159,19 +197,19 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   Future<void> applyProposal(
+
       {required String token,
       required int projectId,
       required int studentId,
       required String coverLetter,
-      required bool disableFlag}) async {
+      }) async {
     try {
       responseHttp = HttpResponse<Map<String, dynamic>>.unknown();
       Map<String, dynamic> data = Map();
       data['projectId'] = projectId;
       data['studentId'] = studentId;
       data['coverLetter'] = coverLetter;
-      data['statusFlag'] = statusFlag;
-      data['disableFlag'] = disableFlag == false ? 0 : 1;
+
       final rs = await http.post(Uri.parse("${env.apiURL}api/proposal"),
           headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
@@ -190,6 +228,64 @@ class ProjectProvider extends ChangeNotifier {
     } on Exception catch (e) {
       print(e);
       responseHttp.updateResponse({"message": e.toString()});
+    }
+  }
+
+  Future<void> updateProject({
+    required String token,
+    required int projectId,
+    int? projectScopeFlag,
+    String? title,
+    String? description,
+    int? numberOfStudents,
+    int? typeFlag,
+    int? status,
+  })async{
+    try{
+
+
+
+    responseHttp = HttpResponse<Map<String, dynamic>>.unknown();
+      Map<String, dynamic> data = Map();
+      
+      final rs1 = await http.get(Uri.parse("${env.apiURL}api/project/$projectId"),headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },);
+
+      final body1 = json.decode(rs1.body);
+      if (rs1.statusCode >= 400){
+        throw Exception(body1);
+      }
+      final projectResult = Map<String, dynamic>.from(body1['result']);
+
+      data['projectScopeFlag'] = projectScopeFlag ?? projectResult['projectScopeFlag'];
+      data['title'] = title ?? projectResult['title'];
+      data['description'] = description ?? projectResult['description'];
+      data['numberOfStudents'] = numberOfStudents ?? projectResult['numberOfStudents'];
+      data['typeFlag'] = typeFlag ?? projectResult['typeFlag'];
+      data['status'] = status ?? projectResult['status'];
+
+      final rs2 = await http.patch(Uri.parse("${env.apiURL}api/project/$projectId"),
+          headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: json.encode(data));
+
+      final body = json.decode(rs2.body);
+      if (body["errorDetails"] != null) {
+        throw Exception(body);
+      }
+
+      final result = Map<String, dynamic>.from(body['result']);
+      responseHttp.updateResponse({"result": result, "status": rs2.statusCode});
+    } on Exception catch (e) {
+      Map<String,dynamic> error = json.decode(e.toString());
+      print(error);
+      responseHttp.updateResponse({"message": error});
     }
   }
 }

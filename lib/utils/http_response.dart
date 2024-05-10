@@ -37,5 +37,6 @@ class HttpResponse<T> {
     this.message = json['message'] ?? this.message;
     this.status = json['status'] ?? this.status;
     this.result = json['result'];
+    this.isLoading = json['loading'] ?? this.isLoading;
   }
 }

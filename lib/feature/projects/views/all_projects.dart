@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
 import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'dart:async';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
@@ -16,7 +17,6 @@ import './apply_project.dart';
 import '../provider/project_provider.dart';
 import '../constants/projetcs_type.dart';
 import '../utils/convert_days.dart';
-import 'dart:async';
 
 class ProjectPage extends StatefulWidget {
   ProjectPage({super.key});
@@ -117,6 +117,7 @@ class _ShowListProjectState extends State<ShowListProject> {
   final controller = ScrollController();
   late ProjectProvider projectProvider;
   late AuthenticateProvider authenticateProvider;
+  bool? hasMore = true;
   int page = 1;
   @override
   void initState() {
@@ -140,6 +141,20 @@ class _ShowListProjectState extends State<ShowListProject> {
     return Expanded(
       child: FutureBuilder(
         future: context.watch<ProjectProvider>().getAllProjectForStudent(
+            proposalsLessThan: context
+                .read<ProjectProvider>()
+                .numberOfProposalsController
+                .text
+                .trim(),
+            projectScopeFlag: context
+                .read<ProjectProvider>()
+                .selectedProjectLength
+                .toString(),
+            numberOfStudents: context
+                .read<ProjectProvider>()
+                .numberOfStudentsController
+                .text
+                .trim(),
             title: context.read<ProjectProvider>().searchController.text.trim(),
             page: page,
             perPage: 5,
@@ -161,11 +176,15 @@ class _ShowListProjectState extends State<ShowListProject> {
                     return Padding(
                       padding: EdgeInsets.zero,
                       child: Center(
-                        child: CircularProgressIndicator(),
+                        child: context.read<ProjectProvider>().hasMore!
+                            ? CircularProgressIndicator()
+                            : Center(),
                       ),
                     );
-                  } else if (context.watch<ProjectProvider>().projects.length >
-                      0) {
+                  } else if (context
+                      .watch<ProjectProvider>()
+                      .projects
+                      .isNotEmpty) {
                     final project =
                         context.watch<ProjectProvider>().projects[index];
 
@@ -284,6 +303,8 @@ class _ShowListProjectState extends State<ShowListProject> {
                                   thickness: 1,
                                 ),
                                 SizedBox(height: 12),
+                                Text('${project.countProposals} proposals'),
+                                SizedBox(height: 12),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -315,11 +336,7 @@ class _ShowListProjectState extends State<ShowListProject> {
                                       ),
                                       child: Text(
                                         Languages.of(context)!.viewDetails,
-                                        // style: TextStyle(
-                                        //   color: Get.isDarkMode
-                                        //       ? Themes.backgroundDark
-                                        //       : Themes.backgroundLight,
-                                        // ), // Màu văn bản
+                                        style: TextStyle(), // Màu văn bản
                                       ),
                                     ),
                                     if (role == "student")

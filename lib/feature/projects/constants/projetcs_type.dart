@@ -6,6 +6,7 @@ class Project {
   DateTime? createdAt;
   int? numberOfPeople;
   int? time;
+  int? countProposals;
   String? describe;
   bool? isFavourite;
 
@@ -14,6 +15,7 @@ class Project {
       this.title,
       this.createdAt,
       this.numberOfPeople,
+      this.countProposals,
       this.time,
       this.describe,
       this.isFavourite = false});
@@ -26,6 +28,7 @@ class Project {
         numberOfPeople: json?['numberOfStudents'],
         time: json?['projectScopeFlag'],
         describe: json?['description'],
+        countProposals: json?['countProposals'],
         isFavourite: json?['isFavourite']);
   }
 }

@@ -309,7 +309,18 @@ class AllProjectWidget extends StatelessWidget {
                                     itemBuilder: (context) {
                                       return [
                                         PopupMenuItem(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) {
+                                                  return ManageProject(
+                                                    selectIndex: 0,
+                                                    job: job,
+                                                    proposals: job.proposals!,
+                                                  );
+                                                },
+                                              ));
+                                            },
                                             child: Text(Languages.of(context)!
                                                 .viewProposal)),
                                         PopupMenuItem(
@@ -317,7 +328,18 @@ class AllProjectWidget extends StatelessWidget {
                                             child: Text(Languages.of(context)!
                                                 .viewMessage)),
                                         PopupMenuItem(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) {
+                                                  return ManageProject(
+                                                    selectIndex: 3,
+                                                    job: job,
+                                                    proposals: job.proposals!,
+                                                  );
+                                                },
+                                              ));
+                                            },
                                             child: Text(Languages.of(context)!
                                                 .viewHired)),
                                         PopupMenuItem(

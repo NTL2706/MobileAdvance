@@ -43,7 +43,13 @@ void onStart(ServiceInstance service) {
               titile: data['notification']['sender']['fullname'],
               body: data['notification']['message']['content'],
               payload: "123");
-        }
+        }else if (data['notification']['typeNotifyFlag'].toString() ==
+            TypeNotifyFlag['Hired'].toString() ){
+              LocalNotification.showSimpleNotification(
+              titile: data['notification']['title'],
+              body: data['notification']['content'],
+              payload: "123");
+            }
       });
 
       service.setAsForegroundService();
