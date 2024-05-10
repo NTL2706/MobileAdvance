@@ -4,6 +4,7 @@ import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate
 import 'package:final_project_advanced_mobile/feature/auth/views/forgot_password.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +38,9 @@ class LoginPage extends StatelessWidget {
                   backgroundImage: AssetImage("assets/images/logo.png"),
                   radius: 100,
                 ),
-                const Center(
+                Center(
                   child: Text(
-                    "Login with StudentHub",
+                    Languages.of(context)!.login,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -49,7 +50,7 @@ class LoginPage extends StatelessWidget {
                 CustomTextField(
                   onChanged: (p0) {},
                   controller: emailSignInController,
-                  hintText: "Username or email",
+                  hintText: Languages.of(context)!.email,
                 ),
                 const SizedBox(
                   height: 10,
@@ -61,7 +62,7 @@ class LoginPage extends StatelessWidget {
                   height: 10,
                 ),
                 Container(
-                  width: constraints.maxWidth / 2,
+                  width: constraints.maxWidth * 0.7,
                   child: ElevatedButton(
                       onPressed: () async {
                         print(apiForLogin);
@@ -115,8 +116,8 @@ class LoginPage extends StatelessWidget {
                                   .read<AuthenticateProvider>()
                                   .state
                                   .message,
-                              confirmBtnText: "OK",
-                              cancelBtnText: "CANCEL",
+                              confirmBtnText: Languages.of(context)!.oke,
+                              cancelBtnText: Languages.of(context)!.cancel,
                               onConfirmBtnTap: () {
                                 Navigator.of(context).pop();
                               },
@@ -128,17 +129,23 @@ class LoginPage extends StatelessWidget {
                               type: QuickAlertType.error);
                         }
                       },
-                      child:
-                          context.watch<AuthenticateProvider>().state.isLoading
-                              ? CircularProgressIndicator()
-                              : Text("LOGIN AS ${title.toUpperCase()}")),
+                      child: context
+                              .watch<AuthenticateProvider>()
+                              .state
+                              .isLoading
+                          ? CircularProgressIndicator()
+                          : Text(
+                              "${Languages.of(context)!.login} ${title.toUpperCase()}")),
+                ),
+                SizedBox(
+                  height: constraints.maxHeight * 0.03,
                 ),
                 Container(
                   alignment: Alignment.center,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Forgot your password? "),
+                      Text("${Languages.of(context)!.forgotPassword}? "),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(
@@ -148,7 +155,7 @@ class LoginPage extends StatelessWidget {
                           ));
                         },
                         child: Text(
-                          "Reset it",
+                          Languages.of(context)!.getIt,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )
@@ -163,7 +170,7 @@ class LoginPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an Student Hub account? "),
+                      Text(Languages.of(context)!.dontAccount + " "),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(
@@ -173,7 +180,7 @@ class LoginPage extends StatelessWidget {
                           ));
                         },
                         child: Text(
-                          "Sign up",
+                          Languages.of(context)!.register,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )

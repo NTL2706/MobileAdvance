@@ -6,6 +6,7 @@ import 'package:final_project_advanced_mobile/feature/callvideo/callvideo.dart';
 import 'package:final_project_advanced_mobile/feature/chat/provider/chat_provider.dart';
 import 'package:final_project_advanced_mobile/feature/chat/views/chat_message.dart';
 import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/feature/projects/provider/project_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,12 +36,12 @@ class NotificationPage extends StatelessWidget {
               final notificationsList = context.watch<NotiProvider>().notiList;
               return Column(
                 children: [
-                  const TabBar(
+                  TabBar(
                     tabs: [
-                      Tab(text: 'All'),
-                      Tab(text: 'Interview'),
-                      Tab(text: 'Message'),
-                      Tab(text: 'Other'),
+                      Tab(text: Languages.of(context)!.all),
+                      Tab(text: Languages.of(context)!.interview),
+                      Tab(text: Languages.of(context)!.message),
+                      Tab(text: Languages.of(context)!.other),
                     ],
                   ),
                   Expanded(
@@ -192,7 +193,8 @@ class NotificationPage extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      child: const Text('Start Interview'),
+                                      child: Text(Languages.of(context)!
+                                          .startInterview),
                                     )
                                   : notification['typeNotifyFlag'] ==
                                           TypeNotifyFlag['Chat'].toString()
@@ -216,7 +218,8 @@ class NotificationPage extends StatelessWidget {
                                               ),
                                             );
                                           },
-                                          child: const Text('Go Chatting'),
+                                          child: Text(
+                                              Languages.of(context)!.goChat),
                                         )
                                       : notification['typeNotifyFlag'] ==
                                               TypeNotifyFlag['Offer'].toString()

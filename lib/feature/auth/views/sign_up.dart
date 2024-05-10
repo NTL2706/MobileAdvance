@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,9 @@ class SignUpForStudentOrCompany extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  "Sign up as ${title}",
+                  Languages.of(context)!.register +
+                      " " +
+                      Languages.of(context)!.student,
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium
@@ -40,17 +43,14 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                 ),
               ),
               CustomTextField(
-                onChanged: (p0) {
-                  
-                },
-                  controller: fullNameSignUpController, hintText: "Fullname"),
+                  onChanged: (p0) {},
+                  controller: fullNameSignUpController,
+                  hintText: Languages.of(context)!.fullName),
               const SizedBox(height: 10),
               CustomTextField(
-                onChanged: (p0) {
-                  
-                },
+                onChanged: (p0) {},
                 controller: emailSignUpController,
-                hintText: "Work email address",
+                hintText: Languages.of(context)!.email,
               ),
               const SizedBox(height: 10),
               PasswordFielddWidget(
@@ -61,11 +61,11 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                   CustomCheckBox(
                     checkBoxStreamController: checkBoxStreamController,
                   ),
-                  const Text("Yes, i understand and agree to StudentHub")
+                  Text(Languages.of(context)!.agree),
                 ],
               ),
               Container(
-                  width: size.width / 2,
+                  width: size.width * 0.7,
                   child: StreamBuilder(
                       initialData: false,
                       stream: checkBoxStreamController.stream,
@@ -76,8 +76,6 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                 ? () async {
                                     if (title ==
                                         StudentHubCategorySignUp.student.name) {
-                              
-
                                       await context
                                           .read<AuthenticateProvider>()
                                           .signUpWithPassword(
@@ -91,7 +89,6 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                               role: StudentHubCategorySignUp
                                                   .values[0].index);
                                     } else {
-                    
                                       await context
                                           .read<AuthenticateProvider>()
                                           .signUpWithPassword(
@@ -116,8 +113,10 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                             .read<AuthenticateProvider>()
                                             .state
                                             .message,
-                                        confirmBtnText: "OK",
-                                        cancelBtnText: "CANCEL",
+                                        confirmBtnText:
+                                            Languages.of(context)!.oke,
+                                        cancelBtnText:
+                                            Languages.of(context)!.cancel,
                                         onConfirmBtnTap: results ==
                                                 AuthResult.success
                                             ? () {
@@ -136,7 +135,7 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                         type: results == AuthResult.success
                                             ? QuickAlertType.success
                                             : QuickAlertType.error);
-                                        checkBoxStreamController.add(false);
+                                    checkBoxStreamController.add(false);
                                   }
                                 : null,
                             child: context
@@ -144,12 +143,12 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                                     .state
                                     .isLoading
                                 ? CircularProgressIndicator()
-                                : const Text("SIGN UP"));
+                                : Text(Languages.of(context)!.register));
                       })),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Looking for a project? "),
+                  Text(Languages.of(context)!.lookProject + " "),
                   GestureDetector(
                     onTap: () {
                       if (title == "student") {
@@ -171,12 +170,12 @@ class SignUpForStudentOrCompany extends StatelessWidget {
                       }
                     },
                     child: title == "student"
-                        ? const Text(
-                            "Apply as company",
+                        ? Text(
+                            "${Languages.of(context)!.apply} ${Languages.of(context)!.company}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )
-                        : const Text(
-                            "Apply as student",
+                        : Text(
+                            "${Languages.of(context)!.apply} ${Languages.of(context)!.student}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                   )

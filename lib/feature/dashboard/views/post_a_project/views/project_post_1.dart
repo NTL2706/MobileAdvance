@@ -1,6 +1,7 @@
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
   Widget build(BuildContext context) {
     return BasicPage(
       child: Container(
+          color:
+              Get.isDarkMode ? Themes.backgroundDark : Themes.backgroundLight,
           padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,39 +32,38 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
                   SizedBox(
                     width: 10,
                   ),
-                  Text("Let's start with a strong title")
+                  Text(Languages.of(context)!.letStart),
                 ],
               ),
               SizedBox(
                 height: 20,
               ),
-              Text(
-                  "This helps your post stand out to the right students. It's the first thing they'll see, so make it Impressive!"),
+              Text(Languages.of(context)!.postJobDescription),
               SizedBox(
                 height: 20,
               ),
               CustomTextField(
-                  onChanged: (p0) {
-                    if (JobModel.titleController.text.length >= 80) {
-                      JobModel.titleController.text =
-                          JobModel.titleController.text.substring(0, 80);
-                    }
-                    setState(() {});
-                  },
-                  controller: JobModel.titleController,
-                  hintText: "write a title for jour post"),
+                onChanged: (p0) {
+                  if (JobModel.titleController.text.length >= 80) {
+                    JobModel.titleController.text =
+                        JobModel.titleController.text.substring(0, 80);
+                  }
+                  setState(() {});
+                },
+                controller: JobModel.titleController,
+                hintText: Languages.of(context)!.description,
+              ),
               SizedBox(
                 height: 20,
               ),
-              Text("Example titles"),
+              Text(Languages.of(context)!.exampleTitle),
               Container(
                 margin: EdgeInsets.only(left: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                        "Build responsive WordPress site with booking payment functionality"),
-                    Text("Facebook ad specialist need for product launch"),
+                    Text(Languages.of(context)!.example1),
+                    Text(Languages.of(context)!.example2),
                   ],
                 ),
               ),
@@ -84,7 +86,7 @@ class _ProjectPost_1State extends State<ProjectPost_1> {
                             },
                           ));
                         },
-                        child: Text("Next: Scope")))
+                        child: Text(Languages.of(context)!.next)))
             ],
           )),
     );

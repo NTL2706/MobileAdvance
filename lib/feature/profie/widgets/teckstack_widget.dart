@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class TechstackWidget extends StatelessWidget {
@@ -24,8 +25,8 @@ class TechstackWidget extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.start, // Căn lề văn bản sang bên trái
             children: [
-              const Text(
-                'Tech stack',
+              Text(
+                Languages.of(context)!.techStack,
                 style: AppTextStyles.headerStyle, // Style cho label
               ),
               Text(

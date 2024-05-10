@@ -3,6 +3,7 @@
 import 'package:final_project_advanced_mobile/back_service.dart';
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './schedule.dart';
@@ -134,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: Icon(Icons.more_vert),
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               PopupMenuItem(
-                child: Text('Shecdule a new meeting'),
+                child: Text(Languages.of(context)!.scheduleMeeting),
                 value: 1,
               ),
               // Thêm các mục menu khác nếu cần
@@ -297,7 +298,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .watch<ChatProvider>()
                                       .textController,
                                   decoration: InputDecoration(
-                                    hintText: 'Enter your message...',
+                                    hintText:
+                                        '${Languages.of(context)!.typeHere} ...',
                                     border: InputBorder
                                         .none, // Loại bỏ viền của TextField
                                     contentPadding: EdgeInsets.all(
@@ -328,7 +330,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
-                                                statusFlag: statusFlag['active']!,
+                                                statusFlag:
+                                                    statusFlag['active']!,
                                                 proposalId: widget.proposalId!,
                                                 token: context
                                                     .read<
@@ -382,7 +385,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       await context
                                           .read<ChatProvider>()
                                           .updateStatusOfStudetnProposal(
-                                            statusFlag: statusFlag['Actice']!,
+                                              statusFlag: statusFlag['Actice']!,
                                               proposalId: widget.proposalId!,
                                               token: context
                                                   .read<AuthenticateProvider>()
@@ -502,7 +505,7 @@ class MeetingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Created by: ${sender.fullname}',
+              '${Languages.of(context)!.createdBy}: ${sender.fullname}',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -521,7 +524,7 @@ class MeetingCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Duration: $duration minutes',
+                  '${Languages.of(context)!.duration}: $duration minutes',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -530,14 +533,14 @@ class MeetingCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Start Time: ${getDateTime(interview.startTime)}',
+              '${Languages.of(context)!.startTime}: ${getDateTime(interview.startTime)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              'End Time: ${getDateTime(interview.endTime)}',
+              '${Languages.of(context)!.endTime}: ${getDateTime(interview.endTime)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -573,10 +576,10 @@ class MeetingCard extends StatelessWidget {
                           );
                           // Handle join meeting
                         },
-                        child: Text('Join'),
+                        child: Text(Languages.of(context)!.join),
                       )
                     : Text(
-                        'This meeting has been canceled',
+                        Languages.of(context)!.cancelMeeting,
                         style: TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
@@ -595,11 +598,11 @@ class MeetingCard extends StatelessWidget {
                         icon: Icon(Icons.more_vert),
                         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                           PopupMenuItem(
-                            child: Text('Edit Meeting'),
+                            child: Text(Languages.of(context)!.edit),
                             value: 1,
                           ),
                           PopupMenuItem(
-                            child: Text('Cancel Meeting'),
+                            child: Text(Languages.of(context)!.cancel),
                             value: 2,
                           ),
                           // Thêm các mục menu khác nếu cần

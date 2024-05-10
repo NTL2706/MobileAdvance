@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class SkillWidget extends StatelessWidget {
@@ -23,13 +24,13 @@ class SkillWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment:
                     CrossAxisAlignment.start, // Căn lề văn bản sang bên trái
                 children: [
                   Text(
-                    'Skill',
+                    Languages.of(context)!.skill,
                     style: AppTextStyles.headerStyle, // Style cho label
                   ),
                 ],

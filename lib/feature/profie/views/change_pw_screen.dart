@@ -3,6 +3,8 @@
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up_by_category.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
+import 'package:final_project_advanced_mobile/services/language_service.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,7 @@ class ChangePwScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("StudentHub"),
+        title: Text(Languages.of(context)!.appName),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) => Padding(
@@ -35,9 +37,9 @@ class ChangePwScreen extends StatelessWidget {
                   backgroundImage: AssetImage("assets/images/logo.png"),
                   radius: 100,
                 ),
-                const Center(
+                Center(
                   child: Text(
-                    "Change password with StudentHub",
+                    Languages.of(context)!.changePassword,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -46,14 +48,14 @@ class ChangePwScreen extends StatelessWidget {
                 ),
                 PasswordFielddWidget(
                   controller: oldPassword,
-                  title: "Old password",
+                  title: Languages.of(context)!.oldPW,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 PasswordFielddWidget(
                   controller: passwordSignInController,
-                  title: "New password",
+                  title: Languages.of(context)!.newPW,
                 ),
                 const SizedBox(
                   height: 10,
@@ -71,8 +73,10 @@ class ChangePwScreen extends StatelessWidget {
                             context.read<AuthenticateProvider>().state.result!;
                         if (result == AuthResult.success) {
                           await context.read<AuthenticateProvider>().signOut(
-                            token: context.read<AuthenticateProvider>().authenRepository.token!
-                          );
+                              token: context
+                                  .read<AuthenticateProvider>()
+                                  .authenRepository
+                                  .token!);
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               '/intro', (route) => false);
                         } else {
@@ -81,8 +85,8 @@ class ChangePwScreen extends StatelessWidget {
                                   .read<AuthenticateProvider>()
                                   .state
                                   .message,
-                              confirmBtnText: "OK",
-                              cancelBtnText: "CANCEL",
+                              confirmBtnText: Languages.of(context)!.oke,
+                              cancelBtnText: Languages.of(context)!.cancel,
                               onConfirmBtnTap: () {
                                 Navigator.of(context).pop();
                               },
@@ -94,10 +98,13 @@ class ChangePwScreen extends StatelessWidget {
                               type: QuickAlertType.error);
                         }
                       },
-                      child:
-                          context.watch<AuthenticateProvider>().state.isLoading
-                              ? CircularProgressIndicator()
-                              : Text("Change password ${title.toUpperCase()}")),
+                      child: context
+                              .watch<AuthenticateProvider>()
+                              .state
+                              .isLoading
+                          ? CircularProgressIndicator()
+                          : Text(
+                              "${Languages.of(context)!.changePassword} ${title.toUpperCase()}")),
                 ),
               ],
             ),

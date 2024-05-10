@@ -8,6 +8,7 @@ import 'package:final_project_advanced_mobile/feature/notification/views/notific
 import 'package:final_project_advanced_mobile/feature/profie/views/create_profile_page.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
 import 'package:final_project_advanced_mobile/feature/projects/views/all_projects.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/services/theme_service.dart';
 
 import 'package:flutter/material.dart';
@@ -192,22 +193,22 @@ class _HomeBodyState extends State<HomeBody> {
           borderRadius: BorderRadius.all(Radius.circular(30)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: 'Project',
+                label: Languages.of(context)!.projects,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.dashboard),
-                label: 'Dashboard',
+                label: Languages.of(context)!.dashboard,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.message),
-                label: 'Message',
+                label: Languages.of(context)!.message,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.notifications),
-                label: 'Alert',
+                label: Languages.of(context)!.alert,
               ),
             ],
             currentIndex: _selectedIndex,

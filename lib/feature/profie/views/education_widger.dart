@@ -1,5 +1,6 @@
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class EducationWidget extends StatelessWidget {
@@ -22,12 +23,12 @@ class EducationWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Education",
+                    Languages.of(context)!.education,
                     style: AppTextStyles.headerStyle,
                   )
                 ],
@@ -84,23 +85,26 @@ class EducationWidget extends StatelessWidget {
             TextEditingController(text: endAcademicYear.toString());
 
         return AlertDialog(
-          title: Text('Edit School Info'),
+          title: Text(Languages.of(context)!.editEducation),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: 'School Name'),
+                decoration: InputDecoration(
+                    labelText: Languages.of(context)!.schoolName),
               ),
               TextField(
                 controller: startYearController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Start Academic Year'),
+                decoration: InputDecoration(
+                    labelText: Languages.of(context)!.startYear),
               ),
               TextField(
                 controller: endYearController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'End Academic Year'),
+                decoration:
+                    InputDecoration(labelText: Languages.of(context)!.endYear),
               ),
             ],
           ),
@@ -109,14 +113,14 @@ class EducationWidget extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text(Languages.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
                 editEducationInfo(index, nameController.text,
                     startYearController.text, endYearController.text);
               },
-              child: Text('Save'),
+              child: Text(Languages.of(context)!.save),
             ),
           ],
         );

@@ -9,6 +9,7 @@ import 'package:final_project_advanced_mobile/feature/profie/views/test.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/teckstack_widget.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class DetailProfileStudentScreen extends StatefulWidget {
@@ -88,7 +89,8 @@ class _DetailProfileStudentScreenState
                 style: AppTextStyles.headerStyle,
               ),
               Text("HCMUS", style: AppTextStyles.bodyStyle),
-              Text("Student", style: AppTextStyles.bodyStyle),
+              Text(Languages.of(context)!.student,
+                  style: AppTextStyles.bodyStyle),
             ],
           ),
         ],
@@ -126,7 +128,7 @@ class _DetailProfileStudentScreenState
             // ),
             ProfileListTile(
               icon: Icons.article,
-              title: "CV & Transcript",
+              title: Languages.of(context)!.cvAndTranscript,
               onTap: () {
                 // move to profile screen
                 Navigator.push(
@@ -142,7 +144,7 @@ class _DetailProfileStudentScreenState
             ),
             ProfileListTile(
               icon: Icons.work_outlined,
-              title: "Experience",
+              title: Languages.of(context)!.experience,
               onTap: () {
                 // move to profile screen
                 Navigator.push(
@@ -192,7 +194,7 @@ class _DetailProfileStudentScreenState
             shouldUpdate
                 ? ElevatedButton(
                     onPressed: _handleUpdate,
-                    child: Text('Update'),
+                    child: Text(Languages.of(context)!.update),
                   )
                 : SizedBox(),
 
