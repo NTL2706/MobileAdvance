@@ -2,11 +2,12 @@
 
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/sign_up.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class SignUpByCategory extends StatefulWidget {
   const SignUpByCategory({super.key});
-  
+
   @override
   State<SignUpByCategory> createState() => _SignUpByCategoryState();
 }
@@ -27,13 +28,12 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
             child: Column(
               children: [
                 Text(
-                  "Join as company or student",
+                  Languages.of(context)!.selectCategorySignUp,
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-
                 SizedBox(
                   height: 10,
                 ),
@@ -45,7 +45,8 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                     title: Container(
                         alignment: Alignment.topLeft,
                         child: Icon(Icons.person)),
-                    subtitle: Text("I am student"),
+                    subtitle: Text(
+                        "${Languages.of(context)!.iIs} ${Languages.of(context)!.student}"),
                     trailing: Checkbox(
                       onChanged: (value) {
                         if (value!) {
@@ -75,7 +76,8 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                           alignment: Alignment.topLeft,
                           child: ImageIcon(
                               AssetImage("assets/icons/business.png"))),
-                      subtitle: Text("I am company"),
+                      subtitle: Text(
+                          "${Languages.of(context)!.iIs} ${Languages.of(context)!.company}"),
                       trailing: Checkbox(
                         onChanged: (value) {
                           if (value!) {
@@ -96,7 +98,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                   height: 10,
                 ),
                 Container(
-                  width: size.width / 2,
+                  width: size.width,
                   child: ElevatedButton(
                     onPressed: () {
                       print(selectedCategorySignUp);
@@ -110,7 +112,7 @@ class _SignUpByCategoryState extends State<SignUpByCategory> {
                         ));
                       }
                     },
-                    child: const Text("Create account"),
+                    child: Text(Languages.of(context)!.register),
                   ),
                 )
               ],

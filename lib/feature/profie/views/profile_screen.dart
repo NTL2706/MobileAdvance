@@ -9,6 +9,8 @@ import 'package:final_project_advanced_mobile/feature/profie/views/create_profil
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_company_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/detail_profile_student_screen.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/profile_list_title_widget.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
+import 'package:final_project_advanced_mobile/services/language_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   bool isAccountListVisible = false;
+  bool isLanguageListVisible = false;
   late AnimationController _controller;
   late Animation _animation;
   Profile? profile = null;
@@ -65,8 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen>
     if (role == null || username == null) {
       Future.delayed(Duration(milliseconds: 200), () {
         context.read<AuthenticateProvider>().signOut(
-          token: context.read<AuthenticateProvider>().authenRepository.token!
-        );
+            token:
+                context.read<AuthenticateProvider>().authenRepository.token!);
         return IntroPage();
       });
     }
@@ -77,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       username = switchProfile?['companyName'];
     }
 
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text(""),
         elevation: 0,
@@ -111,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text("Profile"),
+              Text(Languages.of(context)!.profile),
             ],
           ),
         ],
@@ -196,8 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                   : ListTile(
                       leading: Icon(Icons.add),
                       title: role == "student"
-                          ? Text("Add company")
-                          : Text("Add student"),
+                          ? Text(Languages.of(context)!.addCompany)
+                          : Text(Languages.of(context)!.addStudent),
                       onTap: role == "student"
                           ? () {
                               createProfile("company");
@@ -206,6 +209,31 @@ class _ProfileScreenState extends State<ProfileScreen>
                               createProfile("student");
                             },
                     )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _switchLanguage(bool isLanguageListVisible) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: isLanguageListVisible ? 1.0 : 0.0,
+      child: Visibility(
+        visible: isLanguageListVisible,
+        child: Container(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(Languages.of(context)!.changeLanguage),
+                onTap: () {
+                  // switch language
+                  LanguageService().switchLanguage(context);
+                },
+              ),
             ],
           ),
         ),
@@ -251,7 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             ProfileListTile(
               icon: Icons.account_circle,
-              title: "Switch profile",
+              title: Languages.of(context)!.switchAccount,
               onTap: () {
                 print("Profile button clicked");
                 setState(() {
@@ -262,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             _switchAccountAction(isAccountListVisible),
             ProfileListTile(
               icon: Icons.person,
-              title: "Profile",
+              title: Languages.of(context)!.profile,
               onTap: () {
                 // move to profile screen
                 if (role == "student") {
@@ -289,15 +317,18 @@ class _ProfileScreenState extends State<ProfileScreen>
               },
             ),
             ProfileListTile(
-              icon: Icons.settings,
-              title: "Settings",
+              icon: Icons.account_circle,
+              title: Languages.of(context)!.setting,
               onTap: () {
-                print("Settings button clicked");
+                setState(() {
+                  isLanguageListVisible = !isLanguageListVisible;
+                });
               },
             ),
+            _switchLanguage(isLanguageListVisible),
             ProfileListTile(
               icon: Icons.password_outlined,
-              title: "Change password",
+              title: Languages.of(context)!.changePassword,
               onTap: () {
                 Navigator.push(
                   context,
@@ -311,11 +342,13 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
             ProfileListTile(
               icon: Icons.logout,
-              title: "Logout",
+              title: Languages.of(context)!.logout,
               onTap: () async {
                 await context.read<AuthenticateProvider>().signOut(
-                  token: context.read<AuthenticateProvider>().authenRepository.token!
-                );
+                    token: context
+                        .read<AuthenticateProvider>()
+                        .authenRepository
+                        .token!);
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/intro', (route) => false);
               },

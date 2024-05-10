@@ -7,6 +7,7 @@ import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dar
 import 'package:final_project_advanced_mobile/feature/profie/models/company_profile.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/profile_screen.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -80,8 +81,10 @@ class _UpdateCompanyProfileScreenState
             child: IconButton(
                 onPressed: () async {
                   await context.read<AuthenticateProvider>().signOut(
-                    token: context.read<AuthenticateProvider>().authenRepository.token!
-                  );
+                      token: context
+                          .read<AuthenticateProvider>()
+                          .authenRepository
+                          .token!);
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) {
@@ -112,13 +115,13 @@ class _UpdateCompanyProfileScreenState
                 child: ListView(
                   children: [
                     const SizedBox(height: 20),
-                    const Text(
-                      "Update Company Information",
+                    Text(
+                      Languages.of(context)!.updateCompany,
                       style: AppTextStyles.headerStyle,
                     ),
                     const SizedBox(height: 16.0),
-                    const Text(
-                      "Please provide updated information about your company in the fields below. Make sure to review the existing information before making changes.",
+                    Text(
+                      Languages.of(context)!.updateCompanyDescription,
                       style: AppTextStyles.bodyStyle,
                     ),
                     const SizedBox(height: 16.0),
@@ -139,10 +142,14 @@ class _UpdateCompanyProfileScreenState
                         );
                       }).toList(),
                     ),
-                    _buildInputField("Company name", _nameController),
-                    _buildInputField("Address", _addressController),
-                    _buildInputField("Website", _websiteController),
-                    _buildInputField("Description", _descriptionController),
+                    _buildInputField(
+                        Languages.of(context)!.name, _nameController),
+                    _buildInputField(
+                        Languages.of(context)!.address, _addressController),
+                    _buildInputField(
+                        Languages.of(context)!.website, _websiteController),
+                    _buildInputField(Languages.of(context)!.description,
+                        _descriptionController),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
@@ -223,13 +230,13 @@ class _UpdateCompanyProfileScreenState
         builder: (context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text('Please fill in all fields.'),
+            content: Text(Languages.of(context)!.errorMissingField),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: Text(Languages.of(context)!.oke),
               ),
             ],
           );

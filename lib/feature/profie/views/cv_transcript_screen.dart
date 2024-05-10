@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/text_style.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -94,7 +95,8 @@ class _CvTranscriptScreenState extends State<CvTranscriptScreen> {
                 style: AppTextStyles.headerStyle,
               ),
               Text("HCMUS", style: AppTextStyles.bodyStyle),
-              Text("Student", style: AppTextStyles.bodyStyle),
+              Text(Languages.of(context)!.student,
+                  style: AppTextStyles.bodyStyle),
             ],
           ),
         ],

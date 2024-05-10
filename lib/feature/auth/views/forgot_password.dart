@@ -2,6 +2,7 @@
 
 import 'package:final_project_advanced_mobile/feature/auth/constants/auth_result.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +36,9 @@ class ForgotPasswordPage extends StatelessWidget {
                   backgroundImage: AssetImage("assets/images/logo.png"),
                   radius: 100,
                 ),
-                const Center(
+                Center(
                   child: Text(
-                    "Forgot password with StudentHub",
+                    Languages.of(context)!.forgotPassword,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -47,7 +48,7 @@ class ForgotPasswordPage extends StatelessWidget {
                 CustomTextField(
                   onChanged: (p0) {},
                   controller: emailSignInController,
-                  hintText: "Username or email",
+                  hintText: Languages.of(context)!.email,
                 ),
                 const SizedBox(
                   height: 20,
@@ -72,8 +73,8 @@ class ForgotPasswordPage extends StatelessWidget {
                                 .read<AuthenticateProvider>()
                                 .state
                                 .message,
-                            confirmBtnText: "OK",
-                            cancelBtnText: "CANCEL",
+                            confirmBtnText: Languages.of(context)!.oke,
+                            cancelBtnText: Languages.of(context)!.cancel,
                             onConfirmBtnTap: () {
                               Navigator.of(context).pop();
                             },

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, unnecessary_string_interpolations, must_be_immutable, unused_import, unnecessary_import
 
 import 'package:final_project_advanced_mobile/constants/colors.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,8 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
     return Scaffold(
         appBar: AppBar(
           scrolledUnderElevation: 0,
-          title: Text('Saved Projects'),
+          title: Text(
+              ' ${Languages.of(context)!.projects} ${Languages.of(context)!.saved}'),
         ),
         body: Padding(
           padding: EdgeInsets.all(24),
@@ -92,11 +94,11 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Created: ${formatDate(project.createdAt!)}',
+                                  '${Languages.of(context)!.created}: ${formatDate(project.createdAt!)}',
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Student needed: ${project.numberOfPeople}',
+                                  '${Languages.of(context)!.studentNeed}: ${project.numberOfPeople}',
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -108,7 +110,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                 // ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Details:',
+                                  '${Languages.of(context)!.details}:',
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -156,7 +158,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Views Details',
+                                        Languages.of(context)!.viewDetails,
                                         style: TextStyle(
                                             color: Colors.white), // Màu văn bản
                                       ),
@@ -178,7 +180,7 @@ class _ProjectWidgetState extends State<SavedProjectWidget> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Apply',
+                                        Languages.of(context)!.apply,
                                         style: TextStyle(
                                             color: Colors.white), // Màu văn bản
                                       ),

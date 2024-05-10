@@ -4,6 +4,8 @@ import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/input.dart';
 import 'package:final_project_advanced_mobile/feature/profie/widgets/skill_widget.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
+import 'package:final_project_advanced_mobile/services/language_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -55,7 +57,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
   Widget _appDetailProfileBar() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
@@ -75,7 +77,8 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                 style: AppTextStyles.headerStyle,
               ),
               Text("HCMUS", style: AppTextStyles.bodyStyle),
-              Text("Student", style: AppTextStyles.bodyStyle),
+              Text(Languages.of(context)!.student,
+                  style: AppTextStyles.bodyStyle),
             ],
           ),
         ],
@@ -102,8 +105,8 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                     child: TextFormField(
                       controller: null,
                       enabled: false,
-                      decoration: const InputDecoration(
-                        labelText: 'Project experience',
+                      decoration: InputDecoration(
+                        labelText: Languages.of(context)!.experience,
                         labelStyle: AppTextStyles.headerStyle,
                         disabledBorder: InputBorder.none,
                       ),
@@ -140,15 +143,15 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Start Date: ${DateFormat('dd/MM/yyyy').format(projects[index].startDate)}',
+                                    '${Languages.of(context)!.startTime}: ${DateFormat('dd/MM/yyyy').format(projects[index].startDate)}',
                                     style: AppTextStyles.bodyStyle,
                                   ),
                                   Text(
-                                    'End Date: ${DateFormat('dd/MM/yyyy').format(projects[index].endDate)}',
+                                    '${Languages.of(context)!.endTime}: ${DateFormat('dd/MM/yyyy').format(projects[index].endDate)}',
                                     style: AppTextStyles.bodyStyle,
                                   ),
                                   Text(
-                                    'Description: ${projects[index].description}',
+                                    '${Languages.of(context)!.description}: ${projects[index].description}',
                                     style: AppTextStyles.bodyStyle,
                                   ),
                                   SizedBox(height: 8.0),
@@ -275,7 +278,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Project Form'),
+        title: Text(Languages.of(context)!.projects),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -284,12 +287,14 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration:
+                  InputDecoration(labelText: Languages.of(context)!.name),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(
+                  labelText: Languages.of(context)!.description),
             ),
             SizedBox(height: 16.0),
             SkillWidget(
@@ -310,7 +315,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
             ),
             SizedBox(height: 16.0),
             MyInput(
-              title: "Start Time",
+              title: Languages.of(context)!.startTime,
               hint: DateFormat.yMd().format(_selectedStartDate),
               widget: IconButton(
                 icon: const Icon(Icons.calendar_today_outlined),
@@ -320,7 +325,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
               ),
             ),
             MyInput(
-              title: "End Time",
+              title: Languages.of(context)!.endTime,
               hint: DateFormat.yMd().format(_selectedEndDate),
               widget: IconButton(
                 icon: const Icon(Icons.calendar_today_outlined),
@@ -336,14 +341,14 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                   onPressed: () {
                     _saveProject(context);
                   },
-                  child: Text('Save'),
+                  child: Text(Languages.of(context)!.save),
                 ),
                 SizedBox(width: 20.0),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel'),
+                  child: Text(Languages.of(context)!.cancel),
                 ),
               ],
             )

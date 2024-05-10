@@ -3,6 +3,7 @@ import 'package:final_project_advanced_mobile/constants/text_style.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/company_profile.dart';
 import 'package:final_project_advanced_mobile/feature/profie/models/profile.dart';
 import 'package:final_project_advanced_mobile/feature/profie/views/update_company_profile_screen.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 
 class DetailProfileCompanyScreen extends StatefulWidget {
@@ -83,7 +84,8 @@ class _DetailProfileCompanyScreenState
               ),
               const Text("Multinational company",
                   style: AppTextStyles.bodyStyle),
-              const Text("Company", style: AppTextStyles.bodyStyle),
+              Text(Languages.of(context)!.company,
+                  style: AppTextStyles.bodyStyle),
             ],
           ),
         ],
@@ -107,28 +109,32 @@ class _DetailProfileCompanyScreenState
             TextFormField(
               controller: _employeesController,
               enabled: false,
-              decoration:
-                  const InputDecoration(labelText: 'Number of Employees'),
+              decoration: InputDecoration(
+                  labelText: Languages.of(context)!.numberOfEmployees),
             ),
             TextFormField(
               controller: _nameController,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Company Name'),
+              decoration:
+                  InputDecoration(labelText: Languages.of(context)!.name),
             ),
             TextFormField(
               controller: _addressController,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Company Address'),
+              decoration:
+                  InputDecoration(labelText: Languages.of(context)!.address),
             ),
             TextFormField(
               controller: _websiteController,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Website'),
+              decoration:
+                  InputDecoration(labelText: Languages.of(context)!.website),
             ),
             TextFormField(
               controller: _descriptionController,
               enabled: false,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(
+                  labelText: Languages.of(context)!.description),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -141,13 +147,13 @@ class _DetailProfileCompanyScreenState
                   context,
                   MaterialPageRoute(
                     builder: (context) => UpdateCompanyProfileScreen(
-                      titleButton: "Update company profile",
+                      titleButton: Languages.of(context)!.updateCompany,
                       company: company,
                     ),
                   ),
                 );
               },
-              child: const Text('Update Company Info',
+              child: Text(Languages.of(context)!.updateCompany,
                   style: AppTextStyles.buttonTextStyle),
             ),
           ],

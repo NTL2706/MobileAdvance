@@ -182,6 +182,9 @@ class JobNotifier extends ChangeNotifier {
     }
   }
 
+  void refresh(){
+    notifyListeners();
+  }
   Future<Map<String, dynamic>> getProjectProposal(
       {required int projectId, required String token}) async {
     try {

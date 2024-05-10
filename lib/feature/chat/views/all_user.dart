@@ -2,6 +2,7 @@
 
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -39,7 +40,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                     padding: const EdgeInsets.all(12.0),
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Search',
+                        hintText: Languages.of(context)!.search,
                         prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
