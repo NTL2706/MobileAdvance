@@ -20,18 +20,8 @@ Future<void> initializeService() async {
   );
 }
 
-@pragma('vm:entry-point')
-void onStart(ServiceInstance service) {
-  if (service is AndroidServiceInstance) {
-    service.on("setAsForeground").listen((event) {
-      print("foreground");
-      String token = event?['token'];
-      String userId = (event?['userId']).toString();
-      SocketManager socketManager = SocketManager(token: token);
-
-      socketManager.socket?.on("NOTI_$userId", (data) {
-        print(data);
-        print(data['notification']['typeNotifyFlag'].toString() == TypeNotifyFlag['Offer'].toString());
+void handleNotify(Map<String,dynamic> data){
+ print(data['notification']['typeNotifyFlag'].toString() == TypeNotifyFlag['Offer'].toString());
         if (data['notification']['typeNotifyFlag'].toString() == TypeNotifyFlag['Offer'].toString()) {
           LocalNotification.showSimpleNotification(
               titile: data['notification']['title'],
@@ -50,8 +40,19 @@ void onStart(ServiceInstance service) {
               body: data['notification']['content'],
               payload: "123");
             }
-      });
+}
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) {
+  if (service is AndroidServiceInstance) {
+    service.on("setAsForeground").listen((event) {
+      print("foreground");
+      String token = event?['token'];
+      String userId = (event?['userId']).toString();
+      SocketManager socketManager = SocketManager(token: token);
 
+      socketManager.socket?.on("NOTI_$userId", (data) {
+        handleNotify(data);
+      });
       service.setAsForegroundService();
     });
 
@@ -61,11 +62,7 @@ void onStart(ServiceInstance service) {
       SocketManager socketManager = SocketManager(token: token);
 
       socketManager.socket?.on("NOTI_$userId", (data) async {
-        print(data);
-        if (data['notification']['typeNotifyFlag'] ==
-            TypeNotifyFlag['Offer']) {}
-        await LocalNotification.showSimpleNotification(
-            titile: "123", body: "123", payload: "123");
+        handleNotify(data);
       });
       service.setAsBackgroundService();
     });

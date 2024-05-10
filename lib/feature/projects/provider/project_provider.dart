@@ -242,9 +242,6 @@ class ProjectProvider extends ChangeNotifier {
     int? status,
   })async{
     try{
-
-
-
     responseHttp = HttpResponse<Map<String, dynamic>>.unknown();
       Map<String, dynamic> data = Map();
       

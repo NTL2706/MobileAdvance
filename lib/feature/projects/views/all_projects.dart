@@ -314,9 +314,10 @@ class _ShowListProjectState extends State<ShowListProject> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ProjectDetailScreen(
-                                                      disableFlag: disableFlag,
-                                                      project: project)),
+                                                ProjectDetailScreen(
+                                                    disableFlag: disableFlag,
+                                                    project: project)
+                                                ),
                                         );
                                       },
                                       style: ButtonStyle(

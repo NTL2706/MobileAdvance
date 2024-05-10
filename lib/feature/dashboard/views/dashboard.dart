@@ -1,18 +1,22 @@
-
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
+import 'package:final_project_advanced_mobile/constants/type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
+import 'package:final_project_advanced_mobile/feature/projects/provider/project_provider.dart';
+import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 // List<JobModel> jobList = [
 //   JobModel(
@@ -218,15 +222,22 @@ class DashBoard extends StatelessWidget {
   }
 }
 
-class AllProjectWidget extends StatelessWidget {
+class AllProjectWidget extends StatefulWidget {
   AllProjectWidget({super.key, required this.state, required this.jobList});
   String? state;
   List<Map<String, dynamic>> jobList;
+
   @override
-  Widget build(BuildContext context) {;
+  State<AllProjectWidget> createState() => _AllProjectWidgetState();
+}
+
+class _AllProjectWidgetState extends State<AllProjectWidget> {
+  @override
+  Widget build(BuildContext context) {
+    ;
 
     final role = context.read<AuthenticateProvider>().authenRepository.role;
-    final activeJobs = jobList
+    final activeJobs = widget.jobList
         .where((element) => element['statusFlag'] == statusFlag['Active'])
         .toList();
     return Container(
@@ -244,7 +255,7 @@ class AllProjectWidget extends StatelessWidget {
             ),
           if (role == "student")
             Text(
-              "Your proposal(${jobList.length})",
+              "Your proposal(${widget.jobList.length})",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -252,10 +263,10 @@ class AllProjectWidget extends StatelessWidget {
             ),
           Expanded(
             child: ListView.builder(
-              itemCount: jobList.length,
+              itemCount: widget.jobList.length,
               itemBuilder: (context, index) {
-                JobModel job = JobModel.jsonFrom(jobList[index]);
-                print(jobList[index]['statusFlag']);
+                JobModel job = JobModel.jsonFrom(widget.jobList[index]);
+                print(widget.jobList[index]['statusFlag']);
                 return GestureDetector(
                   onTap: role == "company"
                       ? () {
@@ -344,7 +355,234 @@ class AllProjectWidget extends StatelessWidget {
                                             onTap: () {},
                                             child: Text("View job posting")),
                                         PopupMenuItem(
-                                            onTap: () {},
+                                            onTap: () async {
+                                              await showDialog(
+
+                                                context: context,
+                                                builder: (context) {
+                                                  String initialTime =
+                                                      optionsTimeForJob[job
+                                                          .projectScopeFlag]!;
+
+                                                  String initTypeFlag = typeFlag
+                                                      .entries
+                                                      .where((element) =>
+                                                          element.value ==
+                                                          job.typeFlag)
+                                                      .first
+                                                      .key;
+
+                                                  TextEditingController
+                                                      titleController =
+                                                      TextEditingController();
+                                                  TextEditingController
+                                                      desController =
+                                                      TextEditingController();
+                                                  TextEditingController
+                                                      numberOfStudentController =
+                                                      TextEditingController();
+
+                                                  titleController.text =
+                                                      job.title!;
+                                                  desController.text =
+                                                      job.description!;
+                                                  numberOfStudentController
+                                                          .text =
+                                                      job.numberOfStudents
+                                                          .toString();
+                                                  return StatefulBuilder(
+                                                      builder:
+                                                          (context, setState) {
+                                                    return AlertDialog(
+                                                      scrollable: true
+                                                      ,
+                                                      title:
+                                                          Text("Edit project"),
+                                                      content: Container(
+                                                        height: 400,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text("Title"),
+                                                            CustomTextField(
+                                                                controller:
+                                                                    titleController,
+                                                                onChanged:
+                                                                    (p0) {},
+                                                                hintText:
+                                                                    "Title"),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text("Discription"),
+                                                            CustomTextField(
+                                                                onChanged:
+                                                                    (p0) {},
+                                                                controller:
+                                                                    desController,
+                                                                hintText:
+                                                                    "Discription"),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                                "Number of student"),
+                                                            CustomTextField(
+                                                                onChanged:
+                                                                    (p0) {},
+                                                                controller:
+                                                                    numberOfStudentController,
+                                                                hintText:
+                                                                    "Number of student"),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            DropdownButton(
+                                                              value:
+                                                                  initialTime,
+                                                              items: optionsTimeForJob
+                                                                  .entries
+                                                                  .map((e) => DropdownMenuItem(
+                                                                      value: e
+                                                                          .value,
+                                                                      child: Text(
+                                                                          e.value)))
+                                                                  .toList(),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(
+                                                                  () {
+                                                                    initialTime =
+                                                                        value!;
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                            DropdownButton(
+                                                              value:
+                                                                  initTypeFlag,
+                                                              items: typeFlag
+                                                                  .entries
+                                                                  .map((e) => DropdownMenuItem(
+                                                                      value:
+                                                                          e.key,
+                                                                      child: Text(
+                                                                          e.key)))
+                                                                  .toList(),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(
+                                                                  () {
+                                                                    initTypeFlag =
+                                                                        value!;
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                ElevatedButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    child: Text(
+                                                                        "Cancle")),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                ElevatedButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                          
+                                                                      await context.read<ProjectProvider>().updateProject(
+                                                                          token: context
+                                                                              .read<
+                                                                                  AuthenticateProvider>()
+                                                                              .authenRepository
+                                                                              .token!,
+                                                                          projectId: job
+                                                                              .id!,
+                                                                          description: desController
+                                                                              .text.trim(),
+                                                                          numberOfStudents: int.parse(numberOfStudentController
+                                                                              .text.trim()),
+                                                                          projectScopeFlag: optionsTimeForJob
+                                                                              .entries
+                                                                              .where((element) =>
+                                                                                  element.value.toString().trim() ==
+                                                                                  initialTime.toString().trim())
+                                                                              .first
+                                                                              .key,
+                                                                          title: titleController
+                                                                              .text,
+                                                                          typeFlag:
+                                                                              typeFlag[initTypeFlag]);
+
+                                                                      final result = context
+                                                                          .read<
+                                                                              ProjectProvider>()
+                                                                          .responseHttp
+                                                                          .result;
+                                                                      if (result !=
+                                                                          null) {
+                                                                        await QuickAlert.show(
+                                                                            text: "Update Success",
+                                                                            confirmBtnText: "OK",
+                                                                            cancelBtnText: "CANCEL",
+                                                                            onConfirmBtnTap: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            onCancelBtnTap: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            context: context,
+                                                                            showCancelBtn: true,
+                                                                            type: QuickAlertType.success);
+                                                                        context.read<JobNotifier>().refresh();
+                                                                        Navigator.of(context).pop();
+                                                                      } else {
+                                                                        await QuickAlert.show(
+                                                                            text: "Update Failed",
+                                                                            confirmBtnText: "OK",
+                                                                            cancelBtnText: "CANCEL",
+                                                                            onConfirmBtnTap: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            onCancelBtnTap: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            context: context,
+                                                                            showCancelBtn: true,
+                                                                            type: QuickAlertType.error);
+                                                                      }
+                                                                    },
+                                                                    child: Text(
+                                                                        "Update"))
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
+
+                                                },
+                                              );
+                                              
+                                            },
                                             child: Text("Edit posting")),
                                         PopupMenuItem(
                                             onTap: () async {
