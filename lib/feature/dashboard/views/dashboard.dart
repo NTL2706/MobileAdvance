@@ -256,8 +256,7 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
             ),
           if (role == "student")
             Text(
-
-              "${Languages.of(context)!.proposal} (${jobList.length})",
+              "${Languages.of(context)!.proposal} (${widget.jobList.length})",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
