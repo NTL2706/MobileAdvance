@@ -331,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
                                                 statusFlag:
-                                                    statusFlag['active']!,
+                                                    statusFlag['Active']!,
                                                 proposalId: widget.proposalId!,
                                                 token: context
                                                     .read<

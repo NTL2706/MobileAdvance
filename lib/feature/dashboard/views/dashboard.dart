@@ -4,6 +4,7 @@ import 'package:final_project_advanced_mobile/constants/type_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
+import 'package:final_project_advanced_mobile/feature/callvideo/callvideo.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
@@ -16,7 +17,6 @@ import 'package:final_project_advanced_mobile/widgets/custom_textfield.dart';
 
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
@@ -187,11 +187,12 @@ class DashBoard extends StatelessWidget {
                     Expanded(
                         child: Container(
                       child: CustomTabBar(
-                        lengOfTabBar: 3,
+                        lengOfTabBar: 4,
                         tabs: [
                           Text(Languages.of(context)!.allProject),
                           Text(Languages.of(context)!.working),
                           Text(Languages.of(context)!.archive),
+                          Text(Languages.of(context)!.interview),
                         ],
                         tab_views: [
                           AllProjectWidget(
@@ -214,6 +215,7 @@ class DashBoard extends StatelessWidget {
                             }).toList(),
                             state: JobState.archieved.name,
                           ),
+                          const InterviewActive(),
                         ],
                       ),
                     ))
@@ -360,10 +362,8 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                             child: Text(Languages.of(context)!
                                                 .viewJobPosting)),
                                         PopupMenuItem(
-
                                             onTap: () async {
                                               await showDialog(
-
                                                 context: context,
                                                 builder: (context) {
                                                   String initialTime =
@@ -400,8 +400,7 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                       builder:
                                                           (context, setState) {
                                                     return AlertDialog(
-                                                      scrollable: true
-                                                      ,
+                                                      scrollable: true,
                                                       title:
                                                           Text("Edit project"),
                                                       content: Container(
@@ -512,7 +511,6 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                 ElevatedButton(
                                                                     onPressed:
                                                                         () async {
-                                                                          
                                                                       await context.read<ProjectProvider>().updateProject(
                                                                           token: context
                                                                               .read<
@@ -522,20 +520,18 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                           projectId: job
                                                                               .id!,
                                                                           description: desController
-                                                                              .text.trim(),
+                                                                              .text
+                                                                              .trim(),
                                                                           numberOfStudents: int.parse(numberOfStudentController
-                                                                              .text.trim()),
+                                                                              .text
+                                                                              .trim()),
                                                                           projectScopeFlag: optionsTimeForJob
                                                                               .entries
-                                                                              .where((element) =>
-                                                                                  element.value.toString().trim() ==
-                                                                                  initialTime.toString().trim())
+                                                                              .where((element) => element.value.toString().trim() == initialTime.toString().trim())
                                                                               .first
                                                                               .key,
-                                                                          title: titleController
-                                                                              .text,
-                                                                          typeFlag:
-                                                                              typeFlag[initTypeFlag]);
+                                                                          title: titleController.text,
+                                                                          typeFlag: typeFlag[initTypeFlag]);
 
                                                                       final result = context
                                                                           .read<
@@ -557,8 +553,11 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                             context: context,
                                                                             showCancelBtn: true,
                                                                             type: QuickAlertType.success);
-                                                                        context.read<JobNotifier>().refresh();
-                                                                        Navigator.of(context).pop();
+                                                                        context
+                                                                            .read<JobNotifier>()
+                                                                            .refresh();
+                                                                        Navigator.of(context)
+                                                                            .pop();
                                                                       } else {
                                                                         await QuickAlert.show(
                                                                             text: "Update Failed",
@@ -584,10 +583,8 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                       ),
                                                     );
                                                   });
-
                                                 },
                                               );
-                                              
                                             },
                                             child: Text("Edit posting")),
                                         PopupMenuItem(
@@ -700,6 +697,106 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class InterviewActive extends StatelessWidget {
+  const InterviewActive({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: context.watch<JobNotifier>().getAllInterView(
+          token: context.read<AuthenticateProvider>().authenRepository.token!,
+          userId: context.read<AuthenticateProvider>().authenRepository.id!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (context, index) {
+                final interview = snapshot.data?[index];
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: Get.isDarkMode
+                              ? Themes.boxDark
+                              : Themes.boxLight),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${interview?['title']}',
+                                maxLines: 1,
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 24,
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Text(
+                                'START: ${DateTime.parse(interview?['startTime']).day}-${DateTime.parse(interview?['startTime']).month}-${DateTime.parse(interview?['startTime']).year}',
+                                style: TextStyle(
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Text(
+                                'END: ${DateTime.parse(interview?['endTime']).day}-${DateTime.parse(interview?['endTime']).month}-${DateTime.parse(interview?['endTime']).year}',
+                                style: TextStyle(
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Center(
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CallPage(
+                                              userId: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .id!
+                                                  .toString(),
+                                              token: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .token!,
+                                              interviewId: interview?['id'],
+                                              callID:
+                                                  interview!['meetingRoomId']
+                                                      .toString(),
+                                              userName: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .username!,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text("Go to interview")))
+                            ]),
+                      )),
+                );
+              });
+        }
+      },
     );
   }
 }
