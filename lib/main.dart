@@ -8,6 +8,7 @@ import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart'
 import 'package:final_project_advanced_mobile/feature/intro/views/intro_page.dart';
 import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
 import 'package:final_project_advanced_mobile/feature/profie/provider/profile_provider.dart';
+import 'package:final_project_advanced_mobile/services/language_service.dart';
 import 'package:final_project_advanced_mobile/services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -16,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './feature/projects/provider/project_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 late SharedPreferences sharedPreferences;
 late configEnv env;
@@ -32,11 +34,43 @@ void main() async {
       ?.requestNotificationsPermission();
   await initializeService();
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  static void setLocale(BuildContext context, Locale newLocale) {
+    var state = context.findAncestorStateOfType<_MyAppState>();
+    state!.setLocale(newLocale);
+  }
+
+  static void restartApp(BuildContext context) {
+    final _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+  }
+
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+  Key key = UniqueKey();
+
+  void setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+    print('Set locale to ${_locale}');
+  }
+
+  @override
+  void didChangeDependencies() {
+    setState(() {
+      _locale = LanguageService().language;
+    });
+    super.didChangeDependencies();
+  }
 
   // This widget is the root of your application.
   @override
@@ -61,6 +95,29 @@ class MyApp extends StatelessWidget {
           routes: {
             '/intro': (context) => IntroPage(),
             '/home': (context) => HomePage(),
+          },
+          supportedLocales: const [Locale('vi', ''), Locale('en', '')],
+          localizationsDelegates: const [
+            AppLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          locale: _locale,
+          localeResolutionCallback: (locale, supportedLocales) {
+            _locale = LanguageService().language;
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == _locale?.languageCode &&
+                  supportedLocale.countryCode == _locale?.countryCode) {
+                return supportedLocale;
+              }
+            }
+            return supportedLocales.first;
+            // if (_locale == Locale("vi", "")) {
+            //   return locale;
+            // } else {
+            //   return Locale("en", "");
+            // }
           },
           theme: Themes.lightTheme,
           darkTheme: Themes.darkTheme,

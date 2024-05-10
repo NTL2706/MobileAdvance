@@ -1,47 +1,8 @@
+import 'package:final_project_advanced_mobile/languages/en.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
+import 'package:final_project_advanced_mobile/languages/vi.dart';
+import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter/widgets.dart';
-
-abstract class Languages {
-  static Languages? of(BuildContext context) {
-    return Localizations.of<Languages>(context, Languages);
-  }
-
-  String get appName;
-
-  String get welcomeText;
-
-  String get appDescription;
-
-  String get selectLanguage;
-}
-
-class LanguageEn extends Languages {
-  @override
-  String get appName => "Demo App";
-
-  @override
-  String get welcomeText => "Welcome";
-
-  @override
-  String get selectLanguage => "Select your language";
-
-  @override
-  String get appDescription =>
-      "This application helps you to easily implement the multi language to your flutter application.";
-}
-
-class LanguageHi extends Languages {
-  @override
-  String get appName => "";
-
-  @override
-  String get welcomeText => "";
-
-  @override
-  String get selectLanguage => "";
-
-  @override
-  String get appDescription => "";
-}
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Languages> {
   const AppLocalizationsDelegate();
@@ -57,7 +18,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<Languages> {
       case 'en':
         return LanguageEn();
       case 'vi':
-        return LanguageHi();
+        return LanguageVietNamese();
       default:
         return LanguageEn();
     }
@@ -67,4 +28,25 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<Languages> {
   bool shouldReload(LocalizationsDelegate<Languages> old) => false;
 }
 
-// class LanguageService 
+class LanguageService {
+  static const String _key = 'language';
+  final _box = sharedPreferences;
+
+  void _saveLanguageToBox(String language) async {
+    _box.setString(_key, language);
+  }
+
+  String _loadLanguageFromBox() {
+    return _box.getString(_key) ?? 'vi';
+  }
+
+  Locale get language {
+    return Locale(_loadLanguageFromBox(), '');
+  }
+
+  void switchLanguage(BuildContext context) {
+    final newLanguage = _loadLanguageFromBox() == 'en' ? 'vi' : 'en';
+    _saveLanguageToBox(newLanguage);
+    MyApp.setLocale(context, Locale(newLanguage));
+  }
+}

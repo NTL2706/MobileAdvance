@@ -2,6 +2,7 @@ import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_categ
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/auth/views/login.dart';
 import 'package:final_project_advanced_mobile/feature/home/views/home_page.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,20 +21,23 @@ class _IntroPageState extends State<IntroPage> {
     // TODO: implement initState
     super.initState();
     String? role = context.read<AuthenticateProvider>().authenRepository.role;
-    if (role != null){
-      Future.delayed(Duration(milliseconds: 100),() {
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-      },); 
+    if (role != null) {
+      Future.delayed(
+        Duration(milliseconds: 100),
+        () {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/home', (route) => false);
+        },
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    
     print("/intro");
-    
-    return  Scaffold(
-      resizeToAvoidBottomInset: true,
+
+    return Scaffold(
+        resizeToAvoidBottomInset: true,
         body: Container(
             color: Color(0xFFCE5A67),
             child: Padding(
@@ -57,8 +61,7 @@ class _IntroPageState extends State<IntroPage> {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    'Build your product with high-skilled students'
-                        .toUpperCase(),
+                    Languages.of(context)!.slotGen.toUpperCase(),
                     style: TextStyle(
                       color: Color.fromARGB(255, 252, 245, 237),
                       fontSize: 20.0,
@@ -67,7 +70,7 @@ class _IntroPageState extends State<IntroPage> {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    'Find and onboard best-skilled student for your product. Student works to gain experience & skills from real-world projects',
+                    Languages.of(context)!.appDescription,
                     style: TextStyle(
                       color:
                           Color.fromARGB(255, 252, 245, 237).withOpacity(0.5),
@@ -82,9 +85,15 @@ class _IntroPageState extends State<IntroPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.company.name}", title: StudentHubCategorySignUp.company.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.company.name}",
+                                title: StudentHubCategorySignUp.company.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -95,16 +104,22 @@ class _IntroPageState extends State<IntroPage> {
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
                             minimumSize: Size(100.0, 50.0)),
-                        child: Text('Company',
+                        child: Text(Languages.of(context)!.company,
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
                       SizedBox(width: 24.0),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return LoginPage(apiForLogin: "api for ${StudentHubCategorySignUp.student.name}", title: StudentHubCategorySignUp.student.name,);
-                          },));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LoginPage(
+                                apiForLogin:
+                                    "api for ${StudentHubCategorySignUp.student.name}",
+                                title: StudentHubCategorySignUp.student.name,
+                              );
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 244, 191, 150),
@@ -115,7 +130,7 @@ class _IntroPageState extends State<IntroPage> {
                                   0.0), // Đặt giá trị để có góc bo tròn
                             ),
                             minimumSize: Size(100.0, 50.0)),
-                        child: Text('Student',
+                        child: Text(Languages.of(context)!.student,
                             style: TextStyle(
                                 color: Color.fromARGB(255, 31, 23, 23))),
                       ),
@@ -124,7 +139,7 @@ class _IntroPageState extends State<IntroPage> {
                   SizedBox(height: 24.0),
                   // Câu giới thiệu khác không phải nút
                   Text(
-                    'StudentHub is university market place to connect high-skilled student and company on a real-world project',
+                    Languages.of(context)!.appDescription2,
                     style: TextStyle(fontSize: 14.0),
                     textAlign: TextAlign.center,
                   ),

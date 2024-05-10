@@ -4,6 +4,7 @@ import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -57,7 +58,7 @@ class _ProjectPageState extends State<ProjectPage> {
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide(color: Colors.grey),
                         ),
-                        hintText: 'Search projects...',
+                        hintText: '${Languages.of(context)!.searchProject}...',
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                     ),
@@ -251,21 +252,21 @@ class _ShowListProjectState extends State<ShowListProject> {
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Created: ${formatDate(project.createdAt!)}',
+                                  '${Languages.of(context)!.created}: ${formatDate(project.createdAt!)}',
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Student needed: ${project.numberOfPeople}',
+                                  '${Languages.of(context)!.studentNeed}: ${project.numberOfPeople}',
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Time: ${optionsTimeForJob[project.time ?? 0]!}',
+                                  '${Languages.of(context)!.time}: ${optionsTimeForJob[project.time ?? 0]!}',
                                 ),
                                 SizedBox(height: 12),
                                 Text(
-                                  'Details:',
+                                  Languages.of(context)!.details,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -313,7 +314,7 @@ class _ShowListProjectState extends State<ShowListProject> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Views Details',
+                                        Languages.of(context)!.viewDetails,
                                         // style: TextStyle(
                                         //   color: Get.isDarkMode
                                         //       ? Themes.backgroundDark
@@ -351,7 +352,7 @@ class _ShowListProjectState extends State<ShowListProject> {
                                           ),
                                         ),
                                         child: Text(
-                                          'Apply',
+                                          Languages.of(context)!.apply,
                                           style: TextStyle(
                                               color:
                                                   Colors.white), // Màu văn bản

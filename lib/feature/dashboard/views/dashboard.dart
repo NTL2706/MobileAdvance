@@ -1,4 +1,3 @@
-
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
@@ -7,6 +6,7 @@ import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNot
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -145,7 +145,7 @@ class DashBoard extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Your projects",
+                          Text(Languages.of(context)!.projects,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white)),
@@ -167,7 +167,7 @@ class DashBoard extends StatelessWidget {
                                   ));
                                 },
                                 child: Text(
-                                  "Post a jobs",
+                                  Languages.of(context)!.postJob,
                                   style: TextStyle(
                                       color: Get.isDarkMode
                                           ? Themes.backgroundLight
@@ -181,9 +181,9 @@ class DashBoard extends StatelessWidget {
                       child: CustomTabBar(
                         lengOfTabBar: 3,
                         tabs: [
-                          Text("All projects"),
-                          Text("Working"),
-                          Text("Archieve"),
+                          Text(Languages.of(context)!.allProject),
+                          Text(Languages.of(context)!.working),
+                          Text(Languages.of(context)!.archive),
                         ],
                         tab_views: [
                           AllProjectWidget(
@@ -224,9 +224,10 @@ class AllProjectWidget extends StatelessWidget {
   List<Map<String, dynamic>> jobList;
   @override
   Widget build(BuildContext context) {
-
     final role = context.read<AuthenticateProvider>().authenRepository.role;
-    final activeJobs = jobList.where((element) => element['statusFlag'] == statusFlag['Active']).toList();
+    final activeJobs = jobList
+        .where((element) => element['statusFlag'] == statusFlag['Active'])
+        .toList();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -234,7 +235,7 @@ class AllProjectWidget extends StatelessWidget {
         children: [
           if (role == "student")
             Text(
-              "Active(${activeJobs.length})",
+              "${Languages.of(context)!.archive} (${activeJobs.length})",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -242,7 +243,7 @@ class AllProjectWidget extends StatelessWidget {
             ),
           if (role == "student")
             Text(
-              "Your proposal(${jobList.length})",
+              "${Languages.of(context)!.proposal} (${jobList.length})",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -309,19 +310,24 @@ class AllProjectWidget extends StatelessWidget {
                                       return [
                                         PopupMenuItem(
                                             onTap: () {},
-                                            child: Text("View proposals")),
+                                            child: Text(Languages.of(context)!
+                                                .viewProposal)),
                                         PopupMenuItem(
                                             onTap: () {},
-                                            child: Text("View messages")),
+                                            child: Text(Languages.of(context)!
+                                                .viewMessage)),
                                         PopupMenuItem(
                                             onTap: () {},
-                                            child: Text("View hired")),
+                                            child: Text(Languages.of(context)!
+                                                .viewHired)),
                                         PopupMenuItem(
                                             onTap: () {},
-                                            child: Text("View job posting")),
+                                            child: Text(Languages.of(context)!
+                                                .viewJobPosting)),
                                         PopupMenuItem(
                                             onTap: () {},
-                                            child: Text("Edit posting")),
+                                            child: Text(Languages.of(context)!
+                                                .exitPosting)),
                                         PopupMenuItem(
                                             onTap: () async {
                                               await context
@@ -334,19 +340,21 @@ class AllProjectWidget extends StatelessWidget {
                                                           .token!,
                                                       id: job.id!);
                                             },
-                                            child: Text("Remove posting")),
+                                            child: Text(Languages.of(context)!
+                                                .removePosting)),
                                         PopupMenuItem(
                                             onTap: () {
                                               // context.read<JobNotifier>().updateJob(id: job.id!, state: JobState.working.name);
                                             },
-                                            child: Text("Start working")),
+                                            child: Text(Languages.of(context)!
+                                                .startWorking)),
                                       ];
                                     },
                                   ))
                           ],
                         ),
                         Text(job.createAt!),
-                        Text("Student are looking for"),
+                        Text(Languages.of(context)!.lookingFor),
                         Text(
                           "${"-\r${job.description}"}",
                           overflow: TextOverflow.ellipsis,
@@ -372,7 +380,7 @@ class AllProjectWidget extends StatelessWidget {
                                                       ? Themes.backgroundLight
                                                       : Themes.backgroundDark)),
                                           child: Text("${job.proposalNumber}")),
-                                      Text("Proposals")
+                                      Text(Languages.of(context)!.proposal)
                                     ],
                                   ),
                                 ),
@@ -393,7 +401,7 @@ class AllProjectWidget extends StatelessWidget {
                                                       ? Themes.backgroundLight
                                                       : Themes.backgroundDark)),
                                           child: Text("${job.messagesNumber}")),
-                                      Text("Messages")
+                                      Text(Languages.of(context)!.message)
                                     ],
                                   ),
                                 ),
@@ -414,7 +422,7 @@ class AllProjectWidget extends StatelessWidget {
                                                       ? Themes.backgroundLight
                                                       : Themes.backgroundDark)),
                                           child: Text("${job.hiredNumber}")),
-                                      Text("Hired")
+                                      Text(Languages.of(context)!.hired)
                                     ],
                                   ),
                                 ),

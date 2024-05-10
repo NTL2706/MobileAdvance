@@ -3,6 +3,7 @@
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/projects/constants/projetcs_type.dart';
 import 'package:final_project_advanced_mobile/feature/projects/provider/project_provider.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,7 @@ class ApplyProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Example'),
+        title: Text(Languages.of(context)!.applyProject),
       ),
       body: Center(
         child: Container(
@@ -24,12 +25,12 @@ class ApplyProject extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Apply Text',
+                Languages.of(context)!.applyText,
                 style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
               Text(
-                'Description Text',
+                Languages.of(context)!.descriptionText,
                 style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 20.0),
@@ -51,7 +52,7 @@ class ApplyProject extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text('Cancel'),
+                    child: Text(Languages.of(context)!.cancel),
                   ),
                   SizedBox(width: 20.0),
                   ElevatedButton(
@@ -75,7 +76,7 @@ class ApplyProject extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.green,
                           content: Text(
-                            "Sended success",
+                            Languages.of(context)!.sendedSuccess,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -86,7 +87,7 @@ class ApplyProject extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
-                            "Sended fail",
+                            Languages.of(context)!.sendedFail,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -95,7 +96,7 @@ class ApplyProject extends StatelessWidget {
                         ));
                       }
                     },
-                    child: Text('Apply'),
+                    child: Text(Languages.of(context)!.apply),
                   ),
                 ],
               ),

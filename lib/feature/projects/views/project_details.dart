@@ -3,6 +3,8 @@
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/constants/time_for_job.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_2.dart';
+import 'package:final_project_advanced_mobile/languages/en.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/projetcs_type.dart';
@@ -45,7 +47,7 @@ class ProjectDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Description: ',
+                    '${Languages.of(context)!.description}: ',
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 20,
@@ -68,7 +70,7 @@ class ProjectDetailScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Student needed : ',
+                            '${Languages.of(context)!.studentNeed} : ',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Padding(
@@ -92,13 +94,13 @@ class ProjectDetailScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Time : ',
+                            '${Languages.of(context)!.created} : ',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 12),
                             child: Text(
-                              'Time: ${optionsTimeForJob[project.time]!}',
+                              '${Languages.of(context)!.time}: ${optionsTimeForJob[project.time]!}',
                             ),
                           ),
                         ],
@@ -110,57 +112,61 @@ class ProjectDetailScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if(role == "student")
-                  TextButton(
-                    onPressed: () {
-                      // projectProvider.toggleFavoriteStatus(project.id);
-                    },
-                    style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(
-                          Size(150, 55)), // Kích thước nút
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          disableFlag ? Colors.blue : Colors.red), // Màu nền
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // Đặt border radius
+                  if (role == "student")
+                    TextButton(
+                      onPressed: () {
+                        // projectProvider.toggleFavoriteStatus(project.id);
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(
+                            Size(150, 55)), // Kích thước nút
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            disableFlag ? Colors.blue : Colors.red), // Màu nền
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // Đặt border radius
+                          ),
                         ),
                       ),
+                      child: Text(
+                        disableFlag
+                            ? Languages.of(context)!.save
+                            : Languages.of(context)!.saved,
+                        style: TextStyle(color: Colors.white), // Màu văn bản
+                      ),
                     ),
-                    child: Text(
-                      disableFlag ? 'Save' : 'Saved',
-                      style: TextStyle(color: Colors.white), // Màu văn bản
-                    ),
-                  ),
                   SizedBox(width: 24),
-                  if(role == "student")
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ApplyProject(
-                                  project: project,
-                                  disableFlag: disableFlag,
-                                )),
-                      );
-                    },
-                    style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(Size(150, 55)),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.blue), // Màu nền
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // Đặt border radius
+                  if (role == "student")
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ApplyProject(
+                                    project: project,
+                                    disableFlag: disableFlag,
+                                  )),
+                        );
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(Size(150, 55)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.blue), // Màu nền
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // Đặt border radius
+                          ),
                         ),
                       ),
+                      child: Text(
+                        Languages.of(context)!.apply,
+                        style: TextStyle(color: Colors.white), // Màu văn bản
+                      ),
                     ),
-                    child: Text(
-                      'Apply',
-                      style: TextStyle(color: Colors.white), // Màu văn bản
-                    ),
-                  ),
                 ],
               )
             ],

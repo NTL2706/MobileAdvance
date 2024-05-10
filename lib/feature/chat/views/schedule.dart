@@ -1,4 +1,5 @@
 import 'package:final_project_advanced_mobile/feature/chat/constants/chat_type.dart';
+import 'package:final_project_advanced_mobile/languages/language.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/chat_provider.dart';
@@ -35,7 +36,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Text(
-              'Schedule a meeting',
+              Languages.of(context)!.scheduleMeeting,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -57,7 +58,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Start Time',
+                        Languages.of(context)!.startTime,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -83,7 +84,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                                 provider.startTimeController.text.isNotEmpty
                                     ? getDateTime(DateTime.parse(
                                         provider.startTimeController.text))
-                                    : 'Pick date and time',
+                                    : Languages.of(context)!.pickDateAndTime,
                               ),
                             ],
                           ),
@@ -98,7 +99,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'End Time',
+                        Languages.of(context)!.endTime,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -124,7 +125,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                                 provider.endTimeController.text.isNotEmpty
                                     ? getDateTime(DateTime.parse(
                                         provider.endTimeController.text))
-                                    : 'Pick date and time',
+                                    : Languages.of(context)!.pickDateAndTime,
                               ),
                             ],
                           ),
@@ -183,7 +184,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Schedule',
+                      Languages.of(context)!.create,
                       style: TextStyle(
                           color: Colors.white), // Đặt màu chữ là màu trắng
                     ),
@@ -231,7 +232,7 @@ class MeetingScheduleBottomSheet extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Update',
+                      Languages.of(context)!.update,
                       style: TextStyle(
                           color: Colors.white), // Đặt màu chữ là màu trắng
                     ),
