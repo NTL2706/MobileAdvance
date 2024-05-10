@@ -6,15 +6,13 @@ import 'package:final_project_advanced_mobile/widgets/basic_page.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
 
-class ManageProject extends StatelessWidget{
+class ManageProject extends StatelessWidget {
   ManageProject(
-  {
-    super.key,
-    required this.proposals,
-    required this.job,
-    this.selectIndex
-  });
-  List<Map<String,dynamic>> proposals;
+      {super.key,
+      required this.proposals,
+      required this.job,
+      this.selectIndex});
+  List<Map<String, dynamic>> proposals;
   JobModel job;
   int? selectIndex;
   @override
@@ -29,25 +27,44 @@ class ManageProject extends StatelessWidget{
                 selectIndex: selectIndex,
                 lengOfTabBar: 4,
                 tabs: [
-                  Text("Proposals",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text("Detail",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text("Message",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold
-                  ),),
-                  Text("Hired",style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold
-                  ),),
+                  Text(
+                    "Proposals",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Detail",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Message",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Hired",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ],
-                 tab_views: [
+                tab_views: [
                   ManageProjectProposal(
                     proposals: proposals,
                   ),
                   ManageProjectDetail(job: job),
-                  Container(child: Center(child: Text("Message"),)),
+                  Container(
+                      child: Center(
+                    child: Text("Message"),
+                  )),
                   ManageProjectHired(proposals: proposals)
                 ],
               ),
@@ -55,6 +72,6 @@ class ManageProject extends StatelessWidget{
           ],
         ),
       ),
-    ) ;
+    );
   }
 }

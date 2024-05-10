@@ -1,15 +1,14 @@
-
 import 'package:final_project_advanced_mobile/constants/colors.dart';
 import 'package:final_project_advanced_mobile/constants/status_flag.dart';
 import 'package:final_project_advanced_mobile/feature/auth/constants/sigup_category.dart';
 import 'package:final_project_advanced_mobile/feature/auth/provider/authenticate_provider.dart';
+import 'package:final_project_advanced_mobile/feature/callvideo/callvideo.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
 import 'package:final_project_advanced_mobile/widgets/tab_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:provider/provider.dart';
@@ -179,11 +178,12 @@ class DashBoard extends StatelessWidget {
                     Expanded(
                         child: Container(
                       child: CustomTabBar(
-                        lengOfTabBar: 3,
+                        lengOfTabBar: 4,
                         tabs: [
                           Text("All projects"),
                           Text("Working"),
                           Text("Archieve"),
+                          Text("Interview")
                         ],
                         tab_views: [
                           AllProjectWidget(
@@ -206,6 +206,7 @@ class DashBoard extends StatelessWidget {
                             }).toList(),
                             state: JobState.archieved.name,
                           ),
+                          const InterviewActive(),
                         ],
                       ),
                     ))
@@ -223,8 +224,7 @@ class AllProjectWidget extends StatelessWidget {
   String? state;
   List<Map<String, dynamic>> jobList;
   @override
-  Widget build(BuildContext context) {;
-
+  Widget build(BuildContext context) {
     final role = context.read<AuthenticateProvider>().authenRepository.role;
     final activeJobs = jobList
         .where((element) => element['statusFlag'] == statusFlag['Active'])
@@ -454,6 +454,106 @@ class AllProjectWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class InterviewActive extends StatelessWidget {
+  const InterviewActive({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: context.watch<JobNotifier>().getAllInterView(
+          token: context.read<AuthenticateProvider>().authenRepository.token!,
+          userId: context.read<AuthenticateProvider>().authenRepository.id!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (context, index) {
+                final interview = snapshot.data?[index];
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: Get.isDarkMode
+                              ? Themes.boxDark
+                              : Themes.boxLight),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${interview?['title']}',
+                                maxLines: 1,
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 24,
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Text(
+                                'START: ${DateTime.parse(interview?['startTime']).day}-${DateTime.parse(interview?['startTime']).month}-${DateTime.parse(interview?['startTime']).year}',
+                                style: TextStyle(
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Text(
+                                'END: ${DateTime.parse(interview?['endTime']).day}-${DateTime.parse(interview?['endTime']).month}-${DateTime.parse(interview?['endTime']).year}',
+                                style: TextStyle(
+                                  color: Get.isDarkMode
+                                      ? Themes.textLight
+                                      : Themes.textDark,
+                                ),
+                              ),
+                              Center(
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CallPage(
+                                              userId: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .id!
+                                                  .toString(),
+                                              token: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .token!,
+                                              interviewId: interview?['id'],
+                                              callID:
+                                                  interview!['meetingRoomId']
+                                                      .toString(),
+                                              userName: context
+                                                  .read<AuthenticateProvider>()
+                                                  .authenRepository
+                                                  .username!,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text("Go to interview")))
+                            ]),
+                      )),
+                );
+              });
+        }
+      },
     );
   }
 }

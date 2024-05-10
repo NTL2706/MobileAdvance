@@ -328,7 +328,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                         await context
                                             .read<ChatProvider>()
                                             .updateStatusOfStudetnProposal(
-                                                statusFlag: statusFlag['active']!,
+                                                statusFlag:
+                                                    statusFlag['Active']!,
                                                 proposalId: widget.proposalId!,
                                                 token: context
                                                     .read<
@@ -382,7 +383,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       await context
                                           .read<ChatProvider>()
                                           .updateStatusOfStudetnProposal(
-                                            statusFlag: statusFlag['Actice']!,
+                                              statusFlag: statusFlag['Actice']!,
                                               proposalId: widget.proposalId!,
                                               token: context
                                                   .read<AuthenticateProvider>()

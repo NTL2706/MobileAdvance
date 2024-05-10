@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class JobNotifier extends ChangeNotifier {
@@ -28,25 +29,26 @@ class JobNotifier extends ChangeNotifier {
   Future<Map<String, dynamic>> getProposalOfStudent(
       {required int studentId, required String token}) async {
     try {
-      final response = await http.get(headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-      }, Uri.parse("https://api.studenthub.dev/api/proposal/project/$studentId"));
+      final response = await http.get(
+          headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          },
+          Uri.parse(
+              "https://api.studenthub.dev/api/proposal/project/$studentId"));
 
       final body = json.decode(response.body);
-      
+
       List<Map<String, dynamic>> projectList = [];
       if (response.statusCode >= 400) {
         throw Exception(body['errorDetails']);
       }
 
-      projectList = List<Map<String,dynamic>>.from(body['result']).map((e) {
-          final project = Map<String,dynamic>.from(e['project']);
-          project.addAll({
-            "statusFlag": e['statusFlag']
-          });
-          return project;
-        }).toList();
-      
+      projectList = List<Map<String, dynamic>>.from(body['result']).map((e) {
+        final project = Map<String, dynamic>.from(e['project']);
+        project.addAll({"statusFlag": e['statusFlag']});
+        return project;
+      }).toList();
+
       // final proposalListOfStudent = List<Map<String, dynamic>>.from(body['result']);
 
       // for (int i = 0; i < proposalListOfStudent.length; i++) {
@@ -61,7 +63,7 @@ class JobNotifier extends ChangeNotifier {
       //             "${env.apiURL}api/project/${proposalListOfStudent[i]['projectId']}"));
 
       //     final bodyProject = json.decode(project.body);
-       
+
       //     Map<String, dynamic> convertToProject =
       //         Map<String, dynamic>.from(bodyProject['result']);
 
@@ -76,13 +78,11 @@ class JobNotifier extends ChangeNotifier {
       //     }
 
       //     projectList.add(convertToProject);
-      //   } 
+      //   }
       //   catch (e) {
       //     // print(e);
       //   }
       // }
-
-
 
       return {"result": projectList, "error": null};
     } on Exception catch (e) {
@@ -199,6 +199,31 @@ class JobNotifier extends ChangeNotifier {
     } on Exception catch (e) {
       print(e.toString());
       return {"error": e.toString()};
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllInterView(
+      {required String token, required int userId}) async {
+    try {
+      final response = await http.get(headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+      }, Uri.parse("${dotenv.env['API_URL']}api/interview/user/$userId"));
+
+      final body = json.decode(response.body);
+
+      if (response.statusCode >= 400) {
+        throw Exception(body['errorDetails']);
+      }
+
+      List<Map<String, dynamic>> interviewList =
+          List<Map<String, dynamic>>.from(body['result']);
+
+      interviewList.removeWhere((element) => element['deletedAt'] != null);
+
+      return interviewList;
+    } on Exception catch (e) {
+      print(e.toString());
+      return [];
     }
   }
 }
