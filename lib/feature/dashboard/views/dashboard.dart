@@ -189,13 +189,10 @@ class DashBoard extends StatelessWidget {
                       child: CustomTabBar(
                         lengOfTabBar: 4,
                         tabs: [
-                          Text("All projects"),
-                          Text("Working"),
-                          Text("Archieve"),
-                          Text("Interview")
                           Text(Languages.of(context)!.allProject),
                           Text(Languages.of(context)!.working),
                           Text(Languages.of(context)!.archive),
+                          Text(Languages.of(context)!.interview),
                         ],
                         tab_views: [
                           AllProjectWidget(
@@ -261,7 +258,6 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
             ),
           if (role == "student")
             Text(
-
               "${Languages.of(context)!.proposal} (${widget.jobList.length})",
               style: Theme.of(context)
                   .textTheme
@@ -366,10 +362,8 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                             child: Text(Languages.of(context)!
                                                 .viewJobPosting)),
                                         PopupMenuItem(
-
                                             onTap: () async {
                                               await showDialog(
-
                                                 context: context,
                                                 builder: (context) {
                                                   String initialTime =
@@ -406,8 +400,7 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                       builder:
                                                           (context, setState) {
                                                     return AlertDialog(
-                                                      scrollable: true
-                                                      ,
+                                                      scrollable: true,
                                                       title:
                                                           Text("Edit project"),
                                                       content: Container(
@@ -518,7 +511,6 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                 ElevatedButton(
                                                                     onPressed:
                                                                         () async {
-                                                                          
                                                                       await context.read<ProjectProvider>().updateProject(
                                                                           token: context
                                                                               .read<
@@ -528,20 +520,18 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                           projectId: job
                                                                               .id!,
                                                                           description: desController
-                                                                              .text.trim(),
+                                                                              .text
+                                                                              .trim(),
                                                                           numberOfStudents: int.parse(numberOfStudentController
-                                                                              .text.trim()),
+                                                                              .text
+                                                                              .trim()),
                                                                           projectScopeFlag: optionsTimeForJob
                                                                               .entries
-                                                                              .where((element) =>
-                                                                                  element.value.toString().trim() ==
-                                                                                  initialTime.toString().trim())
+                                                                              .where((element) => element.value.toString().trim() == initialTime.toString().trim())
                                                                               .first
                                                                               .key,
-                                                                          title: titleController
-                                                                              .text,
-                                                                          typeFlag:
-                                                                              typeFlag[initTypeFlag]);
+                                                                          title: titleController.text,
+                                                                          typeFlag: typeFlag[initTypeFlag]);
 
                                                                       final result = context
                                                                           .read<
@@ -563,8 +553,11 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                                             context: context,
                                                                             showCancelBtn: true,
                                                                             type: QuickAlertType.success);
-                                                                        context.read<JobNotifier>().refresh();
-                                                                        Navigator.of(context).pop();
+                                                                        context
+                                                                            .read<JobNotifier>()
+                                                                            .refresh();
+                                                                        Navigator.of(context)
+                                                                            .pop();
                                                                       } else {
                                                                         await QuickAlert.show(
                                                                             text: "Update Failed",
@@ -590,10 +583,8 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                                       ),
                                                     );
                                                   });
-
                                                 },
                                               );
-                                              
                                             },
                                             child: Text("Edit posting")),
                                         PopupMenuItem(

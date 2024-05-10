@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
+import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNotifier.dart';
 import 'package:final_project_advanced_mobile/feature/notification/provider/notify_provider.dart';
 import 'package:final_project_advanced_mobile/main.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +58,7 @@ class CallPage extends StatelessWidget {
         onCallEnd: (ZegoCallEndEvent event, VoidCallback defaultAction) async {
           await deleteSchedule(token: token, interviewId: interviewId);
           context.read<NotiProvider>().reload();
+          context.read<JobNotifier>().refresh();
           defaultAction.call();
         },
       ),
