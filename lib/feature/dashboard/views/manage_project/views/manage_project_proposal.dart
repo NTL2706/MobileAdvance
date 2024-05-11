@@ -22,7 +22,7 @@ class ManageProjectProposal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(proposals);
-    proposals = proposals.where((element) => element['statusFlag'].toString() == statusFlag['Waiting'].toString(),).toList();
+    proposals = proposals.where((element) => (element['statusFlag'].toString() == statusFlag['Waiting'].toString() || element['statusFlag'].toString() == statusFlag['Active'].toString() ),).toList();
     return Container(
       child: ListView.builder(
         itemCount: proposals.length,

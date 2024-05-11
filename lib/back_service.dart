@@ -20,27 +20,36 @@ Future<void> initializeService() async {
   );
 }
 
-void handleNotify(Map<String,dynamic> data){
- print(data['notification']['typeNotifyFlag'].toString() == TypeNotifyFlag['Offer'].toString());
-        if (data['notification']['typeNotifyFlag'].toString() == TypeNotifyFlag['Offer'].toString()) {
-          LocalNotification.showSimpleNotification(
-              titile: data['notification']['title'],
-              body: data['notification']['content'],
-              payload: "123");
-        } else if (data['notification']['typeNotifyFlag'].toString() ==
-            TypeNotifyFlag['Chat'].toString()) {
-          LocalNotification.showSimpleNotification(
-              titile: data['notification']['sender']['fullname'],
-              body: data['notification']['message']['content'],
-              payload: "123");
-        }else if (data['notification']['typeNotifyFlag'].toString() ==
-            TypeNotifyFlag['Hired'].toString() ){
-              LocalNotification.showSimpleNotification(
-              titile: data['notification']['title'],
-              body: data['notification']['content'],
-              payload: "123");
-            }
+void handleNotify(Map<String, dynamic> data) {
+  print(data['notification']['typeNotifyFlag'].toString() ==
+      TypeNotifyFlag['Offer'].toString());
+  if (data['notification']['typeNotifyFlag'].toString() ==
+      TypeNotifyFlag['Offer'].toString()) {
+    LocalNotification.showSimpleNotification(
+        titile: data['notification']['title'],
+        body: data['notification']['content'],
+        payload: "123");
+  } else if (data['notification']['typeNotifyFlag'].toString() ==
+      TypeNotifyFlag['Chat'].toString()) {
+    LocalNotification.showSimpleNotification(
+        titile: data['notification']['sender']['fullname'],
+        body: data['notification']['message']['content'],
+        payload: "123");
+  } else if (data['notification']['typeNotifyFlag'].toString() ==
+      TypeNotifyFlag['Hired'].toString()) {
+    LocalNotification.showSimpleNotification(
+        titile: data['notification']['title'],
+        body: data['notification']['content'],
+        payload: "123");
+  } else if (data['notification']['typeNotifyFlag'].toString() ==
+      TypeNotifyFlag['Interview'].toString()) {
+    LocalNotification.showSimpleNotification(
+        titile: data['notification']['sender']['fullname'],
+        body: data['notification']['content'],
+        payload: "123");
+  }
 }
+
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) {
   if (service is AndroidServiceInstance) {

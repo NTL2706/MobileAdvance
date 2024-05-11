@@ -9,6 +9,7 @@ import 'package:final_project_advanced_mobile/feature/dashboard/providers/JobNot
 import 'package:final_project_advanced_mobile/feature/dashboard/views/manage_project/views/manage_project.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/models/job_model.dart';
 import 'package:final_project_advanced_mobile/feature/dashboard/views/post_a_project/views/project_post_1.dart';
+import 'package:final_project_advanced_mobile/feature/projects/utils/convert_days.dart';
 
 import 'package:final_project_advanced_mobile/languages/language.dart';
 
@@ -243,6 +244,7 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
     final activeJobs = widget.jobList
         .where((element) => element['statusFlag'] == statusFlag['Active'])
         .toList();
+
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -270,6 +272,7 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
               itemBuilder: (context, index) {
                 JobModel job = JobModel.jsonFrom(widget.jobList[index]);
                 print(widget.jobList[index]['statusFlag']);
+                print(widget.jobList[index]['coverLetter']);
                 return GestureDetector(
                   onTap: role == "company"
                       ? () {
@@ -612,7 +615,9 @@ class _AllProjectWidgetState extends State<AllProjectWidget> {
                                   ))
                           ],
                         ),
-                        Text(job.createAt!),
+                        if(role == "student")
+                        Text(widget.jobList[index]['coverLetter'],style: Theme.of(context).textTheme.bodyMedium,),
+                        Text(formatDate(DateTime.parse(job.createAt!))),
                         Text(Languages.of(context)!.lookingFor),
                         Text(
                           "${"-\r${job.description}"}",
