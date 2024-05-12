@@ -28,34 +28,6 @@ class NotiProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> markNotificationAsRead(String id) async {
-    // Retrieve the base URL from the environment variable
-    final String baseUrl = dotenv.env['BASE_URL'] ?? '';
-    final String apiUrl = '$baseUrl/api/notification/readNoti/$id';
-
-    try {
-      // Perform a PATCH request
-      final response = await http.patch(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer yourAuthToken', // Add any required authorization here
-        },
-        body: jsonEncode({'read': true}), // Adjust the request body as needed
-      );
-
-      // Check the response status
-      if (response.statusCode == 200) {
-        print('Notification marked as read');
-      } else {
-        print('Failed to mark notification as read: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error occurred: $error');
-    }
-  }
-
   Future<void> readNoti(int id, String token) async {
     final String? baseUrl = dotenv.env['API_URL'];
     final String path = 'api/notification/readNoti/$id';

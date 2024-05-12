@@ -97,7 +97,7 @@ class NotificationPage extends StatelessWidget {
       child: ListView.builder(
         itemCount: filteredList.length,
         itemBuilder: (context, index) {
-          final notification = filteredList[filteredList.length - 1 - index];
+          final notification = filteredList[index];
           return Container(
             margin: const EdgeInsets.only(top: 10),
             child: Column(
