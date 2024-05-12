@@ -45,7 +45,7 @@ class JobNotifier extends ChangeNotifier {
 
       projectList = List<Map<String, dynamic>>.from(body['result']).map((e) {
         final project = Map<String, dynamic>.from(e['project']);
-        project.addAll({"statusFlag": e['statusFlag']});
+        project.addAll({"statusFlag": e['statusFlag'],"coverLetter":e['coverLetter']});
         return project;
       }).toList();
 
